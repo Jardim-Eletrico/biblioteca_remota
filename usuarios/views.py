@@ -38,6 +38,18 @@ def fazer_login(request):
 
 
 #LEITOR
+def criar_conta(request):
+     if request.method == "POST":
+          leitor = Leitor(
+            nome = request.POST["nome"],
+            email = request.POST["email"],
+            cpf = request.POST["cpf"],
+            senha = request.POST["senha"],
+          )
+          leitor.criar_conta()
+
+          return redirect("fazer_login")
+     return render(request, "usuarios/criar_conta.html")
 
 #BIBLIOTECARIO
 

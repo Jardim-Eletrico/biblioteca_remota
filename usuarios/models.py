@@ -16,6 +16,10 @@ class Usuario(models.Model):
             return self.nome
 
 class Leitor(Usuario):
+
+    def criar_conta(self):
+         self.save()
+         
     def reservar_livro(self):
          pass
 

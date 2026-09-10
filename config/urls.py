@@ -18,8 +18,10 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from usuarios import views
 
 urlpatterns = [
+    path("", views.fazer_login, name="inicio"),
     path('admin/', admin.site.urls),
     path("livros/", include("livros.urls")),
     path("usuarios/", include("usuarios.urls")),
