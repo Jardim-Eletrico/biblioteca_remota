@@ -17,7 +17,9 @@
         <div class="livro">
             <h2>{{ livro.titulo }}</h2>
             {% if livro.capa %}
-            <div class="capa"><img src="{{ livro.capa.url }}" alt="Capa de {{ livro.titulo }}"></div>
+            <div class="capa"><img src="{{ livro.capa.url }}" alt="Capa de {{ livro.titulo }}">
+            </div>
+            {% endif %}
             <div class="livro-info">
                 <p>Autor: {{ livro.autor }}</p>
                 <p>Ano: {{ livro.ano }}</p>
@@ -26,11 +28,15 @@
                 <p>Editora: {{ livro.editora }}</p>
 
                 <a href="{% url 'editar_livro' livro.id %}">
-                <button>EDITAR</button>
+                <button type="button">EDITAR</button>
                 </a>
+
+                <form method="POST" action="{% url 'excluir_livro' livro.id %}">
+                {% csrf_token %}
+                <button type="submit">EXCLUIR EXEMPLAR</button>
+                </form>
             </div>
             <br><br><br>
-            {% endif %}
             </div>
         {% endfor %}
 </body>

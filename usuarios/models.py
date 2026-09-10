@@ -36,5 +36,5 @@ class Bibliotecario(Usuario):
     def editar_livro(self, livro):
          livro.save()
 
-    def ver_leitores(self):
-         pass
+    def ver_leitores(self, leitores):
+         leitores.get()

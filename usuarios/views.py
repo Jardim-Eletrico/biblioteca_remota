@@ -89,9 +89,23 @@ def editar_livro(request, id):
             bibliotecario_id = request.session.get("usuario_id")
             bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
             bibliotecario.editar_livro(livro)
-            
+
             return redirect("mostrar_livros")
 
     return render(request, "livros/editar_livro.html", {
         "livro": livro
     })
+
+def excluir_livro(request, id):
+    if request.session.get("tipo_usuario") != "bibliotecario":
+         return redirect("fazer_login")
+
+    livro = Livro.objects.get(id = id)
+
+    if request.method == "POST":
+        bibliotecario_id = request.session.get("usuario_id")
+        bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
+        bibliotecario.excluir_livro(livro)
+        return redirect("mostrar_livros")
+
+    return redirect("mostrar_livros")
