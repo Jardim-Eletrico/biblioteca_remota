@@ -24,6 +24,10 @@
                 <p>Gênero: {{ livro.genero }}</p>
                 <p>Sinopse: {{ livro.sinopse }}</p>
                 <p>Editora: {{ livro.editora }}</p>
+
+                <a href="{% url 'editar_livro' livro.id %}">
+                <button>EDITAR</button>
+                </a>
             </div>
             <br><br><br>
             {% endif %}

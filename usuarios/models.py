@@ -33,8 +33,8 @@ class Bibliotecario(Usuario):
     def excluir_livro(self, livro):
          livro.delete()
 
-    def editar_livro(self):
-         pass
+    def editar_livro(self, livro):
+         livro.save()
 
     def ver_leitores(self):
          pass

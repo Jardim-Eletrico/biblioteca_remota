@@ -59,11 +59,39 @@ def cadastrar_livro(request):
             genero=request.POST["genero"],
             editora=request.POST["editora"],
             ano=request.POST["ano"],
-            capa=request.FILES.get("capa"),
         )
+        if request.FILES.get("capa"):
+                        livro.capa =request.FILES.get("capa")
+
         bibliotecario_id = request.session.get("usuario_id")
         bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
         bibliotecario.cadastrar_livro(livro)
 
         return redirect("mostrar_livros")
     return render(request, "livros/cadastrar_livro.html")
+
+def editar_livro(request, id):
+    if request.session.get("tipo_usuario") != "bibliotecario":
+            return redirect("fazer_login")
+
+    livro = Livro.objects.get(id = id)
+
+    if request.method == "POST":
+            livro.titulo = request.POST["titulo"]
+            livro.autor=request.POST["autor"]
+            livro.sinopse=request.POST["sinopse"]
+            livro.genero=request.POST["genero"]
+            livro.editora=request.POST["editora"]
+            livro.ano=request.POST["ano"]
+            if request.FILES.get("capa"):
+                livro.capa =request.FILES.get("capa")
+
+            bibliotecario_id = request.session.get("usuario_id")
+            bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
+            bibliotecario.editar_livro(livro)
+            
+            return redirect("mostrar_livros")
+
+    return render(request, "livros/editar_livro.html", {
+        "livro": livro
+    })
