@@ -10,6 +10,9 @@
 </head>
 <body>
     <h1>BIBLIOTECA</h1>
+    <a href="{% url 'cadastrar_livro' %}">
+        <button>Cadastrar outro livro</button>
+    </a>
         {% for livro in livros %}
         <div class="livro">
             <h2>{{ livro.titulo }}</h2>

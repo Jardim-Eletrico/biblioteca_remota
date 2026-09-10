@@ -40,7 +40,17 @@ def fazer_login(request):
 #LEITOR
 
 #BIBLIOTECARIO
+
+def home_gestor(request):
+    if request.session.get("tipo_usuario") != "bibliotecario":
+        return redirect("fazer_login")
+
+    return render(request, "usuarios/bibliotecario/home_gestor.html")
+
 def cadastrar_livro(request):
+    if request.session.get("tipo_usuario") != "bibliotecario":
+        return redirect("fazer_login")
+    
     if request.method == "POST":
         livro = Livro(
             titulo = request.POST["titulo"],
@@ -51,8 +61,9 @@ def cadastrar_livro(request):
             ano=request.POST["ano"],
             capa=request.FILES.get("capa"),
         )
-        bibliotecario_id = request.session.get("bibliotecario_id")
+        bibliotecario_id = request.session.get("usuario_id")
         bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
         bibliotecario.cadastrar_livro(livro)
 
         return redirect("mostrar_livros")
+    return render(request, "livros/cadastrar_livro.html")
