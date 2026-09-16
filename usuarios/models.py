@@ -17,20 +17,23 @@ class Usuario(models.Model):
 
 class Leitor(Usuario):
 
-    def criar_conta(self):
-         self.save()
-         
-    def reservar_livro(self):
-         pass
+     def criar_conta(self):
+          self.save()
 
-    def minhas_reservas(self):
-         pass
+     def efetuar_emprestimo(self, livro):
+          pass
+          
+          
+     def reservar_livro(self):
+          pass
+
+     def minhas_reservas(self):
+          pass
     
 
 class Bibliotecario(Usuario):
     matricula = models.CharField(max_length=5, unique=True)
     
-
     def cadastrar_livro(self,livro):
           livro.save()
          

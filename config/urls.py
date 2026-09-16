@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("livros/", include("livros.urls")),
     path("usuarios/", include("usuarios.urls")),
+    path("emprestimos", include("emprestimos.urls"))
 ]
 
 urlpatterns += static(

@@ -40,3 +40,9 @@ h1 {
     margin: 6px 0;
     line-height: 1.4;
 }
+
+.livros-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}

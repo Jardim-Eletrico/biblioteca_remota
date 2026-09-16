@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
-from livros.models import Livro
+from livros.models import *
 
 # Create your views here.
 def mostrar_users(request):
@@ -62,50 +62,67 @@ def home_gestor(request):
 def cadastrar_livro(request):
     if request.session.get("tipo_usuario") != "bibliotecario":
         return redirect("fazer_login")
-    
+
+    generos = Genero.objects.all().order_by("nome")
+
     if request.method == "POST":
         livro = Livro(
-            titulo = request.POST["titulo"],
+            titulo=request.POST["titulo"],
             autor=request.POST["autor"],
             sinopse=request.POST["sinopse"],
-            genero=request.POST["genero"],
             editora=request.POST["editora"],
             ano=request.POST["ano"],
         )
+
         if request.FILES.get("capa"):
-                        livro.capa =request.FILES.get("capa")
+            livro.capa = request.FILES.get("capa")
 
         bibliotecario_id = request.session.get("usuario_id")
         bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
+
         bibliotecario.cadastrar_livro(livro)
 
+        generos_selecionados = request.POST.getlist("generos")
+
+        livro.generos.set(generos_selecionados)
+
         return redirect("mostrar_livros")
-    return render(request, "livros/cadastrar_livro.html")
+
+    return render(request, "livros/cadastrar_livro.html", {
+        "generos": generos
+    })
 
 def editar_livro(request, id):
     if request.session.get("tipo_usuario") != "bibliotecario":
-            return redirect("fazer_login")
+        return redirect("fazer_login")
 
-    livro = Livro.objects.get(id = id)
+    livro = Livro.objects.get(id=id)
 
     if request.method == "POST":
-            livro.titulo = request.POST["titulo"]
-            livro.autor=request.POST["autor"]
-            livro.sinopse=request.POST["sinopse"]
-            livro.genero=request.POST["genero"]
-            livro.editora=request.POST["editora"]
-            livro.ano=request.POST["ano"]
-            if request.FILES.get("capa"):
-                livro.capa =request.FILES.get("capa")
+        livro.titulo = request.POST["titulo"]
+        livro.autor = request.POST["autor"]
+        livro.sinopse = request.POST["sinopse"]
+        livro.editora = request.POST["editora"]
+        livro.ano = request.POST["ano"]
 
-            bibliotecario_id = request.session.get("usuario_id")
-            bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
-            bibliotecario.editar_livro(livro)
+        if request.FILES.get("capa"):
+            livro.capa = request.FILES.get("capa")
 
-            return redirect("mostrar_livros")
+        generos_selecionados = request.POST.getlist("generos")
+        livro.generos.set(generos_selecionados)
+
+        bibliotecario_id = request.session.get("usuario_id")
+        bibliotecario = Bibliotecario.objects.get(id=bibliotecario_id)
+
+        bibliotecario.editar_livro(livro)
+
+        return redirect("mostrar_livros")
+
+    generos = Genero.objects.all().order_by("nome")
 
     return render(request, "livros/editar_livro.html", {
-        "livro": livro
+        "livro": livro,
+        "generos": generos
     })
 
 def excluir_livro(request, id):
