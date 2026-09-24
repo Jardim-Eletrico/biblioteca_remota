@@ -5,7 +5,7 @@ export default function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    async function handleLogin() {
+    async function ValidarLogin() {
         try {
             const dados = await login(email, password);
 
@@ -32,7 +32,7 @@ export default function Login() {
             />
 
             <button
-                onClick={handleLogin}
+                onClick={ValidarLogin}
                 className="bg-blue-500 text-white px-4 py-2"
             >
                 Entrar
