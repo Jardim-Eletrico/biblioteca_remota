@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     'livros',
     'usuarios',
+    'corsheaders',
     'rest_framework',
     'api',
     'rest_framework_simplejwt',
@@ -48,13 +49,15 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
@@ -149,8 +152,13 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACESS_TOKEN_LIFETIME": timedelta(days=30),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=90),
 }
 
 AUTH_USER_MODEL = "usuarios.Usuario"
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]

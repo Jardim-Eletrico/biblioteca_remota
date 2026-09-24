@@ -25,7 +25,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
             "password": {"write_only": True}
         }
 
-    def create(self, validated_data):
+    def create(self, validated_data): #Cria um usuário já com hash em seus dados.
         usuario = Usuario.objects.create_user(
             username=validated_data["username"],
             email=validated_data["email"],
@@ -51,7 +51,7 @@ class EmailTokenObtainPairSerializer(TokenObtainPairSerializer):
     username_field = "email"
     
     def validate(self, attrs):
-        email = attrs.get("email")
+        email = attrs.get("email") #attr = atributo
         password = attrs.get("password")
 
         try:
