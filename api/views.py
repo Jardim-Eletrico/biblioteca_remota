@@ -5,12 +5,15 @@ from livros.models import Livro
 from usuarios.models import Usuario
 
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.permissions import AllowAny
 from .serializers import EmailTokenObtainPairSerializer
 
 
 class LivroListCreateView(generics.ListCreateAPIView):
     queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
+    permission_classes = [AllowAny]
+
 
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):

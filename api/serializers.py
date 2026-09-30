@@ -1,10 +1,18 @@
 from rest_framework import serializers
-from livros.models import Livro
+from livros.models import *
 from usuarios.models import *
 
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+class CddSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CDD
+        fields = ["codigo", "descricao"]
+
 class LivroSerializer(serializers.ModelSerializer): #Faz a serialização com base numa model ja existente
+
+    cdd = CddSerializer()
+
     class Meta: #pega a model Livro
         model = Livro
         fields = "__all__" #pega todos seus atributos
