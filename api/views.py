@@ -11,19 +11,24 @@ from usuarios.models import Usuario
 from .permissions import *
 
 from drf_spectacular.utils import extend_schema
-
-
-class LivroListCreateView(generics.ListCreateAPIView):
+#-------------------------------------------
+class LivroListView(generics.ListAPIView):
     queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
+    permission_classes = [IsBibliotecario_or_Readonly]
 
+class LivroCreateView(generics.CreateAPIView):
+    queryset = Livro.objects.all()
+    serializer_class = LivroSerializer
+    permission_classes = [IsBibliotecario]
+#-------------------------------------------
 
 class UsuarioCreateView(generics.CreateAPIView):
     queryset = Usuario.objects.all()

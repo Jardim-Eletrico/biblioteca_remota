@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from livros.models import Livro
+from livros.models import *
 from usuarios.models import *
 
 class LivroSerializer(serializers.ModelSerializer): #Faz a serialização com base numa model ja existente
@@ -7,6 +7,15 @@ class LivroSerializer(serializers.ModelSerializer): #Faz a serialização com ba
         model = Livro
         fields = "__all__" #pega todos seus atributos
 
+    def create(self, validated_data):
+        quantidade = validated_data.pop('quantidade') #O pop exclui o item do dicionario enviado pelo cliente, mas guarda suas informações para o cadastro
+
+        livro = Livro.objects.create(**validated_data)
+
+        for i in range(quantidade):
+            Exemplar.objects.create(livro=livro)
+
+        return livro
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
