@@ -9,6 +9,8 @@ from .serializers import *
 from livros.models import Livro
 from usuarios.models import Usuario
 
+from drf_spectacular.utils import extend_schema
+
 class LivroListCreateView(generics.ListCreateAPIView):
     queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
@@ -26,6 +28,7 @@ class UsuarioCreateView(generics.CreateAPIView):
     serializer_class = UsuarioSerializer
     permission_classes = []
 
+@extend_schema(auth=[], request=LoginSerializer)
 class LoginView(APIView):
     permission_classes = [AllowAny]
 

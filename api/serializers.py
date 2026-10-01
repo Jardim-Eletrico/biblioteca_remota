@@ -43,3 +43,7 @@ class BibliotecarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bibliotecario
         fields = "__all__" 
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only = True)

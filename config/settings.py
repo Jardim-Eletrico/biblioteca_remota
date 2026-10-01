@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'usuarios',
     'corsheaders',
     'rest_framework',
+    'drf_spectacular',
     'api',
 ]
 
@@ -148,11 +149,10 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
         "rest_framework.authentication.SessionAuthentication",
-    ]
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
-
 
 AUTH_USER_MODEL = "usuarios.Usuario"
 
