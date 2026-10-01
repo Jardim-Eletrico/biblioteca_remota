@@ -1,13 +1,13 @@
-from rest_framework import generics
+from django.contrib.auth import authenticate, login, logout
+
+from rest_framework import generics, status
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .serializers import *
 from livros.models import Livro
 from usuarios.models import Usuario
-
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework.permissions import AllowAny
-from .serializers import EmailTokenObtainPairSerializer
-
 
 class LivroListCreateView(generics.ListCreateAPIView):
     queryset = Livro.objects.all().order_by("titulo")
@@ -26,5 +26,5 @@ class UsuarioCreateView(generics.CreateAPIView):
     serializer_class = UsuarioSerializer
     permission_classes = []
 
-class EmailLoginView(TokenObtainPairView):
-    serializer_class = EmailTokenObtainPairSerializer
+class LoginView(APIView):
+    permission_classes = [AllowAny]

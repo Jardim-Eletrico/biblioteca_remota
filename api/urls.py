@@ -8,7 +8,7 @@ urlpatterns = [
     path('livros/', LivroListCreateView.as_view()),
     path('livros/<int:pk>/', LivroDetailView.as_view()),
 
-    path('login/', EmailLoginView.as_view(), name="login"),
+    path('login/', ),
     path('login/refresh/', TokenRefreshView.as_view(), name="token_refresh"),
 
     path('cadastro/', UsuarioCreateView.as_view(), name="cadastro"),
