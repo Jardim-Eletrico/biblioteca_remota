@@ -28,3 +28,36 @@ class UsuarioCreateView(generics.CreateAPIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        usuario = authenticate(
+            request,
+            username = username,
+            password = password,
+        )
+
+        if usuario is None:
+            return Response(
+                {"detail": "Usuário ou senha inválidos"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        login(request, usuario)
+
+        return Response({
+            "id": usuario.id,
+            "username": usuario.username,
+            "email": usuario.email,
+            "nome": usuario.nome,
+        })
+
+class LogoutView(APIView):
+    def post(self, request):
+        logout(request)
+
+        return Response({
+            "detail": "Logout realizado"
+        })
