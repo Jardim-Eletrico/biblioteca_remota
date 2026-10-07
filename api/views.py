@@ -1,22 +1,18 @@
-from django.contrib.auth import authenticate, login, logout
-
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework import generics
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .serializers import *
 from livros.models import Livro
 from usuarios.models import Usuario
 from .permissions import *
 
-from drf_spectacular.utils import extend_schema
-#-------------------------------------------
+
+# -------------------------------------------
+
 class LivroListView(generics.ListAPIView):
     queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
-
 
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -24,50 +20,16 @@ class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario_or_Readonly]
 
+
 class LivroCreateView(generics.CreateAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario]
-#-------------------------------------------
+
+
+# -------------------------------------------
 
 class UsuarioCreateView(generics.CreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = []
-
-@extend_schema(auth=[], request=LoginSerializer)
-class LoginView(APIView):
     permission_classes = [AllowAny]
-
-    def post(self, request):
-        username = request.data.get("username")
-        password = request.data.get("password")
-
-        usuario = authenticate(
-            request,
-            username = username,
-            password = password,
-        )
-
-        if usuario is None:
-            return Response(
-                {"detail": "Usuário ou senha inválidos"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        login(request, usuario)
-
-        return Response({
-            "id": usuario.id,
-            "username": usuario.username,
-            "email": usuario.email,
-            "nome": usuario.nome,
-        })
-
-class LogoutView(APIView):
-    def post(self, request):
-        logout(request)
-
-        return Response({
-            "detail": "Logout realizado"
-        })
