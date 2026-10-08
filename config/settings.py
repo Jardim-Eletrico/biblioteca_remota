@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': "biblioteca",
         "USER": 'django',
         "PASSWORD": "1234",
-        "HOST": 'localhost',
+        "HOST": '172.31.80.1',
         "PORT": "3306",
     }
 }
