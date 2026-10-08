@@ -1,5 +1,9 @@
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 from .serializers import *
 from livros.models import Livro
@@ -33,3 +37,26 @@ class UsuarioCreateView(generics.CreateAPIView):
     queryset = Usuario.objects.all()
     serializer_class = UsuarioSerializer
     permission_classes = [AllowAny]
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        refresh_token = request.data.get("refresh")
+
+        try:
+            if not refresh_token:
+                return Response(
+                    
+                        {"detail": "Logout realizado"},
+                        status=status.HTTP_205_RESET_CONTENT
+                    
+                )
+
+        except Exception:
+            return Response(
+
+                {"detail": "Refresh token inválido."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
