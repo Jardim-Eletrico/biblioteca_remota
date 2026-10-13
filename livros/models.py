@@ -44,15 +44,16 @@ class Livro(models.Model):
     def __str__(self):
         return self.titulo
 
+
+def gerar_tombo():
+    while True:
+        caracteres = string.ascii_uppercase + string.digits
+        tombo = "".join(random.choices(caracteres, k=5))
+
+        if not Exemplar.objects.filter(tombo=tombo).exists():
+            return tombo
+
 class Exemplar(models.Model):
-    @staticmethod #FAZ O MÉTODO NÃO PRECISAR DE "SELF"
-    def gerar_tombo():
-        while True:
-            caracteres = string.ascii_uppercase + string.digits
-            tombo = "".join(random.choices(caracteres, k=5))
-             
-            if not Exemplar.objects.filter(tombo=tombo).exists():
-                return tombo
 
     STATUS_CHOICES = [
             ("disponível", "Disponível"),
