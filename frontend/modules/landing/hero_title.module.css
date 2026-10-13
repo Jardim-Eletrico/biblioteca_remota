@@ -1,0 +1,6 @@
+.hero_title {
+    font-family: "Source Serif Pro", serif;
+    font-size: 2.3rem;
+    color: var(--color-dark-state-blue);
+    font-weight: 600;
+}
