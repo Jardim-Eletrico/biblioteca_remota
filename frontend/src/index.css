@@ -1,1 +1,42 @@
-@import 'tailwindcss';
+@import "tailwindcss";
+
+@theme {
+  /* ==================== BÁSICAS ==================== */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ==================== AZUL (marca) ==================== */
+  --color-state-blue: #547992;
+  --color-dark-state-blue: #436175;
+  --color-primary: #2563eb;
+  --color-dark-blue: #0a2e75;
+  --color-dark-blue-2: #0d2d73;
+  --color-navy-background: #04122f;
+  --color-light-blue-logo: #d1defa;
+  --color-reserved-blue-bg: #05122e;
+
+  /* ==================== CINZAS (texto) ==================== */
+  --color-text-muted: #747474;
+  --color-navbar-light: #c2c2c2;
+  --color-navbar-dark: #000000;
+  --color-light-gray: #d7d7d7;
+  --color-text-light: #cfcfcf;
+
+  /* ==================== CINZAS (superfícies) ==================== */
+  --color-surface-dark: #202020;
+  --color-surface-mid: #404040;
+  --color-grey-background: #f2f2f2;
+  --color-grey-stroke: #e6e6e6;
+
+  /* ==================== FUNDOS SUAVES (pastel) ==================== */
+  --color-pale-blue: #e8eefd;
+  --color-pale-green: #e6f7e5;
+  --color-pale-red: #fffccc;
+
+  /* ==================== ESTADOS ==================== */
+  --color-success: #38ff98;
+  --color-available-green: #16a34a;
+  --color-warning: #ff3333;
+  --color-unavailable-red: #e60000;
+  --color-dark-green: #132019;
+}
