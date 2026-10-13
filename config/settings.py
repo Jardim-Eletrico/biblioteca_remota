@@ -47,10 +47,14 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
+    'corsheaders.middleware.CorsMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
 
+    
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
+    
 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -88,7 +92,7 @@ DATABASES = {
         'NAME': "biblioteca",
         "USER": 'django',
         "PASSWORD": "1234",
-        "HOST": '172.31.80.1',
+        "HOST": '127.0.0.1',
         "PORT": "3306",
     }
 }

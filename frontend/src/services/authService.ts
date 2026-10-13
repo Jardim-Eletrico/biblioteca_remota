@@ -1,63 +1,48 @@
-const API_URL = "http://127.0.0.1:8000/api";
+const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
 
-export async function login(
-    username: string,
-    password: string
-) {
-    const response = await fetch(`${API_URL}/login/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username,
-            password,
-        }),
-    });
+import type { LoginResponse, CadastroPayLoad, CadastroResponse } from "../types/api";
 
-    const data = await response.json();
 
-    if (!response.ok) {
-        throw new Error(
-            data.detail || "Usuário ou senha inválidos"
-        );
+export async function login(email: string, password: string): Promise<LoginResponse> {
+  const response = await fetch(`${API_URL}/login/`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
     }
+  );
 
-    localStorage.setItem("access", data.access);
-    localStorage.setItem("refresh", data.refresh);
+  const data = await response.json().catch(() => null);
 
-    return data;
+  if (!response.ok) {
+    throw new Error(data?.detail ?? "Email ou senha inválidos");
+  }
+
+  localStorage.setItem("access", data.access);
+  localStorage.setItem("refresh", data.refresh)
+
+  return data;
 }
 
+export async function cadastro(payload: CadastroPayLoad): Promise<CadastroResponse> {
+  const response = await fetch (`${API_URL}/cadastro/`, 
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+  });
 
-export async function cadastro(
-    username: string,
-    email: string,
-    password: string,
-    nome: string,
-    cpf: string,
-) {
-    const response = await fetch(`${API_URL}/cadastro/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username,
-            email,
-            password,
-            nome,
-            cpf,
-        }),
-    });
+  const data = await response.json().catch(() => null);
 
-    const data = await response.json();
+  if (!response.ok){
+    throw new Error(data?.detail ?? "Erro no cadastro");
+  }
 
-    if (!response.ok) {
-        throw new Error(
-            data.detail || "Erro no cadastro"
-        );
-    }
-
-    return data;
+  return data;
 }
+
+export function logout(){
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+  }
+

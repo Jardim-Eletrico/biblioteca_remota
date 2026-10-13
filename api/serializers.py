@@ -22,11 +22,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
         model = Usuario
         fields = (
             "id",
-            "username",
             "email",
             "password",
             "nome",
-            "cpf",
         )
         extra_kwargs = {
             "password": {"write_only": True}
@@ -34,11 +32,9 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data): #Cria um usuário já com hash em seus dados.
         usuario = Usuario.objects.create_user(
-            username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
             nome=validated_data["nome"],
-            cpf=validated_data["cpf"],
         )
 
         return usuario

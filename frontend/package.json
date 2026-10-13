@@ -10,13 +10,6 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@fontsource-variable/baloo-tamma-2": "^5.3.0",
-    "@fontsource-variable/playpen-sans": "^5.3.0",
-    "@fontsource-variable/roboto": "^5.3.0",
-    "@fontsource-variable/space-grotesk": "^5.3.0",
-    "@fontsource/benne": "^5.3.0",
-    "@fontsource/source-serif-pro": "^5.3.0",
-    "@fontsource/ubuntu": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
