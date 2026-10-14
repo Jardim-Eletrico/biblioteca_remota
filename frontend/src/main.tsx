@@ -9,7 +9,6 @@ import '@fontsource-variable/space-grotesk';
 import '@fontsource/ubuntu';
 import '@fontsource-variable/roboto';
 import '@fontsource/source-serif-pro/400.css';
-import '@fontsource-variable/roboto';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
