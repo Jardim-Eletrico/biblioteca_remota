@@ -32,15 +32,10 @@ class Livro(models.Model):
     subtitulo = models.CharField(max_length = 200, blank=True)
     autor = models.CharField(max_length = 200)
     descricao = models.CharField(max_length=1000, blank=True)
-    editora = models.CharField(max_length = 200)
     generos = models.CharField(max_length=90, blank=True)
-    ano = models.PositiveIntegerField(
+    ano_original = models.PositiveIntegerField(
         validators = [MinValueValidator(1000), MaxValueValidator(9999)]
     )
-    numero_paginas = models.IntegerField(null=True)
-    edicao = models.CharField(max_length=20, null=True)
-    capa = models.ImageField(upload_to="capas/", blank=True)
-    isbn = models.CharField(max_length=17, unique=True, null=True, blank=True)
     def __str__(self):
         return self.titulo
 
@@ -61,6 +56,15 @@ class Exemplar(models.Model):
             ("emprestado", "Emprestado"),
             ("indisponivel", "Indisponível"),
         ]
+
+    ano_publicacao = models.PositiveIntegerField(
+            validators = [MinValueValidator(1000), MaxValueValidator(9999)]
+        )
+    editora = models.CharField(max_length = 200)
+    numero_paginas = models.IntegerField(null=True)
+    edicao = models.CharField(max_length=20, null=True)
+    capa = models.ImageField(upload_to="capas/", blank=True)
+    isbn = models.CharField(max_length=17, unique=True, null=True, blank=True)
     tombo = models.CharField(max_length=5, unique=True, default=gerar_tombo)
     livro = models.ForeignKey(Livro, on_delete=models.CASCADE, related_name="exemplares")
     status = models.CharField(max_length = 20,

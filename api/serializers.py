@@ -2,11 +2,21 @@ from rest_framework import serializers
 from livros.models import *
 from usuarios.models import *
 
-class LivroSerializer(serializers.ModelSerializer): #Faz a serialização com base numa model ja existente
+class LivroSerializer(serializers.ModelSerializer):
+ 
+     #Faz a serialização com base numa model ja existente
     class Meta: #pega a model Livro
         model = Livro
         fields = "__all__" #pega todos seus atributos
 
+    def validate_isbn(self, value):
+        return value or None 
+
+    def validate_titulo(self, value):
+        if not value.strip():
+            raise serializers.ValidationError("O título é obrigatório.")
+        return value.strip()
+    
     def create(self, validated_data):
         quantidade = validated_data.pop('quantidade') #O pop exclui o item do dicionario enviado pelo cliente, mas guarda suas informações para o cadastro
 
