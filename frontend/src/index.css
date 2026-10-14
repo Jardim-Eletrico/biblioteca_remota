@@ -1,42 +1,39 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  /* ==================== BÁSICAS ==================== */
-  --color-white: #ffffff;
-  --color-black: #000000;
+    /* Fontes */
+    --font-space-grotesk: "Space Grotesk Variable", sans-serif;
+    --font-ubuntu: "Ubuntu", sans-serif;
+    --font-roboto: "Roboto Variable", sans-serif;
+    --font-source-serif-pro: "Source Serif Pro", serif;
+    --font-roboto: "Roboto Variable", sans-serif;
 
-  /* ==================== AZUL (marca) ==================== */
-  --color-state-blue: #547992;
-  --color-dark-state-blue: #436175;
-  --color-primary: #2563eb;
-  --color-dark-blue: #0a2e75;
-  --color-dark-blue-2: #0d2d73;
-  --color-navy-background: #04122f;
-  --color-light-blue-logo: #d1defa;
-  --color-reserved-blue-bg: #05122e;
 
-  /* ==================== CINZAS (texto) ==================== */
-  --color-text-muted: #747474;
-  --color-navbar-light: #c2c2c2;
-  --color-navbar-dark: #000000;
-  --color-light-gray: #d7d7d7;
-  --color-text-light: #cfcfcf;
-
-  /* ==================== CINZAS (superfícies) ==================== */
-  --color-surface-dark: #202020;
-  --color-surface-mid: #404040;
-  --color-grey-background: #f2f2f2;
-  --color-grey-stroke: #e6e6e6;
-
-  /* ==================== FUNDOS SUAVES (pastel) ==================== */
-  --color-pale-blue: #e8eefd;
-  --color-pale-green: #e6f7e5;
-  --color-pale-red: #fffccc;
-
-  /* ==================== ESTADOS ==================== */
-  --color-success: #38ff98;
-  --color-available-green: #16a34a;
-  --color-warning: #ff3333;
-  --color-unavailable-red: #e60000;
-  --color-dark-green: #132019;
+    /* Cores */
+    --color-state-blue: #547992;
+    --color-dark-state-blue: #436175;
+    --color-sucess: #33FF33;
+    --color-warning: #FF3333;
+    --color-primary: #2563EB;
+    --color-text-muted: #747474;
+    --color-navbar-light: rgba(194, 194, 194, 0.7);
+    --color-navbar-dark: rgba(0, 0, 0, 0.7);
+    --color-light-gray: #D7D7D7;
+    --color-text-light: #CFCFCF;
+    --color-surface-dark: #202020;
+    --color-surface-mid: #404040;
+    --color-pale-blue: #E8EEFD;
+    --color-pale-green: #E6F7E5;
+    --color-avaiable-green: #16A34A;
+    --color-unavaiable-red: #E60000;
+    --color-pale-red: #FFCCCC;
+    --color-dark-blue: #0A2E75;
+    --color-navy-background: #04122F;
+    --color-light-blue-logo: #D1DEFA;
+    --color-grey-background: #F2F2F2;
+    --color-grey-stroke: #E6E6E6;
+    --color-dark-blue-2: #0D2D73;
+    --color-reserved-blue-bg: rgba(5, 18, 46, 0.750);
+    --color-dark-green: #132019;
+    --color-gray-logo-bg: #CCCCCC;
 }
