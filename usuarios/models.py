@@ -1,5 +1,8 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.core.exceptions import ValidationError
+from livros.models import *
+from pedidos.models import Pedido
 # Create your models here.
 
 class UsuarioManager(BaseUserManager):
@@ -43,21 +46,50 @@ class Usuario(AbstractUser):
      def __str__(self):
           return self.nome
 
-class Leitor(models.Model):
-     usuario = models.OneToOneField(
-          Usuario,
-          on_delete=models.CASCADE,
-          related_name="leitor"
-     )
-     def __str__(self):
-               return self.usuario.nome
 
-     def efetuar_emprestimo(self, livro):
-          pass
-     def reservar_livro(self):
-          pass
-     def minhas_reservas(self):
-          pass
+class Leitor(models.Model):
+    usuario = models.OneToOneField(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name="leitor"
+    )
+
+    def __str__(self):
+        return self.usuario.nome
+
+    def efetuar_emprestimo(self, exemplar):
+        if exemplar.status != "disponivel":
+            raise ValidationError("Esse exemplar não está disponível")
+
+        return Pedido.objects.create(
+            leitor=self,
+            edicao=exemplar.edicao,
+            status="pendente",
+        )
+
+    def reservar_livro(self, livro):
+        reservas_ativas = Pedido.objects.filter(
+            leitor=self,
+            status__in=["pendente", "aprovado"],
+        ).count()
+
+        if reservas_ativas >= 2:
+            raise ValidationError(
+                "Você só pode reservar 2 livros."
+            )
+
+        return Pedido.objects.create(
+            leitor=self,
+            livro=livro,
+            status="pendente",
+        )
+
+    def minhas_reservas(self):
+        return Pedido.objects.filter(
+            leitor=self,
+            status="pendente",
+        )
+
     
 
 

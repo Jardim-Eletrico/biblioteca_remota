@@ -1,14 +1,17 @@
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 
 from .serializers import *
-from livros.models import Livro
+from livros.models import Livro, Edicao
+
 from usuarios.models import Usuario
 from .permissions import *
+
+
+from django.shortcuts import get_object_or_404
 
 
 # -------------------------------------------
@@ -25,11 +28,57 @@ class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsBibliotecario_or_Readonly]
 
 
+class LivroListCreateView(generics.ListCreateAPIView):
+    queryset = Livro.objects.all().order_by("titulo")
+    serializer_class = LivroSerializer
+    permission_classes = [IsBibliotecario]
+
+class ExemplarLoteCreateView(APIView):
+    permission_classes = [IsBibliotecario]
+
+    def post(self, request, edicao_id):
+        edicao = get_object_or_404(Edicao, pk=edicao_id)
+
+        serializer = ExemplarLoteSerializer(
+            data = request.data,
+            context = {'edicao': edicao}
+        )
+
+        serializer.is_valid(raise_exception=True)
+        exemplares = serializer.save()
+
+        return Response(
+            {
+                "mensagem": "Exemplares cadastrados com sucesso",
+                "quantidade": len(exemplares),
+                "exemplares": [
+                    {
+                        "id": exemplar.id,
+                        "tombo": exemplar.tombo,
+                        "status": exemplar.status,
+                    }
+
+                    for exemplar in exemplares
+                ],
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
 class LivroCreateView(generics.CreateAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario]
 
+
+class EdicaoListCreateView(generics.ListCreateAPIView):
+    queryset = Edicao.objects.select_related("livro").all()
+    serializer_class = EdicaoSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated(), IsBibliotecario()]
+
+        return [IsAuthenticated()]
 
 # -------------------------------------------
 

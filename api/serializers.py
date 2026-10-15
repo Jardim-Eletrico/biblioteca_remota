@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.db import transaction
 from livros.models import *
 from usuarios.models import *
 
@@ -8,6 +9,7 @@ class LivroSerializer(serializers.ModelSerializer):
     class Meta: #pega a model Livro
         model = Livro
         fields = "__all__" #pega todos seus atributos
+
 
     def validate_isbn(self, value):
         return value or None 
@@ -26,6 +28,29 @@ class LivroSerializer(serializers.ModelSerializer):
             Exemplar.objects.create(livro=livro)
 
         return livro
+
+class EdicaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Edicao,
+        fields = "__all__",
+
+class ExemplarLoteSerializer(serializers.Serializer):
+    quantidade = serializers.IntegerField(
+        min_value = 1,
+        max_value = 100,
+    )
+
+    @transaction.atomic
+    def create(self, validated_data):
+        edicao = self.context['edicao']
+        quantidade = validated_data['quantidade']
+
+        exemplares = [
+            Exemplar(edicao=edicao)
+            for i in range(quantidade)
+        ]
+
+        return Exemplar.objects.bulk_create(exemplares)
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
