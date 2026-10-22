@@ -2,6 +2,9 @@ from rest_framework import serializers
 from django.db import transaction
 from livros.models import *
 from usuarios.models import *
+import random
+import string
+
 
 class LivroSerializer(serializers.ModelSerializer):
  
@@ -73,6 +76,33 @@ class UsuarioSerializer(serializers.ModelSerializer):
         )
 
         Leitor.objects.create(usuario = usuario)
+
+        return usuario
+
+
+
+
+class BibliotecarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = (
+            "id",
+            "email",
+            "password",
+            "nome",
+        )
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
+    @transaction.atomic
+    def create(self, validated_data): #Cria um usuário já com hash em seus dados.
+        usuario = Usuario.objects.create_user(
+            email=validated_data["email"],
+            password=validated_data["password"],
+            nome=validated_data["nome"],
+        )
+
+        Bibliotecario.objects.create(usuario = usuario)
 
         return usuario
     

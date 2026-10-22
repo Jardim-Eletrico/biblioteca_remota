@@ -111,3 +111,7 @@ class LogoutView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+
+class BibliotecarioCreateView(generics.CreateAPIView):
+    serializer_class = BibliotecarioSerializer
+    permission_classes = [IsBibliotecario]

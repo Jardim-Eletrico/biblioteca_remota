@@ -91,7 +91,13 @@ class Leitor(models.Model):
         )
 
     
+def gerar_matricula():
+    while True:
+        caracteres = string.ascii_uppercase + string.digits
+        matricula = "".join(random.choices(caracteres, k=5))
 
+        if not Bibliotecario.objects.filter(matricula=matricula).exists():
+            return matricula
 
 class Bibliotecario(models.Model):
     usuario = models.OneToOneField(
@@ -101,7 +107,8 @@ class Bibliotecario(models.Model):
     )
     def __str__(self):
               return self.usuario.nome
-    matricula = models.CharField(max_length=5, unique=True)
+    matricula = models.CharField(max_length=5, unique=True, default=gerar_matricula)
+
 
     def cadastrar_livro(self, livro):
         livro.save()
