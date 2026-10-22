@@ -5,15 +5,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import (
-    LivroListView,
-    LivroDetailView,
-    LivroCreateView,
-    EdicaoListCreateView,
-    ExemplarLoteCreateView,
-    LogoutView,
-    UsuarioCreateView,
-)
+from .views import *
 
 urlpatterns = [
     # Livros
@@ -38,4 +30,7 @@ urlpatterns = [
 
     # Cadastro de usuário
     path("cadastro/", UsuarioCreateView.as_view(), name="cadastro"),
+
+    # Cadastro de bibliotecário
+    path('cadastro-bibliotecario/', BibliotecarioCreateView.as_view(), name='cadastro-bibliotecario')
 ]

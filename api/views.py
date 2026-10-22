@@ -3,6 +3,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import *
 from livros.models import Livro, Edicao
@@ -95,20 +97,24 @@ class LogoutView(APIView):
     def post(self, request):
         refresh_token = request.data.get("refresh")
 
-        try:
-            if not refresh_token:
-                return Response(
-                    
-                        {"detail": "Logout realizado"},
-                        status=status.HTTP_205_RESET_CONTENT
-                    
-                )
-
-        except Exception:
+        if not refresh_token:
             return Response(
+            {"detail": "O refresh token é obrigatório."},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-                {"detail": "Refresh token inválido."},
-                status=status.HTTP_400_BAD_REQUEST
+
+        try:
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(
+                {'detail': 'Logout realizado'}, status=status.HTTP_205_RESET_CONTENT
+            )
+
+        except TokenError:
+            return Response(
+                {'detail': 'Refresh token inválido'}, status=status.HTTP_404_NOT_FOUND
             )
 
 
