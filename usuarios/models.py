@@ -34,7 +34,7 @@ class UsuarioManager(BaseUserManager):
 class Usuario(AbstractUser):
      username = None
      nome = models.CharField(max_length=200)
-     email = models.EmailField(unique=True)
+     email = models.EmailField(max_length=200, unique=True)
      cpf = None
      
      objects = UsuarioManager()

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db import transaction
 from livros.models import *
 from usuarios.models import *
@@ -116,7 +117,7 @@ class BibliotecarioSerializer(serializers.ModelSerializer):
         model = Bibliotecario
         fields = "__all__" 
 
-class LoginSerializer(serializers.Serializer):
+class LoginSerializer(TokenObtainPairSerializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only = True)
 
