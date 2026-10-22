@@ -31,8 +31,8 @@ class LivroSerializer(serializers.ModelSerializer):
 
 class EdicaoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Edicao,
-        fields = "__all__",
+        model = Edicao
+        fields = "__all__"
 
 class ExemplarLoteSerializer(serializers.Serializer):
     quantidade = serializers.IntegerField(
@@ -64,13 +64,15 @@ class UsuarioSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "password": {"write_only": True}
         }
-
+    @transaction.atomic
     def create(self, validated_data): #Cria um usuário já com hash em seus dados.
         usuario = Usuario.objects.create_user(
             email=validated_data["email"],
             password=validated_data["password"],
             nome=validated_data["nome"],
         )
+
+        Leitor.objects.create(usuario = usuario)
 
         return usuario
     
@@ -87,3 +89,6 @@ class BibliotecarioSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only = True)
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()

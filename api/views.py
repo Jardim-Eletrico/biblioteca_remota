@@ -34,6 +34,7 @@ class LivroListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsBibliotecario]
 
 class ExemplarLoteCreateView(APIView):
+    serializer_class = ExemplarLoteSerializer
     permission_classes = [IsBibliotecario]
 
     def post(self, request, edicao_id):
@@ -88,6 +89,7 @@ class UsuarioCreateView(generics.CreateAPIView):
     permission_classes = [AllowAny]
 
 class LogoutView(APIView):
+    serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
