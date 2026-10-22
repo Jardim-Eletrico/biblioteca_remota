@@ -3,35 +3,27 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db import transaction
 from livros.models import *
 from usuarios.models import *
+from emprestimos import *
+from pedidos import *
+
 import random
 import string
 
 
 class LivroSerializer(serializers.ModelSerializer):
- 
-     #Faz a serialização com base numa model ja existente
-    class Meta: #pega a model Livro
+    class Meta:
         model = Livro
-        fields = "__all__" #pega todos seus atributos
-
+        fields = "__all__"
 
     def validate_isbn(self, value):
-        return value or None 
+        return value or None
 
     def validate_titulo(self, value):
         if not value.strip():
-            raise serializers.ValidationError("O título é obrigatório.")
+            raise serializers.ValidationError(
+                "O título é obrigatório."
+            )
         return value.strip()
-    
-    def create(self, validated_data):
-        quantidade = validated_data.pop('quantidade') #O pop exclui o item do dicionario enviado pelo cliente, mas guarda suas informações para o cadastro
-
-        livro = Livro.objects.create(**validated_data)
-
-        for i in range(quantidade):
-            Exemplar.objects.create(livro=livro)
-
-        return livro
 
 class EdicaoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -40,22 +32,27 @@ class EdicaoSerializer(serializers.ModelSerializer):
 
 class ExemplarLoteSerializer(serializers.Serializer):
     quantidade = serializers.IntegerField(
-        min_value = 1,
-        max_value = 100,
+        min_value=1,
+        max_value=100,
     )
 
     @transaction.atomic
     def create(self, validated_data):
-        edicao = self.context['edicao']
-        quantidade = validated_data['quantidade']
+        edicao = self.context["edicao"]
+        quantidade = validated_data["quantidade"]
 
         exemplares = [
             Exemplar(edicao=edicao)
-            for i in range(quantidade)
+            for _ in range(quantidade)
         ]
 
         return Exemplar.objects.bulk_create(exemplares)
 
+
+
+
+
+#---------------------------------------------------------
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
@@ -83,7 +80,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
 
 
 
-class BibliotecarioSerializer(serializers.ModelSerializer):
+class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Usuario
         fields = (
@@ -118,8 +115,14 @@ class BibliotecarioSerializer(serializers.ModelSerializer):
         fields = "__all__" 
 
 class LoginSerializer(TokenObtainPairSerializer):
-    username = serializers.CharField()
-    password = serializers.CharField(write_only = True)
+    username_field = Usuario.USERNAME_FIELD
+
+    email = serializers.EmailField()
+    password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        attrs[Usuario.USERNAME_FIELD] = attrs.pop("email")
+        return super().validate(attrs)
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()

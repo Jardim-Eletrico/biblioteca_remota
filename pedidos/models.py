@@ -1,12 +1,12 @@
 from django.db import models
-from django.utils import timezone
-
 
 # Create your models here.
 
+from django.db import models
+from django.utils import timezone
 
-class Pedido (models.Model):
 
+class Pedido(models.Model):
     STATUS_CHOICES = [
         ("pendente", "Pendente"),
         ("aprovado", "Aprovado"),
@@ -17,7 +17,8 @@ class Pedido (models.Model):
     leitor = models.ForeignKey(
         "usuarios.Leitor",
         on_delete=models.CASCADE,
-        related_name="pedidos",)
+        related_name="pedidos",
+    )
 
     edicao = models.ForeignKey(
         "livros.Edicao",
@@ -32,7 +33,7 @@ class Pedido (models.Model):
     )
 
     data_pedido = models.DateTimeField(
-        auto_now_add=True
+        auto_now_add=True,
     )
 
     data_resposta = models.DateTimeField(
@@ -41,12 +42,11 @@ class Pedido (models.Model):
     )
 
     class Meta:
-        ordering = ['-data_pedido']
+        ordering = ["-data_pedido"]
 
     def __str__(self):
         return (
-            f'Pedido #{self.pk}'
-            f'{self.leitor}'
-            f'{self.edicao.livro.titulo}'
+            f"Pedido #{self.pk} "
+            f"{self.leitor} "
+            f"{self.edicao.livro.titulo}"
         )
-    
