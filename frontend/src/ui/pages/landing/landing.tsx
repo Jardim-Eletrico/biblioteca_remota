@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import cardStyles from "@/modules/landing/cards.module.css";
 import HeroTitle from "@/components/pub/landing/hero_title";
 import Card from "@/components/pub/landing/hero_cards";
 import Arrow from "@/components/pub/landing/arrow_right";
@@ -8,7 +7,7 @@ import Arrow from "@/components/pub/landing/arrow_right";
 export default function Landing() {
     return(
         <>
-            <div className="w-full h-[315px] flex flex-col gap-0 px-5 py-[10px] bg-[linear-gradient(130deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0.85)_30%,rgba(255,255,255,0.6)_60%,rgba(255,255,255,0)_100%),url('/landing/hero-landing.png')] bg-cover bg-no-repeat">
+            <div className="w-full h-78.75 flex flex-col gap-0 px-5 py-2.5 bg-[linear-gradient(130deg,rgba(255,255,255,1)_0%,rgba(255,255,255,0.85)_30%,rgba(255,255,255,0.6)_60%,rgba(255,255,255,0)_100%),url('/landing/hero-landing.png')] bg-cover bg-no-repeat">
                 <div className="w-fit h-fit flex flex-col gap-0 max-w-[60%]">
                     <HeroTitle text="DESCUBRA"/>
                     <HeroTitle text="RESERVE" />

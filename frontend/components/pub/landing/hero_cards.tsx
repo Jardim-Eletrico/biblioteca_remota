@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import HeroCard from "@/modules/landing/cards.module.css";
+import HeroCard from "@/modules/landing/card.module.css";
 
 type CardProps = {
     icon: ReactNode,

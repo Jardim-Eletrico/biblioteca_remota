@@ -1,12 +1,11 @@
+import Logo from "./logo";
+
 export default function Pubnavbar() {
     return(
         <>
         
             <header className="w-screen h-fit flex justify-between items-center sticky top-0 z-50 px-5 py-5 before:content-[''] before:absolute before:z-[-1] before:bg-navbar-dark before:inset-0 before:backdrop-blur-md">
-                <div className="w-fit h-fit flex gap-2 font-space-grotesk items-center text-state-blue text-base font-medium">
-                    <img src="/logo.png" alt="libris logo" width={215} height={215} className="bg-gray-logo-bg rounded-full h-[31px] w-auto"/>
-                    <span>Libris</span>
-                </div>
+                <Logo aligned="horizontal" text="yes"/>
                 
                 <div className="w-fit h-fit flex gap-2 items-center text-white font-roboto text-base font-medium">
                     <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" className="bi bi-person" viewBox="0 0 16 16">
