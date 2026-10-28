@@ -3,8 +3,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.db import transaction
 from livros.models import *
 from usuarios.models import *
-from emprestimos import *
-from pedidos import *
+from emprestimos.models import Emprestimo
+from pedidos.models import Pedido
 
 import random
 import string
@@ -47,11 +47,25 @@ class ExemplarLoteSerializer(serializers.Serializer):
         ]
 
         return Exemplar.objects.bulk_create(exemplares)
-
-
-
-
-
+#---------------------------------------------------------
+class PedidoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pedido
+        fields = (
+            'id',
+            'leitor',
+            'status',
+            'data_pedido',
+            'data_resposta',
+        )
+        read_only_fields = (
+            'id',
+            'leitor',
+            'status',
+            'data_pedido',
+            'data_resposta',
+        )
+        
 #---------------------------------------------------------
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
@@ -76,9 +90,6 @@ class UsuarioSerializer(serializers.ModelSerializer):
         Leitor.objects.create(usuario = usuario)
 
         return usuario
-
-
-
 
 class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
     class Meta:

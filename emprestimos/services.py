@@ -58,7 +58,6 @@ def efetivar_emprestimo(
         pedido = pedido,
         exemplar = exemplar,
         data_retirada = data_retirada,
-        data_retirada = data_retirada,
         data_prevista_devolucao = data_prevista_devolucao,
     )
 
