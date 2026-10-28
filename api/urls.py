@@ -32,5 +32,8 @@ urlpatterns = [
     path("cadastro/", UsuarioCreateView.as_view(), name="cadastro"),
 
     # Cadastro de bibliotecário
-    path('cadastro-bibliotecario/', BibliotecarioCreateView.as_view(), name='cadastro-bibliotecario')
+    path('cadastro-bibliotecario/', BibliotecarioCreateView.as_view(), name='cadastro-bibliotecario'),
+
+    # Emprestimos e pedidos:
+    path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
 ]
