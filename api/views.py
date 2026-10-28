@@ -8,9 +8,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import *
 from livros.models import Livro, Edicao
+from pedidos.models import Pedido
 
 from usuarios.models import Usuario
 from .permissions import *
+
+from emprestimos.services import efetivar_emprestimo
 
 
 from django.shortcuts import get_object_or_404
@@ -121,3 +124,45 @@ class LogoutView(APIView):
 class BibliotecarioCreateView(generics.CreateAPIView):
     serializer_class = BibliotecarioSerializer
     permission_classes = [IsBibliotecario]
+# -------------------------------------------
+class EfetivarEmprestimo(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def post(self, request, pedido_id):
+        pedido = get_object_or_404(
+            Pedido,
+            pk = pedido_id,
+        )
+
+        serializer = EfetivarEmprestimoSerializer(
+            data = request.data,
+        )
+        serializer.is_valid(raise_exception=True)
+
+        dados = serializer.validated_data
+
+        emprestimo = efetivar_emprestimo(
+            pedido_id=pedido.pk,
+            exemplar_id=dados['exemplar'].pk,
+            data_prevista_devolucao=dados.get(
+                'data_prevista_devolucao'
+            ),
+        )
+
+        return Response(
+            {
+                "mensagem": "Empréstimo efetivado com sucesso",
+                "emprestimo": {
+                    "id": emprestimo.pk,
+                    "pedido_id": emprestimo.pedido_id,
+                    "exemplar_id": emprestimo.exemplar_id,
+                    "tombo": emprestimo.exemplar.tombo,
+                    "data_retirada": emprestimo.data_retirada,
+                    "data_prevista_devolucao": (
+                        emprestimo.data_prevista_devolucao
+                    ),
+                    "data_devolucao": emprestimo.data_devolucao
+                },
+            },
+            status=status.HTTP_201_CREATED
+        )
