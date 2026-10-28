@@ -54,6 +54,7 @@ class PedidoSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'leitor',
+            'edicao',
             'status',
             'data_pedido',
             'data_resposta',
@@ -65,7 +66,17 @@ class PedidoSerializer(serializers.ModelSerializer):
             'data_pedido',
             'data_resposta',
         )
-        
+
+class EfetivarEmprestimoSerializer(serializers.Serializer):
+    exemplar_id = serializers.PrimaryKeyRelatedField(
+        queryset=Exemplar.objects.all(),
+        source='exemplar',
+    )
+
+    data_prevista_devolucao = serializers.DateField(
+        required=False,
+    )
+
 #---------------------------------------------------------
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
