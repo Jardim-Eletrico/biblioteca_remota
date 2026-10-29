@@ -31,6 +31,9 @@ urlpatterns = [
     # Rotas da API
     path("api/", include("api.urls")),
 
+    # Reset de Senha
+    path('api/password_reset', include('django_rest_passwordreset.urls')),
+
     # Documentação Swagger
     path(
         "api/schema/",
