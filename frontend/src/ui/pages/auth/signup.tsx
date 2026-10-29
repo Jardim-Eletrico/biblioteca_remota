@@ -1,10 +1,13 @@
 import labelStyle from "@/modules/auth/label.module.css";
 import inputStyle from "@/modules/auth/input.module.css";
+import submitStyle from "@/modules/auth/buttons.module.css";
+
+
 
 export default function Signup() {
     return(
         <>
-            <div className="flex flex-col w-full h-fit gap-0.5">
+            <div className="flex flex-col w-full h-fit gap-2">
                 <label className={labelStyle.label} htmlFor="name">
                     Nome
                 </label>
@@ -19,7 +22,7 @@ export default function Signup() {
                 />
             </div>
 
-            <div className="flex flex-col w-full h-fit gap-0.5">
+            <div className="flex flex-col w-full h-fit gap-1.5">
                 <label className={labelStyle.label} htmlFor="email">
                     E-mail
                 </label>
@@ -34,7 +37,7 @@ export default function Signup() {
                 />
             </div>
 
-            <div className="flex flex-col w-full h-fit gap-0.5">
+            <div className="flex flex-col w-full h-fit gap-1.5">
                 <label className={labelStyle.label} htmlFor="password">
                     Senha
                 </label>
@@ -49,7 +52,7 @@ export default function Signup() {
                 />
             </div>
 
-            <div className="flex flex-col w-full h-fit gap-0.5">
+            <div className="flex flex-col w-full h-fit gap-1.5">
                 <label className={labelStyle.label} htmlFor="confirmPassword">
                     Confirmar senha
                 </label>
@@ -63,6 +66,7 @@ export default function Signup() {
                     required
                 />
             </div>
+            <button className={`${submitStyle.submit_button}`} type="submit">CADASTRAR</button>
         </>
     )
 }
