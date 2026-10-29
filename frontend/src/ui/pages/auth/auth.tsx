@@ -15,7 +15,7 @@ export default function Auth() {
         <>
             <div className="fixed inset-0 bg-[url('/auth/auth-bg.png')] bg-center bg-no-repeat bg-cover -z-10" />
 
-            <div className="flex flex-col items-center w-full gap-5 px-5 py-2.5 grow">
+            <div className="flex flex-col items-center w-full gap-6.5 px-5 py-2.5 grow">
                 <Logo aligned="vertical" text="yes" />
 
                 {mode === "login" ? (
@@ -33,46 +33,42 @@ export default function Auth() {
                 )}
 
                 <div className={cardStyles.card}>
-                    <form className="flex flex-col w-full gap-4" action="">
+                    <form className="flex flex-col w-full gap-4" action=""
+                        onSubmit={(event) => {
+                            event.preventDefault();
+
+                            const formData = new FormData(event.currentTarget);
+                            const email = formData.get("email");
+
+                            console.log(email);
+                        }}
+                    >
                         {mode === "login" ? (
                             <>
-                                <Login />
+                                <Login setMode={setMode} /> {/*Passa propriedades do setMode criado no início da função*/}
                             </>
                         ) : mode === "signup" ? (
                             <>
-                            <Signup />
+                                <Signup />
                             </>
                         ) : (
                             <>
-                                <Recovery />
+                                <Recovery setMode={setMode}/>
                             </>
                         )}
-
-                        
-
-                        <button className="flex items-center justify-center w-fit h-fit px-12 py-3 self-center font-ubuntu font-medium text-[1.3rem] text-center text-white bg-dark-state-blue rounded-full mt-5" type="submit">
-                            {mode === "login"
-                            ? "ENTRAR"
-                            : mode === "signup"
-                            ? "CADASTRAR"
-                            : "RECUPERAR SENHA"}
-                        </button>
                         <div className="flex flex-row justify-center gap-1">
                             {mode === "login" ? (
                                 <>
                                     <p className="font-ubuntu font-normal text-[0.85rem] text-white">Não possui uma conta?</p>
-                                    <button className="font-ubuntu font-normal text-[0.85rem] text-[#8EAABE]" onClick={() => setMode("signup")}>Cadastre-se</button>
+                                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("signup")}>Cadastre-se</button>
                                 </>
                             ) : mode === "signup" ? (
                                 <>
                                     <p className="font-ubuntu font-normal text-[0.85rem] text-white">Já possui uma conta?</p>
-                                    <button className="font-ubuntu font-normal text-[0.85rem] text-[#8EAABE]" onClick={() => setMode("login")}>Entrar</button>
+                                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("login")}>Entrar</button>
                                 </>
-                            ) : (
-                                <>
-                                
-                                </>
-                            )}
+                            ) : null
+                            }
                         </div>
                     </form>
                 </div> 
