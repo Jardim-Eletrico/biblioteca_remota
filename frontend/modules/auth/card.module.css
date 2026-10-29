@@ -20,7 +20,7 @@
     z-index: -1;
     
     background-color: var(--color-navbar-dark);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(7px);
     -webkit-backdrop-filter: blur(12px);
 
     border-radius: 30px;
