@@ -6,4 +6,9 @@ from django_rest_passwordreset.signals import (reset_password_token_created,)
 
 @receiver(reset_password_token_created)
 def enviar_token_recuperacao(sender, instance, reset_password_token, **kwargs,):
-    pass
+    usuario = reset_password_token.user
+    token = reset_password_token.key
+
+    send_mail(
+        
+    )
