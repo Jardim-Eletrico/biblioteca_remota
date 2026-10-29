@@ -129,6 +129,14 @@ class LogoutView(APIView):
 class BibliotecarioCreateView(generics.CreateAPIView):
     serializer_class = BibliotecarioSerializer
     permission_classes = [IsBibliotecario]
+
+
+class MeuPerfilView(generics.RetrieveAPIView):
+    serializer_class = MeuPerfilSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 # -------------------------------------------
 class PedidoCreateView(generics.CreateAPIView):
     serializer_class = PedidoSerializer

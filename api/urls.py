@@ -28,6 +28,9 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
+    # Perfil
+    path("perfil/", MeuPerfilView.as_view(), name='meu-perfil'),
+
     # Cadastro de usuário
     path("cadastro/", UsuarioCreateView.as_view(), name="cadastro"),
 

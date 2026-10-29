@@ -153,3 +153,42 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 class LogoutSerializer(serializers.Serializer):
     refresh = serializers.CharField()
+
+class MeuPerfilSerializer(serializers.ModelSerializer):
+    perfis = serializers.SerializerMethodField()
+    leitor_id = serializers.SerializerMethodField()
+    bibliotecario_id = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Usuario
+        fields = [
+            "id",
+            "nome",
+            "email",
+            "perfis",
+            "leitor_id",
+            "bibliotecario_id",
+        ]
+
+    def get_perfis(self, obj):
+        perfis = []
+
+        if hasattr(obj, "leitor"):
+            perfis.append("leitor")
+
+        if hasattr(obj, "bibliotecario"):
+            perfis.append("bibliotecario")
+
+        return perfis or ["sem_perfil"]
+
+    def get_leitor_id(self, obj):
+        if hasattr(obj, "leitor"):
+            return obj.leitor.pk
+
+        return None
+
+    def get_bibliotecario_id(self, obj):
+        if hasattr(obj, "bibliotecario"):
+            return obj.bibliotecario.pk
+
+        return None
