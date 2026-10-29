@@ -1,4 +1,4 @@
-from datetime import timedelta
+from .models import Emprestimo, calcular_devolucao_padrao
 
 from django.db import transaction
 from django.utils import timezone
@@ -45,9 +45,7 @@ def efetivar_emprestimo(
     data_retirada = timezone.now()
 
     if data_prevista_devolucao is None:
-        data_prevista_devolucao = (
-            data_retirada.date() + timedelta(days=14)
-        )
+        data_prevista_devolucao = calcular_devolucao_padrao()
 
     if data_prevista_devolucao < data_retirada.date():
         raise ValidationError(

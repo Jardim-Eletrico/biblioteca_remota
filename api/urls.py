@@ -35,5 +35,7 @@ urlpatterns = [
     path('cadastro-bibliotecario/', BibliotecarioCreateView.as_view(), name='cadastro-bibliotecario'),
 
     # Emprestimos e pedidos:
+    path('pedidos/', PedidoCreateView.as_view(), name='pedido-create'),
+    path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
 ]

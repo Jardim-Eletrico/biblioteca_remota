@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
 
 from .serializers import *
 from livros.models import Livro, Edicao
@@ -13,8 +14,12 @@ from pedidos.models import Pedido
 from usuarios.models import Usuario
 from .permissions import *
 
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import PermissionDenied
+
 from emprestimos.services import efetivar_emprestimo
 
+from drf_spectacular.utils import extend_schema
 
 from django.shortcuts import get_object_or_404
 
@@ -125,9 +130,62 @@ class BibliotecarioCreateView(generics.CreateAPIView):
     serializer_class = BibliotecarioSerializer
     permission_classes = [IsBibliotecario]
 # -------------------------------------------
-class EfetivarEmprestimo(APIView):
+class PedidoCreateView(generics.CreateAPIView):
+    serializer_class = PedidoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        usuario = self.request.user
+
+        try:
+            leitor = usuario.leitor
+        except ObjectDoesNotExist:
+            raise PermissionDenied(
+                "Sua conta não possui um perfil de leitor."
+            )
+
+        serializer.save(leitor=leitor)
+
+class PedidoResponderView(APIView):
+    serializer_class = PedidoResponderSerializer
     permission_classes = [IsAuthenticated, IsBibliotecario]
 
+    def post(self, request, pedido_id):
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        novo_status = serializer.validated_data["status"]
+
+        if pedido.status != "pendente":
+            return Response(
+                {"erro": "Somente pedidos pendentes podem ser respondidos."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        pedido.status = novo_status
+        pedido.data_resposta = timezone.now()
+        pedido.save(update_fields=["status", "data_resposta"])
+
+        return Response(
+            {
+                "mensagem": "Pedido respondido com sucesso.",
+                "pedido_id": pedido.pk,
+                "status": pedido.status,
+                "data_resposta": pedido.data_resposta,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+
+class EfetivarEmprestimo(APIView):
+    serializer_class = EfetivarEmprestimoSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    @extend_schema(
+            request=EfetivarEmprestimoSerializer
+    )
     def post(self, request, pedido_id):
         pedido = get_object_or_404(
             Pedido,

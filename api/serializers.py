@@ -67,6 +67,11 @@ class PedidoSerializer(serializers.ModelSerializer):
             'data_resposta',
         )
 
+class PedidoResponderSerializer(serializers.Serializer):
+    status = serializers.ChoiceField(
+        choices=['aprovado', 'recusado']
+    )
+
 class EfetivarEmprestimoSerializer(serializers.Serializer):
     exemplar_id = serializers.PrimaryKeyRelatedField(
         queryset=Exemplar.objects.all(),
