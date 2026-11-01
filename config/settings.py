@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'usuarios',
     'corsheaders',
     'rest_framework',
-    'api',
+    'api.apps.ApiConfig',
     'emprestimos',
     'pedidos',
 
