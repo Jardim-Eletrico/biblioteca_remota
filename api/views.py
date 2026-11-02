@@ -1,28 +1,43 @@
-from rest_framework import generics, status
-from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework_simplejwt.exceptions import TokenError
-from rest_framework_simplejwt.tokens import RefreshToken
+# Django
+from django.contrib.auth import get_user_model
+from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 
-from .serializers import *
-from livros.models import Livro, Edicao
-from pedidos.models import Pedido
-
-from usuarios.models import Usuario
-from .permissions import *
-
-from django.core.exceptions import ObjectDoesNotExist
+# Django REST Framework
+from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from emprestimos.services import efetivar_emprestimo
+# Simple JWT
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
+# Recuperação de senha
+from django_rest_passwordreset.views import (
+    reset_password_confirm,
+    reset_password_validate_token,
+    ResetPasswordRequestToken,
+)
+# drf-spectacular
 from drf_spectacular.utils import extend_schema
 
-from django.shortcuts import get_object_or_404
+# Aplicação
+from .serializers import *
+from .permissions import *
 
+# Modelos
+from livros.models import Livro, Edicao
+from pedidos.models import Pedido
+from usuarios.models import Usuario
+
+# Serviços
+from emprestimos.services import efetivar_emprestimo
+
+
+Usuario = get_user_model()
 
 # -------------------------------------------
 
@@ -232,3 +247,19 @@ class EfetivarEmprestimo(APIView):
             },
             status=status.HTTP_201_CREATED
         )
+# -------------------------------------------
+class RecuperacaoSenhaView(ResetPasswordRequestToken):
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get("email", "").strip()
+
+        if not Usuario.objects.filter(email__iexact=email).exists():
+            return Response(
+                {
+                    "status": "ERROR",
+                    "message": "Não existe uma conta cadastrada com este e-mail.",
+                },
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        return super().post(request, *args, **kwargs)
