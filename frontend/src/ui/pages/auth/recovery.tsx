@@ -5,16 +5,19 @@ import requirementStyle from "@/modules/auth/password_requirements.module.css";
 import { useState } from "react";
 
 // Criando tipos para pegar propriedades e definir modos
-type RecoveryStep = "email" | "code" | "redefinePassword" | "sucess";
-type LoginProps = {
+
+type RecoveryProps = {
+    step: "email" | "code" | "redefinePassword" | "sucess";
+    setStep: (mode: "email" | "code" | "redefinePassword" | "sucess") => void;
+
     setMode: (mode: "login" | "signup" | "recovery") => void;
-};
+}
+
 
 
 //Funções principais
-export default function Recovery( { setMode }: LoginProps ) {
+export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
 
-    const [step, setStep] = useState<RecoveryStep>("email");
     const [email, setEmail] = useState("");
     const [code, setCode] = useState(""); //Guardar o código do input para uso posterior em função
 
@@ -268,11 +271,15 @@ export default function Recovery( { setMode }: LoginProps ) {
                 </>
             ) : step === "sucess" ? (
                 <>
+                <p className="text-white text-center font-semibold">
+                    Sua senha foi alterada com sucesso. Clique em continuar para fazer login.
+                </p>
+                <button className={`${submitStyle.submit_button}`} type="submit">CONTINUAR</button>
                 </>
             ) : null}
             <div className="flex flex-row gap-0.5 justify-center">
                 <span className="font-ubuntu text-[0.85rem] text-white">Mudou de ideia? Volte à</span>
-                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> setMode("login")}>página anterior</button>
+                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> {setMode("login"); setStep("email")}}>página anterior</button>
             </div>
            
         </>
