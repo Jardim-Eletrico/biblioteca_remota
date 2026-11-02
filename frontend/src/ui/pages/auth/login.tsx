@@ -15,6 +15,27 @@ export default function Login( { setMode }: LoginProps ) {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    async function handleLogin() {
+        try {
+            const response = await fetch("http://localhost:8000/auth/login", { //Trocar pela rota funcional do backend depois
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Erro ao fazer login");
+            }
+
+            const data = await response.json();
+            console.log("Login bem-sucedido:", data);
+        } catch (error) {
+            console.error("Erro ao fazer login:", error);
+        }
+    }
+
     return(
         <>
             <div className="flex flex-col w-full h-fit gap-1.5">
@@ -69,7 +90,11 @@ export default function Login( { setMode }: LoginProps ) {
 
                 <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> setMode("recovery")}>Esqueceu sua senha?</button>
             </div>
-            <button className={`${submitStyle.submit_button}`} type="submit">ENTRAR</button>
+            <button className={`${submitStyle.submit_button}`} type="submit"
+                onClick={handleLogin}
+            >
+                ENTRAR
+            </button>
         </>
     )
 }
