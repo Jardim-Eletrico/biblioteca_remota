@@ -192,3 +192,25 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
             return obj.bibliotecario.pk
 
         return None
+#---------------------------------------------------------
+class SolicitarRecuperacaoSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+class ValidarCodigoSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    codigo = serializers.CharField(
+        min_length=6,
+        max_length=6,
+    )
+
+class RedefinirSenhaSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    codigo = serializers.CharField(
+        min_length=6,
+        max_length=6,
+    )
+    nova_senha = serializers.CharField(
+        min_length=8,
+        write_only=True,
+    )
+    

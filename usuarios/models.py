@@ -4,6 +4,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 from livros.models import *
 from pedidos.models import Pedido
+from django.utils import timezone
 # Create your models here.
 
 class UsuarioManager(BaseUserManager):
@@ -122,3 +123,24 @@ class Bibliotecario(models.Model):
 
     def ver_leitores(self, leitores):
         return leitores.all()
+
+class CodigoRecuperacao(models.Model):
+     usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name="codigos_recuperacao"
+    )
+
+     codigo_hash = models.CharField(max_length=128)
+
+     criado_em = models.DateTimeField(auto_now_add=True)
+
+     expira_em = models.DateTimeField()
+
+     utilizado = models.BooleanField(default=False)
+
+     def esta_expirado(self):
+         return timezone.now() >= self.expira_em
+
+     def __str__(self):
+         return f"Recuperação de senha - {self.usuario.email}"

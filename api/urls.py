@@ -28,6 +28,25 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
 
+    # Recuperação conta
+    path(
+    "password/solicitar/",
+    SolicitarRecuperacaoView.as_view(),
+    name="solicitar-recuperacao",
+    ),
+
+    path(
+    "password/validar/",
+    ValidarCodigoRecuperacaoView.as_view(),
+    name="validar-recuperacao",
+    ),
+
+    path(
+    "password/redefinir/",
+    RedefinirSenhaView.as_view(),
+    name="redefinir-senha",
+    ),
+    
     # Perfil
     path("perfil/", MeuPerfilView.as_view(), name='meu-perfil'),
 

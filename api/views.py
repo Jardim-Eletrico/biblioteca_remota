@@ -16,11 +16,8 @@ from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
 # Recuperação de senha
-from django_rest_passwordreset.views import (
-    reset_password_confirm,
-    reset_password_validate_token,
-    ResetPasswordRequestToken,
-)
+from usuarios.services import solicitar_recuperacao
+
 # drf-spectacular
 from drf_spectacular.utils import extend_schema
 
@@ -35,7 +32,7 @@ from usuarios.models import Usuario
 
 # Serviços
 from emprestimos.services import efetivar_emprestimo
-
+from usuarios.services import(solicitar_recuperacao, validar_codigo, redefinir_senha)
 
 Usuario = get_user_model()
 
@@ -248,18 +245,100 @@ class EfetivarEmprestimo(APIView):
             status=status.HTTP_201_CREATED
         )
 # -------------------------------------------
-class RecuperacaoSenhaView(ResetPasswordRequestToken):
+@extend_schema(
+    request=SolicitarRecuperacaoSerializer,
+)
+class SolicitarRecuperacaoView(APIView):
+    permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        email = request.data.get("email", "").strip()
+    def post(self, request):
+        serializer = SolicitarRecuperacaoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if not Usuario.objects.filter(email__iexact=email).exists():
+        email = serializer.validated_data["email"]
+
+        usuario = Usuario.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if usuario:
+            solicitar_recuperacao(usuario)
+
+        return Response(
+            {
+                "mensagem": (
+                    "Se o e-mail estiver cadastrado, "
+                    "você receberá um código de recuperação."
+                )
+            },
+            status=status.HTTP_200_OK,
+        )
+    
+@extend_schema(
+    request=ValidarCodigoSerializer,
+)
+class ValidarCodigoRecuperacaoView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = ValidarCodigoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        codigo = serializer.validated_data["codigo"]
+
+        usuario = Usuario.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if usuario is None or not validar_codigo(usuario, codigo):
             return Response(
-                {
-                    "status": "ERROR",
-                    "message": "Não existe uma conta cadastrada com este e-mail.",
-                },
-                status=status.HTTP_404_NOT_FOUND,
+                {"erro": "Código inválido ou expirado."},
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
-        return super().post(request, *args, **kwargs)
+        return Response(
+            {"mensagem": "Código validado com sucesso."},
+            status=status.HTTP_200_OK,
+        )
+
+@extend_schema(
+    request=RedefinirSenhaSerializer,
+)
+class RedefinirSenhaView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = RedefinirSenhaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        email = serializer.validated_data["email"]
+        codigo = serializer.validated_data["codigo"]
+        nova_senha = serializer.validated_data["nova_senha"]
+
+        usuario = Usuario.objects.filter(
+            email__iexact=email
+        ).first()
+
+        if usuario is None:
+            return Response(
+                {"erro": "Código inválido ou expirado."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        sucesso = redefinir_senha(
+            usuario,
+            codigo,
+            nova_senha,
+        )
+
+        if not sucesso:
+            return Response(
+                {"erro": "Código inválido ou expirado."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(
+            {"mensagem": "Senha redefinida com sucesso."},
+            status=status.HTTP_200_OK,
+        )
