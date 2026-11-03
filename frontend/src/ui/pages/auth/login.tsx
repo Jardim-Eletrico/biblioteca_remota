@@ -3,6 +3,8 @@ import inputStyle from "@/modules/auth/input.module.css";
 import submitStyle from "@/modules/auth/buttons.module.css";
 import { useState } from "react";
 
+import { login }from "@/src/services/authService";
+
 type LoginProps = { //É um tipo para pegar as propriedades de setMode passadas em auth.tsx -> <Login setMode={setMode}
     setMode: (mode: "login" | "signup" | "recovery") => void;
 };
@@ -15,32 +17,16 @@ export default function Login( { setMode }: LoginProps ) {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    async function handleLogin() {
-        try {
-            const response = await fetch("http://localhost:8000/api/login/", { //Trocar pela rota funcional do backend depois
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
+async function handleLogin() {
+    try {
+        await login(email, password);
 
-            const data = await response.json();
+        console.log("Login realizado com sucesso!");
 
-            if (!response.ok){
-                throw new Error(
-                    data.detail ?? "E-mail ou senha inválidos"
-                );
-            }
-
-            localStorage.setItem("access", data.access); //você deve passar isso para armazenar o token e o refresh token. Olha lá na api/docs pra ver quando precisa.
-            localStorage.setItem("refresh", data.refresh);
-            
-            console.log("Login bem-sucedido:");
-        } catch (error) {
-            console.error("Erro ao fazer login:", error);
-        }
+    } catch (error) {
+        console.error("Erro ao fazer login:", error);
     }
+}
 
     return(
         <>
@@ -74,11 +60,13 @@ export default function Login( { setMode }: LoginProps ) {
                         placeholder="Insira sua senha"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="new-password"
+                        autoComplete="current-password"
                         required
                     />
 
-                    <button className="absolute top-1/2 right-1.5 -translate-y-1/2"
+                    <button 
+                    type="button"
+                    className="absolute top-1/2 right-1.5 -translate-y-1/2"
                         onClick={() => setShowPassword(!showPassword)}
                     >
                         {showPassword ? 
