@@ -13,8 +13,6 @@ type RecoveryProps = {
     setMode: (mode: "login" | "signup" | "recovery") => void;
 }
 
-
-
 //Funções principais
 export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
 
@@ -85,8 +83,6 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
         catch (error) {
             console.error(error);
         }
-
-
     }
 
     async function confirmNewPassword() {
@@ -271,14 +267,19 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                 <p className="text-white text-center font-semibold">
                     Sua senha foi alterada com sucesso. Clique em continuar para fazer login.
                 </p>
-                <button className={`${submitStyle.submit_button}`} type="submit">CONTINUAR</button>
+                <button className={`${submitStyle.submit_button}`} 
+                type="submit"
+                onClick={() => {setMode("login"); setStep("email");}}>CONTINUAR</button>
                 </>
             ) : null}
-            <div className="flex flex-row gap-0.5 justify-center">
-                <span className="font-ubuntu text-[0.85rem] text-white">Mudou de ideia? Volte à</span>
-                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> {setMode("login"); setStep("email")}}>página anterior</button>
-            </div>
-           
+
+            {step !== "sucess" ? (
+                <div className="flex flex-row gap-0.5 justify-center">
+                    <span className="font-ubuntu text-[0.85rem] text-white">Mudou de ideia? Volte à</span>
+                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> {setMode("login"); setStep("email")}}>página anterior</button>
+                </div>
+            ) : null}
+
         </>
     )
 }
