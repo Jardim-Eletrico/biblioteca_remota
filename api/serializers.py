@@ -10,6 +10,10 @@ import random
 import string
 
 
+class LoginSerializer(TokenObtainPairSerializer):
+    username_field = 'email'
+
+#---------------------------------------------------------
 class LivroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Livro

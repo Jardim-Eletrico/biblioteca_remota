@@ -35,10 +35,9 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     const hasNumber = /[0-9]/.test(password);
 
     async function sendCode () { //Enviar código ao e-mail
-        setStep("code");//Tira isso quando você colocar a rota pra função certa
         try {
             // Função para verificar se e-mail está no banco de dados
-            const emailResponse = await fetch("http://localhost:8000/auth/recovery", {//Essa é a rota da função
+            const emailResponse = await fetch("http://localhost:8000/api/password/solicitar", {//Essa é a rota da função
                 method: "POST",
                 headers: { //Os dados que vai mandar
                     "Content-Type": "application/json" //vai mandar os dados em JSON
@@ -61,11 +60,10 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     }
 
     async function confirmCode(code: string) {
-        setStep("redefinePassword");
         try {
             //Função para confirmar se o código está correto
 
-            const codeResponse = await fetch("http://localhost:8000/auth/recovery/confirm", {
+            const codeResponse = await fetch("http://localhost:8000/api/password/validar", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -92,15 +90,14 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     }
 
     async function confirmNewPassword() {
-        setStep("sucess");
         if (password === confirmPassword) {
             try{
-                const passwordResponse = await fetch("http://localhost:8000/auth/recovery", { // O backend deve alterar a senha antiga do usuário pela nova, filtrando os usuários pelo email dado
+                const passwordResponse = await fetch("http://localhost:8000/api/password/redefinir", { // O backend deve alterar a senha antiga do usuário pela nova, filtrando os usuários pelo email dado
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify( { email, password } )
+                    body: JSON.stringify( { email, code, password } )
             
                 })
 

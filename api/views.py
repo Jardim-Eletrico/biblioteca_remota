@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 # Simple JWT
+from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.exceptions import TokenError
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -35,6 +36,10 @@ from emprestimos.services import efetivar_emprestimo
 from usuarios.services import(solicitar_recuperacao, validar_codigo, redefinir_senha)
 
 Usuario = get_user_model()
+
+# -------------------------------------------
+class LoginView(TokenObtainPairView):
+    serializer_class = LoginSerializer
 
 # -------------------------------------------
 

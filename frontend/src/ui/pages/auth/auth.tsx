@@ -6,6 +6,9 @@ import Login from "./login";
 import Signup from "./signup";
 import Recovery from "./recovery";
 
+
+//substitui as funções que usam fetch importando aquelas que estão em "../services". o que não der pra substituir, reescreva e importe elas nos arquivos que precisar
+
 type AuthMode = "login" | "signup" | "recovery";
 type RecoveryStep = "email" | "code" | "redefinePassword" | "sucess";
 

@@ -17,7 +17,7 @@ export default function Login( { setMode }: LoginProps ) {
 
     async function handleLogin() {
         try {
-            const response = await fetch("http://localhost:8000/auth/login", { //Trocar pela rota funcional do backend depois
+            const response = await fetch("http://localhost:8000/api/login/", { //Trocar pela rota funcional do backend depois
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -25,12 +25,18 @@ export default function Login( { setMode }: LoginProps ) {
                 body: JSON.stringify({ email, password }),
             });
 
-            if (!response.ok) {
-                throw new Error("Erro ao fazer login");
+            const data = await response.json();
+
+            if (!response.ok){
+                throw new Error(
+                    data.detail ?? "E-mail ou senha inválidos"
+                );
             }
 
-            const data = await response.json();
-            console.log("Login bem-sucedido:", data);
+            localStorage.setItem("access", data.access); //você deve passar isso para armazenar o token e o refresh token. Olha lá na api/docs pra ver quando precisa.
+            localStorage.setItem("refresh", data.refresh);
+            
+            console.log("Login bem-sucedido:");
         } catch (error) {
             console.error("Erro ao fazer login:", error);
         }

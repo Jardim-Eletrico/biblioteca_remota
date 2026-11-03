@@ -1,6 +1,9 @@
+
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
 
+import { NOMEM } from "dns";
 import type { LoginResponse, CadastroPayLoad, CadastroResponse } from "../types/api";
+import { sensitiveHeaders } from "http2";
 
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
@@ -40,6 +43,7 @@ export async function cadastro(payload: CadastroPayLoad): Promise<CadastroRespon
 
   return data;
 }
+
 
 export function logout(){
     localStorage.removeItem("access");
