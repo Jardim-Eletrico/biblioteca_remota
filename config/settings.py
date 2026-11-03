@@ -38,12 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework_simplejwt.token_blacklist',
+    'drf_spectacular',
 
     'livros',
     'usuarios',
     'corsheaders',
     'rest_framework',
-    'api',
+    'api.apps.ApiConfig',
+    'emprestimos',
+    'pedidos',
+
 ]
 
 MIDDLEWARE = [
@@ -122,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Sao_Paulo'
 
 USE_I18N = True
 
@@ -142,10 +146,12 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
 MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    "default": {
+        "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
 }
+
+DEFAULT_FROM_EMAIL = "biblioteca@exemplo.com"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"

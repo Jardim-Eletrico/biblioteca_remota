@@ -1,5 +1,10 @@
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.core.exceptions import ValidationError
+from livros.models import *
+from pedidos.models import Pedido
+from django.utils import timezone
 # Create your models here.
 
 class UsuarioManager(BaseUserManager):
@@ -31,7 +36,7 @@ class UsuarioManager(BaseUserManager):
 class Usuario(AbstractUser):
      username = None
      nome = models.CharField(max_length=200)
-     email = models.EmailField(unique=True)
+     email = models.EmailField(max_length=200, unique=True)
      cpf = None
      
      objects = UsuarioManager()
@@ -43,23 +48,58 @@ class Usuario(AbstractUser):
      def __str__(self):
           return self.nome
 
+
 class Leitor(models.Model):
-     usuario = models.OneToOneField(
-          Usuario,
-          on_delete=models.CASCADE,
-          related_name="leitor"
-     )
-     def __str__(self):
-               return self.usuario.nome
+    usuario = models.OneToOneField(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name="leitor"
+    )
 
-     def efetuar_emprestimo(self, livro):
-          pass
-     def reservar_livro(self):
-          pass
-     def minhas_reservas(self):
-          pass
+    def __str__(self):
+        return self.usuario.nome
+
+    def efetuar_emprestimo(self, exemplar):
+        if exemplar.status != "disponivel":
+            raise ValidationError("Esse exemplar não está disponível")
+
+        return Pedido.objects.create(
+            leitor=self,
+            edicao=exemplar.edicao,
+            status="pendente",
+        )
+
+    def reservar_livro(self, livro):
+        reservas_ativas = Pedido.objects.filter(
+            leitor=self,
+            status__in=["pendente", "aprovado"],
+        ).count()
+
+        if reservas_ativas >= 2:
+            raise ValidationError(
+                "Você só pode reservar 2 livros."
+            )
+
+        return Pedido.objects.create(
+            leitor=self,
+            livro=livro,
+            status="pendente",
+        )
+
+    def minhas_reservas(self):
+        return Pedido.objects.filter(
+            leitor=self,
+            status="pendente",
+        )
+
     
+def gerar_matricula():
+    while True:
+        caracteres = string.ascii_uppercase + string.digits
+        matricula = "".join(random.choices(caracteres, k=5))
 
+        if not Bibliotecario.objects.filter(matricula=matricula).exists():
+            return matricula
 
 class Bibliotecario(models.Model):
     usuario = models.OneToOneField(
@@ -69,7 +109,8 @@ class Bibliotecario(models.Model):
     )
     def __str__(self):
               return self.usuario.nome
-    matricula = models.CharField(max_length=5, unique=True)
+    matricula = models.CharField(max_length=5, unique=True, default=gerar_matricula)
+
 
     def cadastrar_livro(self, livro):
         livro.save()
@@ -82,3 +123,24 @@ class Bibliotecario(models.Model):
 
     def ver_leitores(self, leitores):
         return leitores.all()
+
+class CodigoRecuperacao(models.Model):
+     usuario = models.ForeignKey(
+        Usuario,
+        on_delete=models.CASCADE,
+        related_name="codigos_recuperacao"
+    )
+
+     codigo_hash = models.CharField(max_length=128)
+
+     criado_em = models.DateTimeField(auto_now_add=True)
+
+     expira_em = models.DateTimeField()
+
+     utilizado = models.BooleanField(default=False)
+
+     def esta_expirado(self):
+         return timezone.now() >= self.expira_em
+
+     def __str__(self):
+         return f"Recuperação de senha - {self.usuario.email}"
