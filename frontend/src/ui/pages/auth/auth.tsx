@@ -21,7 +21,7 @@ export default function Auth() {
         <>
             <div className="fixed inset-0 bg-[url('/auth/auth-bg.png')] bg-center bg-no-repeat bg-cover -z-10" />
 
-            <div className="flex flex-col items-center w-full gap-6.5 px-5 py-2.5 grow">
+            <div className="flex flex-col items-center w-full gap-6.5 px-5 py-7.5 grow">
                 <Logo aligned="vertical" text="yes" />
 
                 {mode === "login" ? (
@@ -80,20 +80,20 @@ export default function Auth() {
                                 <Recovery step={step} setStep={setStep} setMode={setMode}/>
                             </>
                         )}
-                        <div className="flex flex-row justify-center gap-1">
-                            {mode === "login" ? (
-                                <>
-                                    <p className="font-ubuntu font-normal text-[0.85rem] text-white">Não possui uma conta?</p>
-                                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("signup")}>Cadastre-se</button>
-                                </>
-                            ) : mode === "signup" ? (
-                                <>
-                                    <p className="font-ubuntu font-normal text-[0.85rem] text-white">Já possui uma conta?</p>
-                                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("login")}>Entrar</button>
-                                </>
-                            ) : null
-                            }
-                        </div>
+
+                        {mode === "login" ? (
+                            <div className="flex flex-row justify-center gap-1">
+                                <p className="font-ubuntu font-normal text-[0.85rem] text-white">Não possui uma conta?</p>
+                                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("signup")}>Cadastre-se</button>
+                            </div>
+                        ) : mode === "signup" ? (
+                            <div className="flex flex-row justify-center gap-1">
+                                <p className="font-ubuntu font-normal text-[0.85rem] text-white">Já possui uma conta?</p>
+                                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link" onClick={() => setMode("login")}>Entrar</button>
+                            </div>
+                        ) : null
+                        }
+
                     </form>
                 </div> 
             </div> 
