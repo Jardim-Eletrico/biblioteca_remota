@@ -89,7 +89,7 @@ export default function Landing() {
                     </div>
 
                     <Link 
-                        to=""
+                        to="/auth"
                         className="flex items-center justify-center self-center w-fit h-fit px-4 py-2.5 bg-vivid-orange font-roboto text-[16px] text-white font-medium rounded-4xl"
                     >Começar agora</Link>
 
