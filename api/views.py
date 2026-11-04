@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django.db.models import Avg
 
 # Django REST Framework
 from rest_framework import generics, status
@@ -27,7 +28,7 @@ from .serializers import *
 from .permissions import *
 
 # Modelos
-from livros.models import Livro, Edicao
+from livros.models import Livro, Edicao, Avaliacao
 from pedidos.models import Pedido
 from usuarios.models import Usuario
 
@@ -54,6 +55,24 @@ class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario_or_Readonly]
+
+    def retrieve(self, request, *args, **kwargs):
+        livro = self.get_object()
+
+        serializer = self.get_serializer(livro)
+
+        media = Avaliacao.objects.filter(
+            livro=livro
+        ).aggregate(
+            media=Avg("nota")
+        )["media"]
+
+        dados = serializer.data
+        dados["media_avaliacoes"] = (
+            round(media, 2) if media is not None else None
+        )
+
+        return Response(dados)
 
 
 class LivroListCreateView(generics.ListCreateAPIView):
