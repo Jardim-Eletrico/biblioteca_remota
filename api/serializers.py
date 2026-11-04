@@ -51,6 +51,12 @@ class ExemplarLoteSerializer(serializers.Serializer):
         ]
 
         return Exemplar.objects.bulk_create(exemplares)
+
+class AvalicaoSerializer(serializers.Serializer):
+    nota = serializers.IntegerField(
+        min_value =1,
+        max_value=5
+    )
 #---------------------------------------------------------
 class PedidoSerializer(serializers.ModelSerializer):
     class Meta:

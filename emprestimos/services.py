@@ -63,3 +63,26 @@ def efetivar_emprestimo(
     exemplar.save(update_fields=["status"])
 
     return emprestimo   
+
+@transaction.atomic
+def devolver_emprestimo(emprestimo_id):
+    emprestimo = Emprestimo.objects.select_for_update().get(
+        pk=emprestimo_id
+    )
+
+    if emprestimo.data_devolucao is not None:
+        raise ValidationError(
+            "Este livro já foi devolvido"
+        )
+
+    exemplar = Exemplar.objects.select_for_update().get(
+        pk=emprestimo.exemplar_id
+    )
+
+    emprestimo.data_devolucao = timezone.now()
+    emprestimo.save(update_fields=["data_devolucao"])
+
+    exemplar.status = "disponivel"
+    exemplar.save(update_fields=["status"])
+
+    return emprestimo

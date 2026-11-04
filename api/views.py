@@ -20,7 +20,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from usuarios.services import solicitar_recuperacao
 
 # drf-spectacular
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 
 # Aplicação
 from .serializers import *
@@ -32,8 +32,9 @@ from pedidos.models import Pedido
 from usuarios.models import Usuario
 
 # Serviços
-from emprestimos.services import efetivar_emprestimo
+from emprestimos.services import efetivar_emprestimo, devolver_emprestimo
 from usuarios.services import(solicitar_recuperacao, validar_codigo, redefinir_senha)
+from livros.services import avaliar_livro
 
 Usuario = get_user_model()
 
@@ -108,6 +109,45 @@ class EdicaoListCreateView(generics.ListCreateAPIView):
 
         return [IsAuthenticated()]
 
+class AvaliarLivro(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+            request=AvalicaoSerializer,
+            responses={201, AvalicaoSerializer},
+    )
+    def post(self, request, livro_id):
+        serializer = AvalicaoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        leitor = Leitor.objects.filter(
+            usuario = request.user
+        ).first()
+
+        if leitor is None:
+            return Response(
+                {"erro": "Apenas leitores podem avaliar livros"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        livro = get_object_or_404(Livro, pk=livro_id)
+
+        avaliacao = avaliar_livro(
+            leitor=leitor,
+            livro=livro,
+            nota=serializer.validated_data["nota"],
+        )
+
+        return Response(
+            {
+                "mensagem": "Avalicação registrada com sucesso",
+                "avaliação_id": avaliacao.pk,
+                "livro_id": livro.pk,
+                "nota": avaliacao.nota,
+                "data_avaliacao": avaliacao.data_avaliacao,
+            },
+            status=status.HTTP_201_CREATED,
+        )
 # -------------------------------------------
 
 class UsuarioCreateView(generics.CreateAPIView):
@@ -142,18 +182,124 @@ class LogoutView(APIView):
                 {'detail': 'Refresh token inválido'}, status=status.HTTP_404_NOT_FOUND
             )
 
-
-class BibliotecarioCreateView(generics.CreateAPIView):
-    serializer_class = BibliotecarioSerializer
-    permission_classes = [IsBibliotecario]
-
-
 class MeuPerfilView(generics.RetrieveAPIView):
     serializer_class = MeuPerfilSerializer
     permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
+
+class BibliotecarioCreateView(generics.CreateAPIView):
+    serializer_class = BibliotecarioSerializer
+    permission_classes = [IsBibliotecario]
+
+class ListarLeitores(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def get(self, request):
+        leitores = Leitor.objects.select_related("usuario").all()
+
+        resultado = []
+
+        for leitor in leitores:
+            emprestimos = Emprestimo.objects.filter(
+                pedido__leitor=leitor,
+                data_devolucao__isnull=True
+            ).select_related(
+                "pedido",
+                "exemplar",
+                "exemplar__edicao",
+                "exemplar__edicao__livro",
+            )
+
+            lista_emprestimos = []
+
+            for emprestimo in emprestimos:
+                lista_emprestimos.append({
+                    "emprestimo_id": emprestimo.pk,
+                    "livro": emprestimo.exemplar.edicao.livro.titulo,
+                    "tombo": emprestimo.exemplar.tombo,
+                    "data_retirada": emprestimo.data_retirada,
+                    "data_prevista_devolucao": emprestimo.data_prevista_devolucao,
+                    "atrasado": (
+                        emprestimo.data_prevista_devolucao
+                        < timezone.localdate()
+                    )
+                })
+
+            resultado.append({
+                "id": leitor.pk,
+                "nome": leitor.usuario.nome,
+                "email": leitor.usuario.email,
+                "emprestimos": lista_emprestimos
+            })
+
+        return Response(
+            resultado,
+            status=status.HTTP_200_OK
+        )
+
+class BuscarLeitor(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+    @extend_schema(
+            parameters=[
+            OpenApiParameter(
+                name="nome",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="Nome do leitor que deseja pesquisar",
+                required=True,
+            )
+        ]
+    )
+    def get(self, request):
+        nome = request.query_params.get("nome", "").strip()
+
+        if not nome:
+            return Response(
+                {"erro": "Informe o nome do leitor."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        leitores = Leitor.objects.select_related("usuario").filter(
+            usuario__nome__icontains=nome
+        )
+
+        resultado = []
+
+        for leitor in leitores:
+            emprestimos = Emprestimo.objects.filter(
+                pedido__leitor=leitor,
+                data_devolucao__isnull=True
+            ).select_related(
+                "exemplar",
+                "exemplar__edicao",
+                "exemplar__edicao__livro"
+            )
+
+            lista_emprestimos = []
+
+            for emprestimo in emprestimos:
+                lista_emprestimos.append({
+                    "emprestimo_id": emprestimo.pk,
+                    "livro": emprestimo.exemplar.edicao.livro.titulo,
+                    "tombo": emprestimo.exemplar.tombo,
+                    "data_retirada": emprestimo.data_retirada,
+                    "data_prevista_devolucao": emprestimo.data_prevista_devolucao,
+                    "atrasado": (
+                        emprestimo.data_prevista_devolucao
+                        < timezone.localdate()
+                    )
+                })
+
+            resultado.append({
+                "id": leitor.pk,
+                "nome": leitor.usuario.nome,
+                "email": leitor.usuario.email,
+                "emprestimos": lista_emprestimos
+            })
+
+        return Response(resultado, status=status.HTTP_200_OK)
 # -------------------------------------------
 class PedidoCreateView(generics.CreateAPIView):
     serializer_class = PedidoSerializer
@@ -248,6 +394,22 @@ class EfetivarEmprestimo(APIView):
                 },
             },
             status=status.HTTP_201_CREATED
+        )
+
+class DevolverEmprestimo(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def post(self, request, emprestimo_id):
+        emprestimo = devolver_emprestimo(emprestimo_id)
+        return Response(
+            {
+                "mensagem": "Empréstimo devolvido com sucesso.",
+                "emprestimo_id": emprestimo.pk,
+                "data_devolucao": emprestimo.data_devolucao,
+                "exemplar_id": emprestimo.exemplar_id,
+                "status_exemplar": "disponivel",
+            },
+            status=status.HTTP_200_OK,
         )
 # -------------------------------------------
 @extend_schema(

@@ -12,6 +12,7 @@ urlpatterns = [
     path("livros/", LivroListView.as_view(), name="livros"),
     path("livros/cadastrar/", LivroCreateView.as_view(), name="cadastrar_livro"),
     path("livros/<int:pk>/", LivroDetailView.as_view(), name="detalhar_livro"),
+    path("livros/<int:livro_id>/avaliar/", AvaliarLivro.as_view(), name="avaliar_livro"),
 
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
@@ -60,4 +61,9 @@ urlpatterns = [
     path('pedidos/', PedidoCreateView.as_view(), name='pedido-create'),
     path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
+
+    # Acessos Bibliotecario:
+    path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),
+    path('leitores/buscar/', BuscarLeitor.as_view(), name='buscar-leitor'),
+    path('emprestimos/<int:emprestimo_id>/devolver', DevolverEmprestimo.as_view(), name='devolver-emprestimo'),
 ]
