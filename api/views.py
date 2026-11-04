@@ -3,7 +3,10 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
-from django.db.models import Avg
+from django.db.models import Avg, Count, Q
+
+# Outras bibliotecas
+from datetime import timedelta
 
 # Django REST Framework
 from rest_framework import generics, status
@@ -31,6 +34,7 @@ from .permissions import *
 from livros.models import Livro, Edicao, Avaliacao
 from pedidos.models import Pedido
 from usuarios.models import Usuario
+from emprestimos.models import Emprestimo
 
 # Serviços
 from emprestimos.services import efetivar_emprestimo, devolver_emprestimo
@@ -46,11 +50,40 @@ class LoginView(TokenObtainPairView):
 # -------------------------------------------
 
 class LivroListView(generics.ListAPIView):
-    queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        ordenar = self.request.query_params.get("ordenar")
 
+        livros = Livro.objects.annotate(
+            media_avaliacoes=Avg("avaliacoes__nota"),
+        )
+
+        if ordenar == "melhor_nota":
+            return livros.order_by(
+                "-media_avaliacoes",
+                "titulo",
+            )
+
+        if ordenar == "popularidade":
+            data_limite = timezone.now() - timedelta(days=90)
+
+            return livros.annotate(
+                total_emprestimos=Count(
+                    "edicoes__exemplares__emprestimos",
+                    filter=Q(
+                        edicoes__exemplares__emprestimos__data_retirada__gte=data_limite #gte = >=, ou seja, ele a data de retirada deve ser maior ou igual à data limite.
+                    ),
+                    distinct=True,
+                )
+            ).order_by(
+                "-total_emprestimos",
+                "titulo",
+            )
+
+        return livros.order_by("titulo")
+    
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.all()
     serializer_class = LivroSerializer

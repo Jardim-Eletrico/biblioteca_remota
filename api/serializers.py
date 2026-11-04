@@ -15,6 +15,14 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 #---------------------------------------------------------
 class LivroSerializer(serializers.ModelSerializer):
+    media_avaliacoes = serializers.FloatField(
+        read_only=True,
+        allow_null=True
+    )
+
+    total_emprestimos = serializers.IntegerField(
+        read_only=True
+    )
     class Meta:
         model = Livro
         fields = "__all__"
