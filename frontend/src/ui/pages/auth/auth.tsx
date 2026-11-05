@@ -71,7 +71,7 @@ export default function Auth() {
                             </>
                         ) : mode === "signup" ? (
                             <>
-                                <Signup />
+                                <Signup setMode={setMode} />
                             </>
                         ) : (
                             <>
