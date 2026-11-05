@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
+import { ThemeProvider } from '@/contexts/themeContext.tsx';
 //Aviso: Módulos de CSS foram usados em partes que o estilo se repete, mas não necessáriamente há uma necessidade para criar um componente próprio.
 
 //Fonts
@@ -12,6 +13,8 @@ import '@fontsource/source-serif-pro/400.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </StrictMode>,
 )

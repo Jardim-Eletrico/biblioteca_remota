@@ -5,7 +5,7 @@ export default function Publayout(){
     return(
         <div className="min-h-screen flex flex-col">
             <Pubnavbar />
-            <main className="flex flex-col items-center gap-5 bg-grey-background grow relative isolate antialiased">
+            <main className="flex flex-col items-center gap-5 bg-gray-background grow relative isolate antialiased">
                 <Outlet />
             </main>
         </div>

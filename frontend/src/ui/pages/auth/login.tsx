@@ -1,6 +1,6 @@
-import labelStyle from "@/modules/auth/label.module.css";
-import inputStyle from "@/modules/auth/input.module.css";
-import submitStyle from "@/modules/auth/buttons.module.css";
+import labelStyle from "@/modules/public/auth/label.module.css";
+import inputStyle from "@/modules/public/auth/input.module.css";
+import submitStyle from "@/modules/public/auth/buttons.module.css";
 import { useState } from "react";
 
 import { login }from "@/src/services/authService";

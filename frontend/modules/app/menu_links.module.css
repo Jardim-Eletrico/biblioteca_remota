@@ -1,0 +1,14 @@
+.link {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    width: fit-content;
+    height: fit-content;
+    gap: 10px;
+
+    font-family: Ubuntu;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: black;
+}

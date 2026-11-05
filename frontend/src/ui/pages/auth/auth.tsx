@@ -1,6 +1,6 @@
-import cardStyles from "@/modules/auth/card.module.css";
+import cardStyles from "@/modules/public/card.module.css";
 import SectionTitle from "@/components/pub/auth/title"
-import Logo from "@/components/pub/logo"
+import Logo from "@/components/pub/logo";
 import { useState } from "react";
 import Login from "./login";
 import Signup from "./signup";

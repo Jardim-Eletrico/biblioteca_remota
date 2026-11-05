@@ -1,7 +1,7 @@
-import labelStyle from "@/modules/auth/label.module.css";
-import inputStyle from "@/modules/auth/input.module.css";
-import submitStyle from "@/modules/auth/buttons.module.css";
-import requirementStyle from "@/modules/auth/password_requirements.module.css";
+import labelStyle from "@/modules/public/auth/label.module.css";
+import inputStyle from "@/modules/public/auth/input.module.css";
+import submitStyle from "@/modules/public/auth/buttons.module.css";
+import requirementStyle from "@/modules/public/auth/password_requirements.module.css";
 import { useState } from "react";
 
 // Criando tipos para pegar propriedades e definir modos

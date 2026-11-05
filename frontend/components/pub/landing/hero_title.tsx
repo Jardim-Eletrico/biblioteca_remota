@@ -1,4 +1,4 @@
-import heroTitleStyles from "@/modules/landing/hero_title.module.css";
+import heroTitleStyles from "@/modules/public/landing/hero_title.module.css";
 
 type TitleProps = {
     text: string,
