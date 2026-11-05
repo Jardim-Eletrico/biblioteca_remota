@@ -10,7 +10,7 @@ from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView
 from rest_framework.filters import SearchFilter
 
 # Simple JWT
@@ -45,7 +45,15 @@ class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
 # -------------------------------------------
+class ExemplarDetailView(RetrieveDestroyAPIView):
+    queryset = Exemplar.objects.select_related(
+        "edicao",
+        "edicao__livro",
+    )
 
+    serializer_class = ExemplarListSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+    
 class ExemplarListView(ListAPIView):
     queryset = Exemplar.objects.select_related(
         "edicao",

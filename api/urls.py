@@ -23,6 +23,7 @@ urlpatterns = [
         ExemplarLoteCreateView.as_view(),
         name="cadastrar_exemplares",
     ),
+    path('exemplares/<int:pk>/', ExemplarDetailView.as_view(), name="detalhar_exemplar"),
 
     path('exemplares/', ExemplarListView.as_view(), name="listar-exemplares"),
     
