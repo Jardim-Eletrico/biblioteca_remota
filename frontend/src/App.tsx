@@ -5,6 +5,7 @@ import Publayout from "../layouts/publayout";
 import Auth from "./ui/pages/auth/auth";
 import Applayout from "../layouts/applayout";
 import Home from "./ui/pages/home/home";
+import Test from "./Test";
 
 export default function App() {
     return (
@@ -20,6 +21,8 @@ export default function App() {
                         <Route path="/home" element={<Home />}></Route>
                     
                     </Route>
+
+                    <Route path="/test" element={<Test />}></Route>
                     
                 </Routes>
 
