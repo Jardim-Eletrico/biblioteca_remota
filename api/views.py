@@ -55,10 +55,16 @@ class LivroListView(generics.ListAPIView):
 
     def get_queryset(self):
         ordenar = self.request.query_params.get("ordenar")
+        busca = self.request.query_params.get("busca")
 
         livros = Livro.objects.annotate(
             media_avaliacoes=Avg("avaliacoes__nota"),
         )
+
+        if busca:
+            livros = livros.filter(
+                titulo__icontains=busca.strip()
+            )
 
         if ordenar == "melhor_nota":
             return livros.order_by(
