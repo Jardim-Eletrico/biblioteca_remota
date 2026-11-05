@@ -82,7 +82,11 @@ async function handleLogin() {
                     </button>
                 </div>
 
-                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> setMode("recovery")}>Esqueceu sua senha?</button>
+                <button 
+                className="font-ubuntu font-normal text-[0.85rem]
+                 text-blue-link w-fit" 
+                 onClick={()=> setMode("recovery")}>Esqueceu sua senha?
+                 </button>
             </div>
             <button className={`${submitStyle.submit_button}`} type="submit"
                 onClick={handleLogin}
