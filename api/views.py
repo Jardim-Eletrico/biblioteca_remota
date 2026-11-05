@@ -6,10 +6,12 @@ from django.utils import timezone
 
 # Django REST Framework
 from rest_framework import generics, status
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView
+from rest_framework.filters import SearchFilter
 
 # Simple JWT
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -27,7 +29,7 @@ from .serializers import *
 from .permissions import *
 
 # Modelos
-from livros.models import Livro, Edicao
+from livros.models import Livro, Edicao, Exemplar
 from pedidos.models import Pedido
 from usuarios.models import Usuario
 
@@ -43,7 +45,59 @@ class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
 # -------------------------------------------
+class ExemplarDetailView(RetrieveDestroyAPIView):
+    queryset = Exemplar.objects.select_related(
+        "edicao",
+        "edicao__livro",
+    )
 
+    serializer_class = ExemplarListSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+    
+class ExemplarListView(ListAPIView):
+    queryset = Exemplar.objects.select_related(
+        "edicao",
+        "edicao__livro"
+    ).all()
+
+    serializer_class = ExemplarListSerializer
+
+    permission_classes = [
+        IsAuthenticated,
+        IsBibliotecario
+    ]
+
+    filter_backends = [SearchFilter]
+
+    search_fields = [
+        "tombo",
+        "edicao__livro__titulo",
+        "edicao__livro__autor",
+    ]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        exemplar_id = self.request.query_params.get('id')
+
+        if exemplar_id:
+            queryset = queryset.filter(id=exemplar_id)
+
+            if not queryset.exists():
+                raise NotFound("Exemplar não encontrado.")
+            
+        return queryset
+
+    def filter_queryset(self, queryset):
+        queryset = super().filter_queryset(queryset)
+
+        if not queryset.exists():
+            raise NotFound(
+                "Nenhum exemplar encontrado com os dados informados"
+            )
+
+        return queryset
+    
 class LivroListView(generics.ListAPIView):
     queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
@@ -108,6 +162,11 @@ class EdicaoListCreateView(generics.ListCreateAPIView):
             return [IsAuthenticated(), IsBibliotecario()]
 
         return [IsAuthenticated()]
+
+class EdicaoDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Edicao.objects.all()
+    serializer_class = EdicaoSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
 
 class AvaliarLivro(APIView):
     permission_classes = [IsAuthenticated]

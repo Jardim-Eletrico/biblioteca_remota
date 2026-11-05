@@ -4,6 +4,12 @@ import submitStyle from "@/modules/public/auth/buttons.module.css";
 import requirementStyle from "@/modules/public/auth/password_requirements.module.css";
 import { useState } from "react";
 
+
+import { recuperarSenha, verificarCodigo, redefinirSenha } from '@/src/services/authService';
+
+
+
+
 // Criando tipos para pegar propriedades e definir modos
 
 type RecoveryProps = {
@@ -32,85 +38,41 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     const hasLowercase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
 
-    async function sendCode () { //Enviar código ao e-mail
+    async function handleSendCode () { //Enviar código ao e-mail
         try {
-            // Função para verificar se e-mail está no banco de dados
-            const emailResponse = await fetch("http://localhost:8000/api/password/solicitar", {//Essa é a rota da função
-                method: "POST",
-                headers: { //Os dados que vai mandar
-                    "Content-Type": "application/json" //vai mandar os dados em JSON
-                },
-                body: JSON.stringify( {email} ),
-            })
+            await recuperarSenha({email});
 
-            if (emailResponse.ok) {
-                setStep("code");
-            }
-
-            if (!emailResponse.ok) {
-                throw new Error("Falha ao solicitar o código");
-            }
-        }
-
-        catch (error) {
+            setStep("code");
+        } catch(error) {
             console.error(error);
-        }  
+        }
     }
 
-    async function confirmCode(code: string) {
+    async function handleConfirmCode(code: string) {
         try {
-            //Função para confirmar se o código está correto
+            await verificarCodigo({email, codigo: code});
+            setStep("redefinePassword");
+        } catch(error) {
+            console.error(error);
+        }
+    }
 
-            const codeResponse = await fetch("http://localhost:8000/api/password/validar", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, code })
+    async function handleConfirmNewPassword() {
+    if (password === confirmPassword) {
+        try {
+            await redefinirSenha({
+                email,
+                codigo: code,
+                nova_senha: password
             });
 
-            const data = await codeResponse.json();
+            setStep("sucess");
 
-            if (codeResponse.ok && data.valid) {//O backend deve realizar a comparação dos códigos. Se forem iguais, deve retornar {"data": valid}
-                setStep("redefinePassword");
-            }
-
-            if (!codeResponse.ok) {
-                throw new Error("Falha ao confirmar o código de autenticação");
-            }
-        }
-
-        catch (error) {
+        } catch (error) {
             console.error(error);
         }
     }
-
-    async function confirmNewPassword() {
-        if (password === confirmPassword) {
-            try{
-                const passwordResponse = await fetch("http://localhost:8000/api/password/redefinir", { // O backend deve alterar a senha antiga do usuário pela nova, filtrando os usuários pelo email dado
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify( { email, code, password } )
-            
-                })
-
-                if (!passwordResponse.ok) {
-                    throw new Error("Falha ao criar nova senha");
-                }
-
-                else {
-                    setStep("sucess");
-                }
-            
-            }
-            catch (error) {
-                console.error(error)
-            }
-        }
-    }
+}
 
     return(
         <>
@@ -133,7 +95,7 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                             required
                         />
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={sendCode}
+                            onClick={handleSendCode}
                         >ENVIAR CÓDIGO</button>
 
                     </div>
@@ -157,11 +119,11 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                             required
                         />
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={() => confirmCode(code)}
+                            onClick={() => handleConfirmCode(code)}
                         >CONFIRMAR</button>
                         
                         <button className={`${submitStyle.resend_button}`} type="submit"
-                            onClick={sendCode}
+                            onClick={handleSendCode}
                         >REENVIAR</button>
                     </div>
                 </>
@@ -258,7 +220,7 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                         </div>
 
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={confirmNewPassword}
+                            onClick={handleConfirmNewPassword}
                         >CONFIRMAR</button>
                     </div>
                 </>

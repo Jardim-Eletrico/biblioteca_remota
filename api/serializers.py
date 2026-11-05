@@ -30,9 +30,91 @@ class LivroSerializer(serializers.ModelSerializer):
         return value.strip()
 
 class EdicaoSerializer(serializers.ModelSerializer):
+    total_exemplares = serializers.SerializerMethodField()
+    exemplares_disponiveis = serializers.SerializerMethodField()
+
     class Meta:
         model = Edicao
         fields = "__all__"
+
+    def get_total_exemplares(self, obj):
+        return obj.exemplares.count()
+
+    def get_exemplares_disponiveis(self, obj):
+        return obj.exemplares.filter(status='disponivel').count()
+
+class ExemplarListSerializer(serializers.ModelSerializer):
+    titulo = serializers.CharField(
+        source = 'edicao.livro.titulo',
+        read_only = True
+    )
+
+    autor = serializers.CharField(
+        source = 'edicao.livro.autor',
+        read_only = True
+    )
+
+    ano_original = serializers.IntegerField(
+        source = 'edicao.livro.ano_original',
+        read_only = True
+    )
+
+    editora = serializers.CharField(
+        source = 'edicao.editora',
+        read_only = True
+    )
+
+    ano_publicacao = serializers.IntegerField(
+        source = 'edicao.ano_publicacao',
+        read_only = True
+    )
+
+    numero_edicao = serializers.CharField(
+        source = 'edicao.edicao',
+        read_only = True
+    )
+
+    capa = serializers.ImageField(
+        source = 'edicao.capa',
+        read_only = True
+    )
+
+    emprestado = serializers.SerializerMethodField()
+    leitor = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Exemplar
+        fields = [
+            "id",
+            "tombo",
+            "status",
+            "titulo",
+            "autor",
+            "ano_original",
+            "ano_publicacao",
+            "editora",
+            "numero_edicao",
+            "capa",
+            "emprestado",
+            "leitor",
+        ]
+
+    def get_emprestado(self, obj):
+        return Emprestimo.objects.filter(
+            exemplar=obj,
+            data_devolucao__isnull = True
+        ).exists()
+
+    def get_leitor(self, obj):
+        emprestimo = Emprestimo.objects.filter(
+            exemplar = obj,
+            data_devolucao__isnull = True
+        ).select_related("pedido__leitor__usuario").first()
+
+        if emprestimo:
+            return emprestimo.pedido.leitor.usuario.nome
+
+        return None
 
 class ExemplarLoteSerializer(serializers.Serializer):
     quantidade = serializers.IntegerField(

@@ -1,39 +1,48 @@
-// URL base da API.
-// Caso VITE_API_URL não esteja definida no .env, utiliza o endereço local.
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
+import type {
+    LoginResponse,
+    CadastroPayLoad,
+    CadastroResponse,
+    RecuperarSenhaPayload,
+    RecuperarSenhaResponse,
+    VerificarCodigoPayload,
+    VerificarCodigoResponse,
+    RedefinirSenhaPayload,
+    RedefinirSenhaResponse
+} from '../types/api'
 
-import type { LoginResponse, CadastroPayLoad, CadastroResponse } from "../types/api";
+const API_URL = import.meta.env.VITE_API_URL;
 
 
 // =====================================================
 // LOGIN
 // =====================================================
 
-export async function login(email: string, password: string): Promise<LoginResponse> {
+// LOGIN
+export async function login(
+    email: string,
+    password: string
+): Promise<LoginResponse> {
 
-  // Envia as credenciais do usuário para o endpoint de login.
-  const response = await fetch(`${API_URL}/login/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+    const response = await fetch(`${API_URL}/login/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password }),
+    });
 
-  // Converte a resposta do servidor para JSON.
-  // Caso a resposta não contenha um JSON válido, retorna null.
-  const data = await response.json().catch(() => null);
+    const data = await response.json().catch(() => null);
 
-  // Verifica se a requisição foi bem-sucedida.
-  // Caso contrário, lança um erro com a mensagem enviada pelo backend.
-  if (!response.ok) {
-    throw new Error(data?.detail ?? "Email ou senha inválidos");
-  }
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Email ou senha inválidos"
+        );
+    }
 
-  // Armazena os tokens de autenticação no navegador.
-  localStorage.setItem("access", data.access);
-  localStorage.setItem("refresh", data.refresh);
+    localStorage.setItem("access", data.access);
+    localStorage.setItem("refresh", data.refresh);
 
-  // Retorna os dados recebidos do servidor.
-  return data;
+    return data;
 }
 
 
@@ -41,119 +50,169 @@ export async function login(email: string, password: string): Promise<LoginRespo
 // CADASTRO
 // =====================================================
 
-export async function cadastro(payload: CadastroPayLoad): Promise<CadastroResponse> {
 
-  // Envia os dados do formulário de cadastro para o backend.
-  const response = await fetch(`${API_URL}/cadastro/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+// CADASTRO
+export async function cadastro(
+    payload: CadastroPayLoad
+): Promise<CadastroResponse> {
 
-  // Converte a resposta do servidor para JSON.
-  const data = await response.json().catch(() => null);
-
-  // Verifica se houve algum erro durante o cadastro.
-  if (!response.ok) {
-    throw new Error(data?.detail ?? "Erro no cadastro");
-  }
-
-  // Retorna os dados do cadastro realizado.
-  return data;
-}
-
-
-// =====================================================
-// RENOVAÇÃO DO TOKEN
-// =====================================================
-
-export async function refreshToken(): Promise<string> {
-
-  // Recupera o refresh token armazenado no navegador.
-  const refresh = localStorage.getItem("refresh");
-
-  // Impede a tentativa de renovação caso não exista um refresh token.
-  if (!refresh) {
-    throw new Error("Refresh token não encontrado");
-  }
-
-  // Envia o refresh token para o endpoint responsável pela renovação.
-  const response = await fetch(`${API_URL}/token/refresh/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh }),
-  });
-
-  // Converte a resposta do servidor para JSON.
-  const data = await response.json().catch(() => null);
-
-  // Caso a renovação falhe, encerra a sessão localmente.
-  if (!response.ok) {
-    logoutLocal();
-    throw new Error("Não foi possível renovar a sessão");
-  }
-
-  // Atualiza o access token com o novo token recebido.
-  localStorage.setItem("access", data.access);
-
-  // Alguns backends também retornam um novo refresh token.
-  // Nesse caso, substitui o token antigo.
-  if (data.refresh) {
-    localStorage.setItem("refresh", data.refresh);
-  }
-
-  // Retorna o novo access token.
-  return data.access;
-}
-
-
-// =====================================================
-// ENCERRAMENTO LOCAL DA SESSÃO
-// =====================================================
-
-function logoutLocal() {
-
-  // Remove os tokens armazenados no navegador.
-  localStorage.removeItem("access");
-  localStorage.removeItem("refresh");
-}
-
-
-// =====================================================
-// LOGOUT
-// =====================================================
-
-export async function logout() {
-
-  // Recupera os tokens necessários para solicitar o logout ao backend.
-  const access = localStorage.getItem("access");
-  const refresh = localStorage.getItem("refresh");
-
-  try {
-
-    // Só envia a requisição se os dois tokens estiverem disponíveis.
-    if (access && refresh) {
-
-      // Informa ao backend qual usuário está solicitando o logout.
-      const response = await fetch(`${API_URL}/logout/`, {
+    const response = await fetch(`${API_URL}/cadastro/`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${access}`,
+            "Content-Type": "application/json"
         },
-        body: JSON.stringify({ refresh }),
-      });
+        body: JSON.stringify(payload),
+    });
 
-      // Opcional: verificar se o backend aceitou a solicitação.
-      if (!response.ok) {
-        throw new Error("Erro ao encerrar a sessão no servidor");
-      }
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Erro no cadastro"
+        );
     }
 
-  } finally {
+    return data;
+}
 
-    // Independentemente do resultado da requisição,
-    // remove os tokens do navegador.
-    logoutLocal();
-  }
+
+// REFRESH TOKEN
+export async function refreshToken(): Promise<string> {
+
+    const refresh = localStorage.getItem("refresh");
+
+    if (!refresh) {
+        throw new Error("Refresh token não encontrado");
+    }
+
+    const response = await fetch(`${API_URL}/token/refresh/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ refresh }),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        logoutLocal();
+
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Não foi possível renovar a sessão"
+        );
+    }
+
+    localStorage.setItem("access", data.access);
+
+    if (data.refresh) {
+        localStorage.setItem("refresh", data.refresh);
+    }
+
+    return data.access;
+}
+
+
+// LOGOUT LOCAL
+function logoutLocal() {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+}
+
+
+// LOGOUT
+export async function logout() {
+
+    const access = localStorage.getItem("access");
+    const refresh = localStorage.getItem("refresh");
+
+    try {
+        if (access && refresh) {
+            await fetch(`${API_URL}/logout/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${access}`,
+                },
+                body: JSON.stringify({ refresh }),
+            });
+        }
+    } finally {
+        logoutLocal();
+    }
+}
+
+
+// RECUPERAR SENHA
+export async function recuperarSenha(
+    payload: RecuperarSenhaPayload
+): Promise<RecuperarSenhaResponse> {
+
+    const response = await fetch(`${API_URL}/password/solicitar/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Erro ao solicitar recuperação de senha"
+        );
+    }
+
+    return data;
+}
+
+
+// VERIFICAR CÓDIGO
+export async function verificarCodigo(
+    payload: VerificarCodigoPayload
+): Promise<VerificarCodigoResponse> {
+
+    const response = await fetch(`${API_URL}/password/validar/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Código de verificação inválido"
+        );
+    }
+
+    return data;
+}
+
+
+// REDEFINIR SENHA
+export async function redefinirSenha(
+    payload: RedefinirSenhaPayload
+): Promise<RedefinirSenhaResponse> {
+
+    const response = await fetch(`${API_URL}/password/redefinir/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ?? data?.erro ?? "Erro ao redefinir senha"
+        );
+    }
+
+    return data;
 }

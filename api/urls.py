@@ -16,13 +16,17 @@ urlpatterns = [
 
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
-
+    path("edicoes/<int:pk>/", EdicaoDetailView.as_view(), name="edicoes-detail"),
     # Exemplares
     path(
         "edicoes/<int:edicao_id>/exemplares/",
         ExemplarLoteCreateView.as_view(),
         name="cadastrar_exemplares",
     ),
+    path('exemplares/<int:pk>/', ExemplarDetailView.as_view(), name="detalhar_exemplar"),
+
+    path('exemplares/', ExemplarListView.as_view(), name="listar-exemplares"),
+    
 
     # Autenticação
     path("login/", LoginView.as_view(), name="login"),
