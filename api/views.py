@@ -63,8 +63,9 @@ class LivroListView(generics.ListAPIView):
 
         if busca:
             livros = livros.filter(
-                titulo__icontains=busca.strip()
+                Q(titulo__icontains=busca) | Q(autor__icontains=busca)
             )
+        
 
         if ordenar == "melhor_nota":
             return livros.order_by(
