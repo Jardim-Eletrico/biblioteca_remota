@@ -24,6 +24,9 @@ urlpatterns = [
         name="cadastrar_exemplares",
     ),
 
+    path('exemplares/', ExemplarListView.as_view(), name="listar-exemplares"),
+    
+
     # Autenticação
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
