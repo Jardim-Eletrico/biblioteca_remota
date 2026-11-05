@@ -1,9 +1,7 @@
 import type {
     LivroResponse, LivroPayload
 } from '@/src/types/livro'
-import { json } from 'node:stream/consumers';
-import { threadId } from 'node:worker_threads';
-import { data } from 'react-router-dom';
+
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
 

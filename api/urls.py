@@ -16,7 +16,7 @@ urlpatterns = [
 
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
-
+    path("edicoes/<int:pk>/", EdicaoDetailView.as_view(), name="edicoes-detail"),
     # Exemplares
     path(
         "edicoes/<int:edicao_id>/exemplares/",

@@ -10,7 +10,7 @@ from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.filters import SearchFilter
 
 # Simple JWT
@@ -154,6 +154,11 @@ class EdicaoListCreateView(generics.ListCreateAPIView):
             return [IsAuthenticated(), IsBibliotecario()]
 
         return [IsAuthenticated()]
+
+class EdicaoDetailView(RetrieveUpdateDestroyAPIView):
+    queryset = Edicao.objects.all()
+    serializer_class = EdicaoSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
 
 class AvaliarLivro(APIView):
     permission_classes = [IsAuthenticated]
