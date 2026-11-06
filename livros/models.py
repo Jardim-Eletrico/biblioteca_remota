@@ -72,6 +72,7 @@ class Exemplar(models.Model):
         ("reservado", "Reservado"),
         ("emprestado", "Emprestado"),
         ("indisponivel", "Indisponível"),
+        ("baixado", "Baixado"),
     ]
 
     tombo = models.CharField(
@@ -88,6 +89,16 @@ class Exemplar(models.Model):
         max_length=20,
         choices=STATUS_CHOICES,
         default="disponivel"
+    )
+
+    data_baixa = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    motivo_baixa = models.TextField(
+        null=True,
+        blank=True
     )
 
     def __str__(self):

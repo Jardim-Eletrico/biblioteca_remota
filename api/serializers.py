@@ -8,7 +8,7 @@ from pedidos.models import Pedido
 
 import random
 import string
-
+from datetime import datetime
 
 class LoginSerializer(TokenObtainPairSerializer):
     username_field = 'email'
@@ -116,6 +116,40 @@ class ExemplarListSerializer(serializers.ModelSerializer):
 
         return None
 
+class ExemplarPublicoSerializer(serializers.ModelSerializer):
+    titulo = serializers.CharField(
+        source="edicao.livro.titulo",
+        read_only=True
+    )
+
+    autor = serializers.CharField(
+        source="edicao.livro.autor",
+        read_only=True
+    )
+
+    ano_publicacao = serializers.IntegerField(
+        source="edicao.ano_publicacao",
+        read_only=True
+    )
+
+    editora = serializers.CharField(
+        source="edicao.editora",
+        read_only=True
+    )
+
+    class Meta:
+        model = Exemplar
+        fields = [
+            "id",
+            "tombo",
+            "status",
+            "titulo",
+            "autor",
+            "ano_publicacao",
+            "editora",
+        ]
+
+
 class ExemplarLoteSerializer(serializers.Serializer):
     quantidade = serializers.IntegerField(
         min_value=1,
@@ -133,6 +167,12 @@ class ExemplarLoteSerializer(serializers.Serializer):
         ]
 
         return Exemplar.objects.bulk_create(exemplares)
+
+class ExemplarBaixaSerializer(serializers.Serializer):
+    motivo_baixa = serializers.CharField(
+        required = True,
+        allow_blank = False
+    )
 
 class AvalicaoSerializer(serializers.Serializer):
     nota = serializers.IntegerField(
@@ -174,6 +214,45 @@ class EfetivarEmprestimoSerializer(serializers.Serializer):
         required=False,
     )
 
+class EmprestimoSerializer(serializers.ModelSerializer):
+    leitor = serializers.CharField(
+        source = 'pedido.leitor.usuario.nome',
+        read_only = True
+    )
+
+    livro = serializers.CharField(
+        source = "pedido.edicao.livro.titulo",
+        read_only = True
+    )
+
+    tombo = serializers.CharField(
+        source = "exemplar.tombo",
+        read_only = True
+    )
+
+    situacao = serializers.SerializerMethodField()
+
+    def get_situacao(self, obj):
+        if obj.data_devolucao is not None:
+            return "Devolvido"
+
+        if obj.data_prevista_devolucao < timezone.localdate():
+            return "Atrasado"
+
+        return "Em andamento"
+
+    class Meta:
+        model = Emprestimo
+        fields = [
+            "id",
+            "leitor",
+            "livro",
+            "tombo",
+            "data_retirada",
+            "data_prevista_devolucao",
+            "data_devolucao",
+            "situacao",
+            ]
 #---------------------------------------------------------
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:

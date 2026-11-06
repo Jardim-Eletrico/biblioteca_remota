@@ -10,7 +10,7 @@ from rest_framework.exceptions import PermissionDenied, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView, RetrieveDestroyAPIView, RetrieveAPIView
 from rest_framework.filters import SearchFilter
 
 # Simple JWT
@@ -45,6 +45,40 @@ class LoginView(TokenObtainPairView):
     serializer_class = LoginSerializer
 
 # -------------------------------------------
+class ExemplarBaixaView(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    @extend_schema(
+            request=ExemplarBaixaSerializer,
+            responses={200, None}
+    )
+    def post(self, request, pk):
+        exemplar = get_object_or_404(Exemplar, pk=pk)
+
+        serializer = ExemplarBaixaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        if exemplar.status in ["emprestado", "reservado"]:
+            raise ValidationError(
+                "Não é possível fazer a baixa patrimonial de um exemplar emprestado, ou reservado."
+            )
+
+        if exemplar.status == "baixado":
+            raise ValidationError(
+                "Este exemplar já foi baixado"
+            )
+
+        exemplar.status = "baixado"
+        exemplar.data_baixa = timezone.now()
+        exemplar.motivo_baixa = serializer.validated_data["motivo_baixa"]
+
+        exemplar.save()
+
+        return Response(
+            {"mensagem": "Exemplar baixado com sucesso"},
+            status=status.HTTP_200_OK
+        )
+
 class ExemplarDetailView(RetrieveDestroyAPIView):
     queryset = Exemplar.objects.select_related(
         "edicao",
@@ -53,7 +87,55 @@ class ExemplarDetailView(RetrieveDestroyAPIView):
 
     serializer_class = ExemplarListSerializer
     permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def perform_destroy(self, instance):
+        if instance.emprestimos.exists():
+            raise ValidationError(
+                "Não é possível excluir um exemplar que possui histórico de empréstimos. Utilize a baixa patrimonial."
+            )
+
+        instance.delete()
+
+class ExemplarPublicoListView(ListAPIView):
+    serializer_class = ExemplarPublicoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Exemplar.objects.filter(edicao_id = self.kwargs["edicao_id"]).exclude(status="baixado").select_related("edicao", "edicao__livro")
+
+class ExemplarPublicoDetailView(RetrieveAPIView):
+    serializer_class = ExemplarPublicoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Exemplar.objects.exclude(
+            status="baixado"
+        ).select_related(
+            "edicao",
+            "edicao__livro"
+        )
+
+    def retrieve(self, request, *args, **kwargs):
+        exemplar = get_object_or_404(
+            Exemplar,
+            pk=kwargs["pk"]
+        )
+
+        if exemplar.status == "baixado":
+            return Response(
+                {
+                    "mensagem": (
+                        "Este exemplar não está mais disponível no acervo, "
+                        "pois foi baixado do patrimônio."
+                    )
+                },
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        serializer = self.get_serializer(exemplar)
+        return Response(serializer.data)
     
+
 class ExemplarListView(ListAPIView):
     queryset = Exemplar.objects.select_related(
         "edicao",
@@ -78,25 +160,23 @@ class ExemplarListView(ListAPIView):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        exemplar_id = self.request.query_params.get('id')
+        situacao = self.request.query_params.get(
+            "situacao",
+            "nao_baixados"
+        )
 
-        if exemplar_id:
-            queryset = queryset.filter(id=exemplar_id)
+        if situacao == "baixado":
+            return queryset.filter(status="baixado")
 
-            if not queryset.exists():
-                raise NotFound("Exemplar não encontrado.")
-            
-        return queryset
+        elif situacao == "nao_baixados":
+            return queryset.exclude(status="baixado")
 
-    def filter_queryset(self, queryset):
-        queryset = super().filter_queryset(queryset)
+        elif situacao == "todos":
+            return queryset
 
-        if not queryset.exists():
-            raise NotFound(
-                "Nenhum exemplar encontrado com os dados informados"
-            )
-
-        return queryset
+        raise ValidationError({
+            "situacao": "Filtro inválido."
+        })
     
 class LivroListView(generics.ListAPIView):
     queryset = Livro.objects.all().order_by("titulo")
@@ -408,6 +488,16 @@ class PedidoResponderView(APIView):
             status=status.HTTP_200_OK,
         )
 
+
+class EmprestimoListView(ListAPIView):
+    queryset = Emprestimo.objects.select_related(
+        "pedido__leitor__usuario",
+        "pedido__edicao__livro",
+        "exemplar",
+    ).all().order_by("-data_retirada")
+
+    serializer_class = EmprestimoSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
 
 class EfetivarEmprestimo(APIView):
     serializer_class = EfetivarEmprestimoSerializer

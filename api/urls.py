@@ -23,9 +23,11 @@ urlpatterns = [
         ExemplarLoteCreateView.as_view(),
         name="cadastrar_exemplares",
     ),
+    path('edicoes/public/<int:edicao_id>/exemplares/', ExemplarPublicoListView.as_view(), name='exemplares-da-edicao'),
     path('exemplares/<int:pk>/', ExemplarDetailView.as_view(), name="detalhar_exemplar"),
-
     path('exemplares/', ExemplarListView.as_view(), name="listar-exemplares"),
+    path('exemplares/<int:pk>/baixa/', ExemplarBaixaView.as_view(), name="baixar-exemplar"),
+    path('exemplares/public/<int:pk>/', ExemplarPublicoDetailView.as_view(), name='exemplar-publico-detail'),
     
 
     # Autenticação
@@ -65,6 +67,7 @@ urlpatterns = [
     path('pedidos/', PedidoCreateView.as_view(), name='pedido-create'),
     path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
+    path('emprestimos/', EmprestimoListView.as_view(), name="listar-emprestimos"),
 
     # Acessos Bibliotecario:
     path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),
