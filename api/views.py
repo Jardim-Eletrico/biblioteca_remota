@@ -101,7 +101,30 @@ class ExemplarPublicoListView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Exemplar.objects.filter(edicao_id = self.kwargs["edicao_id"]).exclude(status="baixado").select_related("edicao", "edicao__livro")
+        queryset = Exemplar.objects.filter(
+            edicao_id=self.kwargs["edicao_id"]
+        ).exclude(status='baixado').select_related(
+            'edicao',
+            'edicao__livro'
+        )
+
+        status_filtro = self.request.query_params.get(
+            'status',
+            'todos'
+        )
+
+        if status_filtro == 'disponivel':
+            queryset = queryset.filter(status='disponivel')
+
+        elif status_filtro == 'emprestado':
+            queryset = queryset.filter(status='emprestado')
+
+        elif status_filtro != 'todos':
+            raise ValidationError({
+                "status": "Filtro inválido"
+            })
+
+        return queryset
 
 class ExemplarPublicoDetailView(RetrieveAPIView):
     serializer_class = ExemplarPublicoSerializer

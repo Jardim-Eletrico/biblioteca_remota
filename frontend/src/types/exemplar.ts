@@ -2,7 +2,13 @@ export type ExemplarStatus =
     | "disponivel"
     | "reservado"
     | "emprestado"
-    | "indisponivel";
+    | "indisponivel"
+    | "baixado";
+
+export type ExemplarFiltroPublico =
+    | "disponivel"
+    | "emprestado"
+    | "todos";
 
 export interface ExemplarResponse {
     id: number;
@@ -20,8 +26,15 @@ export interface ExemplarResponse {
 
     emprestado: boolean;
     leitor: string | null;
+
+    data_baixa: string | null;
+    motivo_baixa: string | null;
 }
 
 export interface ExemplarLotePayload {
     quantidade: number;
+}
+
+export interface ExemplarBaixaPayload {
+    motivo_baixa: string;
 }
