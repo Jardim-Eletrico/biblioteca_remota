@@ -111,6 +111,8 @@ urlpatterns = [
     path('emprestimos/', EmprestimoListView.as_view(), name="listar-emprestimos"),
     path("pedidos/<int:pedido_id>/cancelar/", PedidoCancelarView.as_view(), name="pedido-cancelar"),
     path("pedidos/meus/ativos/",MeusPedidosAtivosView.as_view(),name="meus-pedidos-ativos"),
+    path("pedidos/<int:pedido_id>/cancelar/",PedidoCancelarView.as_view(),name="pedido-cancelar",),
+    
     # Acessos Bibliotecario:
     path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),
     path('leitores/buscar/', BuscarLeitor.as_view(), name='buscar-leitor'),
