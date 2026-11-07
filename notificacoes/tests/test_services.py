@@ -2,6 +2,10 @@ from datetime import date
 
 from django.test import TestCase
 
+from datetime import date, timedelta
+
+from django.utils import timezone
+
 from usuarios.models import Usuario, Leitor
 from livros.models import Livro, Edicao, Exemplar
 from pedidos.models import Pedido
@@ -14,6 +18,8 @@ from notificacoes.services import (
     notificar_aprovacao_pedido,
     notificar_usuarios_lista_desejos,
     notificar_cancelamento_pedido,
+    notificar_devolucoes_proximas,
+    notificar_emprestimos_atrasados,
     )
 
 
@@ -179,3 +185,124 @@ class NotificarEmprestimoEfetivadoTest(TestCase):
         )
 
         self.assertFalse(notificacao.lida)
+
+    def test_notificar_devolucao_proxima(self):
+        hoje = timezone.localdate()
+
+        self.emprestimo.data_prevista_devolucao = (
+            hoje + timedelta(days=2)
+        )
+        self.emprestimo.save(
+            update_fields=["data_prevista_devolucao"]
+        )
+
+        total = notificar_devolucoes_proximas()
+
+        self.assertEqual(total, 1)
+
+        notificacao = Notificacao.objects.get(
+            usuario=self.usuario,
+            emprestimo=self.emprestimo
+        )
+
+        self.assertEqual(
+            notificacao.titulo,
+            "AVISO DE PRAZO DE DEVOLUÇÃO"
+        )
+
+        self.assertIn(
+            "Livro de Teste",
+            notificacao.mensagem
+        )
+
+    def test_nao_duplicar_aviso_de_devolucao_proxima(self):
+        hoje = timezone.localdate()
+
+        self.emprestimo.data_prevista_devolucao = (
+            hoje + timedelta(days=2)
+        )
+        self.emprestimo.save(
+            update_fields=["data_prevista_devolucao"]
+        )
+
+        primeira_execucao = notificar_devolucoes_proximas()
+        segunda_execucao = notificar_devolucoes_proximas()
+
+        self.assertEqual(primeira_execucao, 1)
+        self.assertEqual(segunda_execucao, 0)
+
+        self.assertEqual(
+            Notificacao.objects.filter(
+                emprestimo=self.emprestimo,
+                titulo="AVISO DE PRAZO DE DEVOLUÇÃO"
+            ).count(),
+            1
+        )
+
+    def test_notificar_emprestimo_atrasado(self):
+        hoje = timezone.localdate()
+
+        self.emprestimo.data_prevista_devolucao = (
+            hoje - timedelta(days=1)
+        )
+        self.emprestimo.save(
+            update_fields=["data_prevista_devolucao"]
+        )
+
+        total = notificar_emprestimos_atrasados()
+
+        self.assertEqual(total, 1)
+
+        notificacao = Notificacao.objects.get(
+            usuario=self.usuario,
+            emprestimo=self.emprestimo
+        )
+
+        self.assertEqual(
+            notificacao.titulo,
+            "Empréstimo em atraso!"
+        )
+
+        self.assertIn(
+            "Livro de Teste",
+            notificacao.mensagem
+        )
+
+        # Executa novamente para verificar duplicidade.
+        segunda_execucao = notificar_emprestimos_atrasados()
+
+        self.assertEqual(segunda_execucao, 0)
+
+        self.assertEqual(
+            Notificacao.objects.filter(
+                emprestimo=self.emprestimo,
+                titulo="Empréstimo em atraso!"
+            ).count(),
+            1
+        )
+
+    def test_nao_notificar_emprestimo_devolvido(self):
+        hoje = timezone.localdate()
+
+        self.emprestimo.data_prevista_devolucao = (
+            hoje - timedelta(days=1)
+        )
+        self.emprestimo.data_devolucao = timezone.now()
+
+        self.emprestimo.save(
+            update_fields=[
+                "data_prevista_devolucao",
+                "data_devolucao"
+            ]
+        )
+
+        total = notificar_emprestimos_atrasados()
+
+        self.assertEqual(total, 0)
+
+        self.assertFalse(
+            Notificacao.objects.filter(
+                emprestimo=self.emprestimo,
+                titulo="Empréstimo em atraso!"
+            ).exists()
+        )

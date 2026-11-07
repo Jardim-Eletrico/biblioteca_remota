@@ -9,8 +9,18 @@ class Notificacao(models.Model):
         related_name="notificacoes"
     )
 
+    emprestimo = models.ForeignKey(
+            'emprestimos.Emprestimo',
+            on_delete=models.SET_NULL,
+            null=True,
+            blank=True,
+            related_name='notificacoes'
+        )
+    
     titulo = models.CharField(max_length=150)
     mensagem = models.TextField()
+
+    
 
     lida = models.BooleanField(default=False)
     data_criacao = models.DateTimeField(auto_now_add=True)
