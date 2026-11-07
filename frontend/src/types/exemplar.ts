@@ -10,6 +10,11 @@ export type ExemplarFiltroPublico =
     | "emprestado"
     | "todos";
 
+export type ExemplarFiltroAdmin =
+    | "baixado"
+    | "nao_baixados"
+    | "todos";
+
 export interface ExemplarResponse {
     id: number;
     tombo: string;

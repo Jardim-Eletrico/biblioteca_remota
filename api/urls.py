@@ -5,7 +5,43 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import *
+from django.urls import path
+from rest_framework_simplejwt.views import TokenRefreshView
+
+# Views de livros
+from livros.views import (
+    LivroListView,
+    LivroDetailView,
+    LivroListCreateView,
+    LivroCreateView,
+    EdicaoListCreateView,
+    EdicaoDetailView,
+    ExemplarBaixaView,
+    ExemplarDetailView,
+    ExemplarPublicoListView,
+    ExemplarPublicoDetailView,
+    ExemplarListView,
+    ExemplarLoteCreateView,
+    AvaliarLivro,
+)
+
+# Views de usuários
+from usuarios.views import (
+    LoginView,
+    LogoutView,
+    MeuPerfilView,
+    UsuarioCreateView,
+    BibliotecarioCreateView,
+    ListarLeitores,
+    BuscarLeitor,
+    SolicitarRecuperacaoView,
+    ValidarCodigoRecuperacaoView,
+    RedefinirSenhaView,
+)
+
+# Views de empréstimos e pedidos
+from pedidos.views import *
+from emprestimos.views import *
 
 urlpatterns = [
     # Livros

@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     'api.apps.ApiConfig',
     'emprestimos',
     'pedidos',
+    'desejos',
+    'notificacoes',
 
 ]
 
