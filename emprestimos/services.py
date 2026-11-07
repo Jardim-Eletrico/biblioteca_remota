@@ -8,22 +8,22 @@ from pedidos.models import Pedido
 from livros.models import Exemplar, Edicao
 from .models import Emprestimo
 
-from notificacoes.services import notificar_usuarios_lista_desejos
+from notificacoes.services import (notificar_usuarios_lista_desejos, notificar_aprovacao_pedido)
 
 @transaction.atomic
 def efetivar_emprestimo(
     pedido_id,
     exemplar_id,
     data_prevista_devolucao=None,
-    ):
+):
     pedido = Pedido.objects.select_for_update().get(
-        pk = pedido_id
+        pk=pedido_id
     )
 
     exemplar = Exemplar.objects.select_for_update().get(
-        pk = exemplar_id
+        pk=exemplar_id
     )
-    
+
     if pedido.status != 'aprovado':
         raise ValidationError(
             'O pedido deve estar aprovado'
@@ -34,9 +34,19 @@ def efetivar_emprestimo(
             'Este pedido já tem um empréstimo'
         )
 
-    if exemplar.status != 'disponivel':
+    if pedido.exemplar_id is None:
         raise ValidationError(
-            'Este exemplar não está disponível'
+            'Este pedido não possui exemplar reservado'
+        )
+
+    if pedido.exemplar_id != exemplar.pk:
+        raise ValidationError(
+            'Este não é o exemplar reservado para este pedido'
+        )
+
+    if exemplar.status != 'reservado':
+        raise ValidationError(
+            'O exemplar não está reservado'
         )
 
     if exemplar.edicao_id != pedido.edicao_id:
@@ -55,16 +65,16 @@ def efetivar_emprestimo(
         )
 
     emprestimo = Emprestimo.objects.create(
-        pedido = pedido,
-        exemplar = exemplar,
-        data_retirada = data_retirada,
-        data_prevista_devolucao = data_prevista_devolucao,
+        pedido=pedido,
+        exemplar=exemplar,
+        data_retirada=data_retirada,
+        data_prevista_devolucao=data_prevista_devolucao,
     )
 
     exemplar.status = "emprestado"
     exemplar.save(update_fields=["status"])
 
-    return emprestimo   
+    return emprestimo
 
 @transaction.atomic
 def devolver_emprestimo(emprestimo_id):
@@ -77,28 +87,51 @@ def devolver_emprestimo(emprestimo_id):
             "Este livro já foi devolvido"
         )
 
+    edicao_id = Exemplar.objects.values_list(
+        "edicao_id",
+        flat=True
+    ).get(pk=emprestimo.exemplar_id)
+
+    edicao = Edicao.objects.select_for_update().get(
+        pk=edicao_id
+    )
+
     exemplar = Exemplar.objects.select_for_update().get(
         pk=emprestimo.exemplar_id
     )
 
-    edicao = Edicao.objects.select_for_update().select_related(
-        "livro"
-    ).get(pk=exemplar.edicao_id)
-
-    ja_existe_disponivel = Exemplar.objects.filter(
-        edicao=edicao,
-        status="disponivel"
-    ).exclude(
-        pk=exemplar.pk
-    ).exists()
-
     emprestimo.data_devolucao = timezone.now()
     emprestimo.save(update_fields=["data_devolucao"])
+
+    pedido = Pedido.objects.select_for_update().filter(
+        edicao=edicao,
+        status="pendente"
+    ).order_by(
+        "data_pedido",
+        "id"
+    ).first()
+
+    if pedido:
+        pedido.exemplar = exemplar
+        pedido.status = "aprovado"
+        pedido.data_resposta = timezone.now()
+
+        pedido.save(update_fields=[
+            "exemplar",
+            "status",
+            "data_resposta"
+        ])
+
+        exemplar.status = "reservado"
+        exemplar.save(update_fields=["status"])
+
+        notificar_aprovacao_pedido(pedido)
+
+        return emprestimo
 
     exemplar.status = "disponivel"
     exemplar.save(update_fields=["status"])
 
-    if not ja_existe_disponivel:
-        notificar_usuarios_lista_desejos(edicao)
+    notificar_usuarios_lista_desejos(edicao)
 
     return emprestimo

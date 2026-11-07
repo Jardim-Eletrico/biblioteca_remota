@@ -18,11 +18,12 @@ class ListaDesejoSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
-    cdd = serializers.CharField(
-        source="edicao.livro.cdd.codigo",
-        read_only=True,
-        allow_null=True
-    )
+    cdd = serializers.SerializerMethodField()
+
+    def get_cdd(self, obj):
+        if obj.edicao.livro.cdd:
+            return obj.edicao.livro.cdd.descricao
+        return None
 
     tem_exemplares_disponiveis = serializers.SerializerMethodField()
 

@@ -19,3 +19,15 @@ def notificar_usuarios_lista_desejos(edicao):
     ]
 
     Notificacao.objects.bulk_create(notificacoes)
+
+
+def notificar_aprovacao_pedido(pedido):
+    Notificacao.objects.create(
+        usuario=pedido.leitor.usuario,
+        titulo="Reserva Aprovada",
+        mensagem = (
+            f'Sua reserva do livro'
+            f'"{pedido.edicao.livro.titulo}" foi aprovada'
+            f"Compareça à biblioteca para retirar o exemplar"
+        )
+    )
