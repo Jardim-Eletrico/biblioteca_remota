@@ -9,7 +9,12 @@ from emprestimos.models import Emprestimo
 from notificacoes.models import Notificacao
 from desejos.models import ListaDesejo
 
-from notificacoes.services import (notificar_emprestimo_efetivado, notificar_aprovacao_pedido, notificar_usuarios_lista_desejos)
+from notificacoes.services import (
+    notificar_emprestimo_efetivado,
+    notificar_aprovacao_pedido,
+    notificar_usuarios_lista_desejos,
+    notificar_cancelamento_pedido,
+    )
 
 
 class NotificarEmprestimoEfetivadoTest(TestCase):
@@ -96,7 +101,7 @@ class NotificarEmprestimoEfetivadoTest(TestCase):
 
         self.assertEqual(
             notificacao.titulo,
-            "Reserva Aprovada",
+            "Reserva aprovada!",
         )
 
         self.assertEqual(
@@ -106,7 +111,7 @@ class NotificarEmprestimoEfetivadoTest(TestCase):
         )
 
         self.assertFalse(notificacao.lida)
-    
+
     def test_notificar_usuarios_lista_desejos(self):
 
         # Cria um segundo usuário.
@@ -116,31 +121,61 @@ class NotificarEmprestimoEfetivadoTest(TestCase):
             nome="Outro Leitor",
         )
 
-        # Adiciona os dois usuários à lista de desejos.
-        ListaDesejo.objects.create(
+        # Primeiro usuário estava aguardando disponibilidade.
+        desejo1 = ListaDesejo.objects.create(
             usuario=self.usuario,
             edicao=self.edicao,
+            aguardando_disponibilidade=True,
         )
 
-        ListaDesejo.objects.create(
+        # Segundo usuário não estava aguardando.
+        desejo2 = ListaDesejo.objects.create(
             usuario=outro_usuario,
             edicao=self.edicao,
+            aguardando_disponibilidade=False,
         )
 
         # Executa a notificação.
         notificar_usuarios_lista_desejos(self.edicao)
 
-        # Verifica se os dois receberam a notificação.
+        # Verifica que somente o primeiro usuário recebeu.
         notificacoes = Notificacao.objects.filter(
             titulo="Livro disponível!"
         )
 
-        self.assertEqual(notificacoes.count(), 2)
+        self.assertEqual(notificacoes.count(), 1)
 
         self.assertTrue(
             notificacoes.filter(usuario=self.usuario).exists()
         )
 
-        self.assertTrue(
+        self.assertFalse(
             notificacoes.filter(usuario=outro_usuario).exists()
         )
+
+        # Verifica que os dois registros não estão mais aguardando.
+        desejo1.refresh_from_db()
+        desejo2.refresh_from_db()
+
+        self.assertFalse(desejo1.aguardando_disponibilidade)
+        self.assertFalse(desejo2.aguardando_disponibilidade)
+        
+    def test_criar_notificacao_de_cancelamento(self):
+
+        notificar_cancelamento_pedido(self.pedido)
+
+        notificacao = Notificacao.objects.get(
+            usuario=self.usuario
+        )
+
+        self.assertEqual(
+            notificacao.titulo,
+            "Pedido cancelado!",
+        )
+
+        self.assertEqual(
+            notificacao.mensagem,
+            'Seu pedido do livro "Livro de Teste" foi cancelado.'
+        )
+
+        self.assertFalse(notificacao.lida)

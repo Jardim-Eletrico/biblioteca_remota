@@ -19,6 +19,10 @@ class ListaDesejo(models.Model):
 
     data_adicao = models.DateTimeField(auto_now_add=True)
 
+    aguardando_disponibilidade = models.BooleanField(
+    default=False
+)
+
     class Meta:
         constraints = [
             models.UniqueConstraint(

@@ -7,7 +7,7 @@ from rest_framework.exceptions import ValidationError
 from pedidos.models import Pedido
 from livros.models import Exemplar, Edicao
 
-from notificacoes.services import notificar_aprovacao_pedido
+from notificacoes.services import notificar_aprovacao_pedido, notificar_cancelamento_pedido
 
 
 @transaction.atomic
@@ -133,6 +133,8 @@ def cancelar_pedido(pedido_id):
         pedido.status = "cancelado"
         pedido.save(update_fields=["status"])
 
+        notificar_cancelamento_pedido(pedido)
+
         proximo_pedido = Pedido.objects.select_for_update().filter(
             edicao=edicao,
             status="pendente"
@@ -157,7 +159,7 @@ def cancelar_pedido(pedido_id):
 
         else:
             exemplar.status = "disponivel"
-
+        
         exemplar.save(update_fields=["status"])
 
         return pedido
@@ -165,5 +167,7 @@ def cancelar_pedido(pedido_id):
     # Pedido pendente: basta cancelar.
     pedido.status = "cancelado"
     pedido.save(update_fields=["status"])
+
+    notificar_cancelamento_pedido(pedido)
 
     return pedido

@@ -3,7 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import ListaDesejo
 from .desejos_serializer import ListaDesejoSerializer
-
+from livros.models import Exemplar
 
 class ListaDesejoListCreateView(ListCreateAPIView):
     serializer_class = ListaDesejoSerializer
@@ -18,7 +18,17 @@ class ListaDesejoListCreateView(ListCreateAPIView):
         ).order_by("-data_adicao")
 
     def perform_create(self, serializer):
-        serializer.save(usuario=self.request.user)
+        edicao = serializer.validated_data['edicao']
+
+        existe_disponivel = Exemplar.objects.filter(
+            edicao = edicao,
+            status = 'disponivel'
+        ).exists()
+
+        serializer.save(
+            usuario = self.request.user,
+            aguardando_disponibilidade = not existe_disponivel
+        )
 
 
 class ListaDesejoDeleteView(DestroyAPIView):

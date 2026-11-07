@@ -7,6 +7,7 @@ from .models import (
     Edicao,
     Exemplar,
 )
+from emprestimos.models import Emprestimo
 
 class LivroSerializer(serializers.ModelSerializer):
     class Meta:

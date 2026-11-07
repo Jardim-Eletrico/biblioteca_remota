@@ -42,5 +42,10 @@ class ListaDesejoSerializer(serializers.ModelSerializer):
             "capa",
             "cdd",
             "tem_exemplares_disponiveis",
+            "aguardando_disponibilidade",
             "data_adicao",
         ]
+
+        read_only_fields = [
+        "aguardando_disponibilidade",
+    ]

@@ -2,34 +2,28 @@ from .models import Notificacao
 from desejos.models import ListaDesejo
 
 def notificar_usuarios_lista_desejos(edicao):
-    usuarios_ids = ListaDesejo.objects.filter(
-        edicao=edicao
-    ).values_list("usuario_id", flat=True)
+
+    desejos = ListaDesejo.objects.filter(
+        edicao=edicao,
+        aguardando_disponibilidade=True
+    )
 
     notificacoes = [
         Notificacao(
-            usuario_id=usuario_id,
+            usuario=desejo.usuario,
             titulo="Livro disponível!",
             mensagem=(
                 f'O livro "{edicao.livro.titulo}" '
                 "voltou a ter exemplares disponíveis."
             )
         )
-        for usuario_id in usuarios_ids
+        for desejo in desejos
     ]
 
     Notificacao.objects.bulk_create(notificacoes)
 
-
-def notificar_aprovacao_pedido(pedido):
-    Notificacao.objects.create(
-        usuario=pedido.leitor.usuario,
-        titulo="Reserva Aprovada",
-        mensagem=(
-            f'Sua reserva do livro "{pedido.edicao.livro.titulo}" '
-            "foi aprovada. "
-            "Compareça à biblioteca para retirar o exemplar."
-        )
+    desejos.update(
+        aguardando_disponibilidade=False
     )
 
 def notificar_emprestimo_efetivado(emprestimo):
@@ -44,4 +38,26 @@ def notificar_emprestimo_efetivado(emprestimo):
             f"{emprestimo.data_prevista_devolucao:%d/%m/%Y}."
         )
     )
+    
+def notificar_aprovacao_pedido(pedido):
+    Notificacao.objects.create(
+        usuario=pedido.leitor.usuario,
+        titulo="Reserva aprovada!",
+        mensagem=(
+            f'Sua reserva do livro "{pedido.edicao.livro.titulo}" '
+            "foi aprovada. "
+            "Compareça à biblioteca para retirar o exemplar."
+        )
+    )
+
+def notificar_cancelamento_pedido(pedido):
+    Notificacao.objects.create(
+        usuario=pedido.leitor.usuario,
+        titulo="Pedido cancelado!",
+        mensagem=(
+            f'Seu pedido do livro "{pedido.edicao.livro.titulo}" '
+            "foi cancelado."
+        )
+    )
+
 
