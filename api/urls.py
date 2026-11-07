@@ -39,6 +39,8 @@ from usuarios.views import (
     RedefinirSenhaView,
 )
 
+from desejos.views import *
+
 # Views de empréstimos e pedidos
 from pedidos.views import *
 from emprestimos.views import *
@@ -109,4 +111,8 @@ urlpatterns = [
     path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),
     path('leitores/buscar/', BuscarLeitor.as_view(), name='buscar-leitor'),
     path('emprestimos/<int:emprestimo_id>/devolver', DevolverEmprestimo.as_view(), name='devolver-emprestimo'),
+
+    # Desejos
+    path("desejos/", ListaDesejoListCreateView.as_view(), name="lista-desejos"),
+    path("desejos/<int:pk>/", ListaDesejoDeleteView.as_view(), name="remover-desejo"),
 ]
