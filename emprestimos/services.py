@@ -5,8 +5,10 @@ from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from pedidos.models import Pedido
-from livros.models import Exemplar
+from livros.models import Exemplar, Edicao
 from .models import Emprestimo
+
+from notificacoes.services import notificar_usuarios_lista_desejos
 
 @transaction.atomic
 def efetivar_emprestimo(
@@ -79,10 +81,24 @@ def devolver_emprestimo(emprestimo_id):
         pk=emprestimo.exemplar_id
     )
 
+    edicao = Edicao.objects.select_for_update().select_related(
+        "livro"
+    ).get(pk=exemplar.edicao_id)
+
+    ja_existe_disponivel = Exemplar.objects.filter(
+        edicao=edicao,
+        status="disponivel"
+    ).exclude(
+        pk=exemplar.pk
+    ).exists()
+
     emprestimo.data_devolucao = timezone.now()
     emprestimo.save(update_fields=["data_devolucao"])
 
     exemplar.status = "disponivel"
     exemplar.save(update_fields=["status"])
+
+    if not ja_existe_disponivel:
+        notificar_usuarios_lista_desejos(edicao)
 
     return emprestimo

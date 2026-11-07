@@ -45,6 +45,9 @@ from desejos.views import *
 from pedidos.views import *
 from emprestimos.views import *
 
+# Views de notificacoes
+from notificacoes.views import *
+
 urlpatterns = [
     # Livros
     path("livros/", LivroListView.as_view(), name="livros"),
@@ -115,4 +118,9 @@ urlpatterns = [
     # Desejos
     path("desejos/", ListaDesejoListCreateView.as_view(), name="lista-desejos"),
     path("desejos/<int:pk>/", ListaDesejoDeleteView.as_view(), name="remover-desejo"),
+
+    # Notificacoes
+    path("notificacoes/", NotificacaoListView.as_view(), name="listar-notificacoes"),
+    path("notificacoes/<int:pk>/", NotificacaoLidaView.as_view(), name="marcar-notificacao-lida"),
+    path("notificacoes/<int:pk>/excluir/",NotificacaoDeleteView.as_view(),name="excluir-notificacao"),
 ]
