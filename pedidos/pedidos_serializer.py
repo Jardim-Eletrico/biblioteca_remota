@@ -15,11 +15,17 @@ class PedidoSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    nome_leitor = serializers.CharField(
+    source="leitor.usuario.nome",
+    read_only=True
+)
+
     class Meta:
         model = Pedido
         fields = (
             "id",
             "leitor",
+            "nome_leitor",
             "edicao",
             "titulo",
             "autor",

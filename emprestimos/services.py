@@ -8,7 +8,7 @@ from pedidos.models import Pedido
 from livros.models import Exemplar, Edicao
 from .models import Emprestimo
 
-from notificacoes.services import (notificar_usuarios_lista_desejos, notificar_aprovacao_pedido)
+from notificacoes.services import (notificar_usuarios_lista_desejos, notificar_aprovacao_pedido, notificar_emprestimo_efetivado)
 
 @transaction.atomic
 def efetivar_emprestimo(
@@ -73,6 +73,8 @@ def efetivar_emprestimo(
 
     exemplar.status = "emprestado"
     exemplar.save(update_fields=["status"])
+
+    notificar_emprestimo_efetivado(emprestimo)
 
     return emprestimo
 

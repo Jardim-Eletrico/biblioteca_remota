@@ -25,9 +25,23 @@ def notificar_aprovacao_pedido(pedido):
     Notificacao.objects.create(
         usuario=pedido.leitor.usuario,
         titulo="Reserva Aprovada",
-        mensagem = (
-            f'Sua reserva do livro'
-            f'"{pedido.edicao.livro.titulo}" foi aprovada'
-            f"Compareça à biblioteca para retirar o exemplar"
+        mensagem=(
+            f'Sua reserva do livro "{pedido.edicao.livro.titulo}" '
+            "foi aprovada. "
+            "Compareça à biblioteca para retirar o exemplar."
         )
     )
+
+def notificar_emprestimo_efetivado(emprestimo):
+    Notificacao.objects.create(
+        usuario=emprestimo.pedido.leitor.usuario,
+        titulo="Empréstimo realizado!",
+        mensagem=(
+            f'O empréstimo do livro '
+            f'"{emprestimo.exemplar.edicao.livro.titulo}" '
+            "foi registrado com sucesso. "
+            f"A data prevista para devolução é "
+            f"{emprestimo.data_prevista_devolucao:%d/%m/%Y}."
+        )
+    )
+

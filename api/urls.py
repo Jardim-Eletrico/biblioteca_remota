@@ -109,10 +109,10 @@ urlpatterns = [
     path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
     path('emprestimos/', EmprestimoListView.as_view(), name="listar-emprestimos"),
-    path("pedidos/<int:pedido_id>/cancelar/", PedidoCancelarView.as_view(), name="pedido-cancelar"),
     path("pedidos/meus/ativos/",MeusPedidosAtivosView.as_view(),name="meus-pedidos-ativos"),
     path("pedidos/<int:pedido_id>/cancelar/",PedidoCancelarView.as_view(),name="pedido-cancelar",),
-    
+    path("pedidos/ativos/",TodosPedidosAtivosView.as_view(),name="todos-pedidos-ativos",),
+
     # Acessos Bibliotecario:
     path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),
     path('leitores/buscar/', BuscarLeitor.as_view(), name='buscar-leitor'),
@@ -126,4 +126,5 @@ urlpatterns = [
     path("notificacoes/", NotificacaoListView.as_view(), name="listar-notificacoes"),
     path("notificacoes/<int:pk>/", NotificacaoLidaView.as_view(), name="marcar-notificacao-lida"),
     path("notificacoes/<int:pk>/excluir/",NotificacaoDeleteView.as_view(),name="excluir-notificacao"),
+    path("notificacoes/nao-lidas/",NotificacaoNaoLidasView.as_view(),name="notificacoes-nao-lidas",),
 ]

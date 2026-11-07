@@ -175,3 +175,19 @@ class PedidoCancelarView(APIView):
             },
             status=status.HTTP_200_OK,
         )
+
+class TodosPedidosAtivosView(generics.ListAPIView):
+    serializer_class = PedidoSerializer
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def get_queryset(self):
+        return Pedido.objects.filter(
+            Q(status="pendente") |
+            Q(status="aprovado", emprestimo__isnull=True) |
+            Q(status="aprovado", emprestimo__data_devolucao__isnull=True)
+        ).select_related(
+            "leitor__usuario",
+            "edicao",
+            "edicao__livro",
+            "exemplar",
+        ).order_by("-data_pedido")

@@ -34,7 +34,18 @@ class NotificacaoLidaView(UpdateAPIView):
         return Response(
             self.get_serializer(notificacao).data
         )
-    
+
+class NotificacaoNaoLidasView(ListAPIView):
+    serializer_class = NotificacaoSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Notificacao.objects.filter(
+            usuario=self.request.user,
+            lida=False
+        ).order_by("-data_criacao")
+
+
 class NotificacaoDeleteView(DestroyAPIView):
     serializer_class = NotificacaoSerializer
     permission_classes = [IsAuthenticated]
