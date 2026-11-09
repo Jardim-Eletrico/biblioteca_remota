@@ -6,6 +6,7 @@ import Auth from "./ui/pages/auth/auth";
 import Applayout from "../layouts/applayout";
 import Home from "./ui/pages/home/home";
 import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
+import TesteNotificacaoCard from "./ui/pages/TesteNotificacaoCard";
 
 export default function App() {
     return (
@@ -20,7 +21,7 @@ export default function App() {
                     <Route element={<Applayout />}>
                         <Route path="/home" element={<Home />}></Route>
                         <Route path="/teste-desejos" element={<TesteDesejoCard />}></Route>
-                    
+                        <Route path="/teste-notificacoes" element={<TesteNotificacaoCard />}></Route>
                     </Route>
 
                 </Routes>
