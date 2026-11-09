@@ -1,9 +1,5 @@
-from django.db import models
-
-# Create your models here.
 
 from django.db import models
-from django.utils import timezone
 
 
 class Pedido(models.Model):
@@ -26,15 +22,21 @@ class Pedido(models.Model):
         related_name="pedidos",
     )
 
+    exemplar = models.ForeignKey(
+        "livros.Exemplar",
+        on_delete=models.PROTECT,
+        related_name="pedidos",
+        null=True,
+        blank=True,
+    )
+
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
         default="pendente",
     )
 
-    data_pedido = models.DateTimeField(
-        auto_now_add=True,
-    )
+    data_pedido = models.DateTimeField(auto_now_add=True)
 
     data_resposta = models.DateTimeField(
         null=True,
