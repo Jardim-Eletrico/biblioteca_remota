@@ -1,8 +1,14 @@
-import labelStyle from "@/modules/auth/label.module.css";
-import inputStyle from "@/modules/auth/input.module.css";
-import submitStyle from "@/modules/auth/buttons.module.css";
-import requirementStyle from "@/modules/auth/password_requirements.module.css";
+import labelStyle from "@/modules/public/auth/label.module.css";
+import inputStyle from "@/modules/public/auth/input.module.css";
+import submitStyle from "@/modules/public/auth/buttons.module.css";
+import requirementStyle from "@/modules/public/auth/password_requirements.module.css";
 import { useState } from "react";
+
+
+import { recuperarSenha, verificarCodigo, redefinirSenha } from '@/src/services/authService';
+
+
+
 
 // Criando tipos para pegar propriedades e definir modos
 
@@ -12,8 +18,6 @@ type RecoveryProps = {
 
     setMode: (mode: "login" | "signup" | "recovery") => void;
 }
-
-
 
 //Funções principais
 export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
@@ -34,90 +38,41 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     const hasLowercase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
 
-    async function sendCode () { //Enviar código ao e-mail
-        setStep("code");//Tira isso quando você colocar a rota pra função certa
+    async function handleSendCode () { //Enviar código ao e-mail
         try {
-            // Função para verificar se e-mail está no banco de dados
-            const emailResponse = await fetch("http://localhost:8000/auth/recovery", {//Essa é a rota da função
-                method: "POST",
-                headers: { //Os dados que vai mandar
-                    "Content-Type": "application/json" //vai mandar os dados em JSON
-                },
-                body: JSON.stringify( {email} ),
-            })
+            await recuperarSenha({email});
 
-            if (emailResponse.ok) {
-                setStep("code");
-            }
-
-            if (!emailResponse.ok) {
-                throw new Error("Falha ao solicitar o código");
-            }
-        }
-
-        catch (error) {
+            setStep("code");
+        } catch(error) {
             console.error(error);
-        }  
+        }
     }
 
-    async function confirmCode(code: string) {
-        setStep("redefinePassword");
+    async function handleConfirmCode(code: string) {
         try {
-            //Função para confirmar se o código está correto
+            await verificarCodigo({email, codigo: code});
+            setStep("redefinePassword");
+        } catch(error) {
+            console.error(error);
+        }
+    }
 
-            const codeResponse = await fetch("http://localhost:8000/auth/recovery/confirm", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email, code })
+    async function handleConfirmNewPassword() {
+    if (password === confirmPassword) {
+        try {
+            await redefinirSenha({
+                email,
+                codigo: code,
+                nova_senha: password
             });
 
-            const data = await codeResponse.json();
+            setStep("sucess");
 
-            if (codeResponse.ok && data.valid) {//O backend deve realizar a comparação dos códigos. Se forem iguais, deve retornar {"data": valid}
-                setStep("redefinePassword");
-            }
-
-            if (!codeResponse.ok) {
-                throw new Error("Falha ao confirmar o código de autenticação");
-            }
-        }
-
-        catch (error) {
+        } catch (error) {
             console.error(error);
         }
-
-
     }
-
-    async function confirmNewPassword() {
-        setStep("sucess");
-        if (password === confirmPassword) {
-            try{
-                const passwordResponse = await fetch("http://localhost:8000/auth/recovery", { // O backend deve alterar a senha antiga do usuário pela nova, filtrando os usuários pelo email dado
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify( { email, password } )
-            
-                })
-
-                if (!passwordResponse.ok) {
-                    throw new Error("Falha ao criar nova senha");
-                }
-
-                else {
-                    setStep("sucess");
-                }
-            
-            }
-            catch (error) {
-                console.error(error)
-            }
-        }
-    }
+}
 
     return(
         <>
@@ -140,7 +95,7 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                             required
                         />
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={sendCode}
+                            onClick={handleSendCode}
                         >ENVIAR CÓDIGO</button>
 
                     </div>
@@ -164,11 +119,11 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                             required
                         />
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={() => confirmCode(code)}
+                            onClick={() => handleConfirmCode(code)}
                         >CONFIRMAR</button>
                         
                         <button className={`${submitStyle.resend_button}`} type="submit"
-                            onClick={sendCode}
+                            onClick={handleSendCode}
                         >REENVIAR</button>
                     </div>
                 </>
@@ -265,7 +220,7 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                         </div>
 
                         <button className={`${submitStyle.submit_button}`} type="submit"
-                            onClick={confirmNewPassword}
+                            onClick={handleConfirmNewPassword}
                         >CONFIRMAR</button>
                     </div>
                 </>
@@ -274,14 +229,19 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
                 <p className="text-white text-center font-semibold">
                     Sua senha foi alterada com sucesso. Clique em continuar para fazer login.
                 </p>
-                <button className={`${submitStyle.submit_button}`} type="submit">CONTINUAR</button>
+                <button className={`${submitStyle.submit_button}`} 
+                type="submit"
+                onClick={() => {setMode("login"); setStep("email");}}>CONTINUAR</button>
                 </>
             ) : null}
-            <div className="flex flex-row gap-0.5 justify-center">
-                <span className="font-ubuntu text-[0.85rem] text-white">Mudou de ideia? Volte à</span>
-                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> {setMode("login"); setStep("email")}}>página anterior</button>
-            </div>
-           
+
+            {step !== "sucess" ? (
+                <div className="flex flex-row gap-0.5 justify-center">
+                    <span className="font-ubuntu text-[0.85rem] text-white">Mudou de ideia? Volte à</span>
+                    <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> {setMode("login"); setStep("email")}}>página anterior</button>
+                </div>
+            ) : null}
+
         </>
     )
 }

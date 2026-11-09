@@ -1,3 +1,5 @@
+
+
 export interface LoginResponse {
     acess: string;
     refresh : string;
@@ -15,3 +17,34 @@ export interface CadastroResponse {
   nome: string;
 }
 
+// SOLICITAR RECUPERAÇÃO
+export interface RecuperarSenhaPayload {
+    email: string;
+}
+
+export interface RecuperarSenhaResponse {
+    mensagem: string;
+}
+
+
+// VALIDAR CÓDIGO
+export interface VerificarCodigoPayload {
+    email: string;
+    codigo: string;
+}
+
+export interface VerificarCodigoResponse {
+    mensagem: string;
+}
+
+
+// REDEFINIR SENHA
+export interface RedefinirSenhaPayload {
+    email: string;
+    codigo: string;
+    nova_senha: string;
+}
+
+export interface RedefinirSenhaResponse {
+    mensagem: string;
+}

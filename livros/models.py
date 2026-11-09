@@ -72,6 +72,7 @@ class Exemplar(models.Model):
         ("reservado", "Reservado"),
         ("emprestado", "Emprestado"),
         ("indisponivel", "Indisponível"),
+        ("baixado", "Baixado"),
     ]
 
     tombo = models.CharField(
@@ -83,8 +84,6 @@ class Exemplar(models.Model):
         Edicao,
         on_delete=models.PROTECT,
         related_name="exemplares",
-        null=True,
-        blank=True
     )
     status = models.CharField(
         max_length=20,
@@ -92,7 +91,48 @@ class Exemplar(models.Model):
         default="disponivel"
     )
 
+    data_baixa = models.DateTimeField(
+        null=True,
+        blank=True
+    )
+
+    motivo_baixa = models.TextField(
+        null=True,
+        blank=True
+    )
+
     def __str__(self):
             return f"{self.edicao.livro.titulo} - {self.tombo}"
+
+class Avaliacao(models.Model):
+    leitor = models.ForeignKey(
+        "usuarios.Leitor",
+        on_delete=models.CASCADE,
+        related_name='avaliacoes'
+    )
+    livro = models.ForeignKey(
+        "livros.Livro",
+        on_delete=models.CASCADE,
+        related_name="avaliacoes"
+    )
+    nota = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5)
+        ]
+    )
+
+    data_avaliacao = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(nota__gte=1, nota__lte=5),
+                name="nota_entre_1_e_5"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.livro} - {self.nota} estrelas"
 
     

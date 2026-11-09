@@ -1,7 +1,9 @@
-import labelStyle from "@/modules/auth/label.module.css";
-import inputStyle from "@/modules/auth/input.module.css";
-import submitStyle from "@/modules/auth/buttons.module.css";
+import labelStyle from "@/modules/public/auth/label.module.css";
+import inputStyle from "@/modules/public/auth/input.module.css";
+import submitStyle from "@/modules/public/auth/buttons.module.css";
 import { useState } from "react";
+
+import { login }from "@/src/services/authService";
 
 type LoginProps = { //É um tipo para pegar as propriedades de setMode passadas em auth.tsx -> <Login setMode={setMode}
     setMode: (mode: "login" | "signup" | "recovery") => void;
@@ -15,26 +17,16 @@ export default function Login( { setMode }: LoginProps ) {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    async function handleLogin() {
-        try {
-            const response = await fetch("http://localhost:8000/auth/login", { //Trocar pela rota funcional do backend depois
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            });
+async function handleLogin() {
+    try {
+        await login(email, password);
 
-            if (!response.ok) {
-                throw new Error("Erro ao fazer login");
-            }
+        console.log("Login realizado com sucesso!");
 
-            const data = await response.json();
-            console.log("Login bem-sucedido:", data);
-        } catch (error) {
-            console.error("Erro ao fazer login:", error);
-        }
+    } catch (error) {
+        console.error("Erro ao fazer login:", error);
     }
+}
 
     return(
         <>
@@ -68,11 +60,13 @@ export default function Login( { setMode }: LoginProps ) {
                         placeholder="Insira sua senha"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        autoComplete="new-password"
+                        autoComplete="current-password"
                         required
                     />
 
-                    <button className="absolute top-1/2 right-1.5 -translate-y-1/2"
+                    <button 
+                    type="button"
+                    className="absolute top-1/2 right-1.5 -translate-y-1/2"
                         onClick={() => setShowPassword(!showPassword)}
                     >
                         {showPassword ? 
@@ -88,7 +82,11 @@ export default function Login( { setMode }: LoginProps ) {
                     </button>
                 </div>
 
-                <button className="font-ubuntu font-normal text-[0.85rem] text-blue-link w-fit" onClick={()=> setMode("recovery")}>Esqueceu sua senha?</button>
+                <button 
+                className="font-ubuntu font-normal text-[0.85rem]
+                 text-blue-link w-fit" 
+                 onClick={()=> setMode("recovery")}>Esqueceu sua senha?
+                 </button>
             </div>
             <button className={`${submitStyle.submit_button}`} type="submit"
                 onClick={handleLogin}

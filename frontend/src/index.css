@@ -30,8 +30,8 @@
     --color-dark-blue: #0A2E75;
     --color-navy-background: #04122F;
     --color-light-blue-logo: #D1DEFA;
-    --color-grey-background: #F2F2F2;
-    --color-grey-stroke: #E6E6E6;
+    --color-gray-background: #F2F2F2;
+    --color-gray-stroke: #E6E6E6;
     --color-dark-blue-2: #0D2D73;
     --color-reserved-blue-bg: rgba(5, 18, 46, 0.750);
     --color-dark-green: #132019;
@@ -41,3 +41,5 @@
     --color-forest-green: #2C4839;
     --color-blue-link: #8EAABE;
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
