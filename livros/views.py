@@ -304,7 +304,7 @@ class AvaliarLivro(APIView):
         return Response(
             {
                 "mensagem": "Avalicação registrada com sucesso",
-                "avaliação_id": avaliacao.pk,
+                "avaliaçao_id": avaliacao.pk,
                 "livro_id": livro.pk,
                 "nota": avaliacao.nota,
                 "data_avaliacao": avaliacao.data_avaliacao,
