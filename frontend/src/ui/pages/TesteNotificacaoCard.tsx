@@ -72,7 +72,7 @@ export default function TesteNotificacaoCard() {
 
     return (
 
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto max-w-5xl px-5">
 
                 {/* Carregamento */}
                 {carregando && (

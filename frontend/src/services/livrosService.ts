@@ -1,109 +1,115 @@
+
 import type {
-    LivroResponse, LivroPayload
-} from '@/src/types/livro'
+    LivroResponse,
+    LivroPayload
+} from "@/src/types/livro";
 
+import { apiFetch } from "./api";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
-
+// LISTAR LIVROS
 export async function listarLivros(): Promise<LivroResponse[]> {
-    const response = await fetch(`${API_URL}/livros/`);
+    const response = await apiFetch("/livros/");
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar livros"
+            data?.detail || data?.erro || "Erro ao buscar livros"
         );
-
     }
-    return data
+
+    return data;
 }
 
+// BUSCAR LIVRO
 export async function buscarLivro(id: number): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`);
+    const response = await apiFetch(`/livros/${id}/`);
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar livro"
+            data?.detail || data?.erro || "Erro ao buscar livro"
         );
-
     }
-    return data
+
+    return data;
 }
 
-export async function atualizarLivro(id: number, payload:LivroPayload): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+// ATUALIZAR LIVRO
+export async function atualizarLivro(
+    id: number,
+    payload: LivroPayload
+): Promise<LivroResponse> {
+
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
-    if (!response.ok){
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar livro"
         );
     }
 
     return data;
-    
 }
 
-export async function atualizarLivroParcial(id: number, payload:Partial<LivroPayload>): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+// ATUALIZAR LIVRO PARCIALMENTE
+export async function atualizarLivroParcial(
+    id: number,
+    payload: Partial<LivroPayload>
+): Promise<LivroResponse> {
+
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
-    if (!response.ok){
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar livro"
         );
     }
-    
+
     return data;
 }
 
+// EXCLUIR LIVRO
 export async function excluirLivro(id: number): Promise<void> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "DELETE"
     });
 
     if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
 
         throw new Error(
-            data.detail ||
-            data.erro ||
-            "Erro ao excluir livro."
+            data?.detail || data?.erro || "Erro ao excluir livro."
         );
     }
 }
 
-export async function cadastrarLivro(payload: LivroPayload): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/cadastrar/`, {
+// CADASTRAR LIVRO
+export async function cadastrarLivro(
+    payload: LivroPayload
+): Promise<LivroResponse> {
+
+    const response = await apiFetch("/livros/cadastrar/", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail ||
-            data.erro ||
-            "Erro ao cadastrar livro."
+            data?.detail || data?.erro || "Erro ao cadastrar livro."
         );
     }
 

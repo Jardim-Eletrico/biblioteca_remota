@@ -1,3 +1,4 @@
+
 import type {
     LoginResponse,
     CadastroPayLoad,
@@ -8,16 +9,16 @@ import type {
     VerificarCodigoResponse,
     RedefinirSenhaPayload,
     RedefinirSenhaResponse
-} from '../types/api'
+} from "../types/api";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL
+    ?? "http://127.0.0.1:8000/api";
 
 
 // =====================================================
 // LOGIN
 // =====================================================
 
-// LOGIN
 export async function login(
     email: string,
     password: string
@@ -28,7 +29,7 @@ export async function login(
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password })
     });
 
     const data = await response.json().catch(() => null);
@@ -50,8 +51,6 @@ export async function login(
 // CADASTRO
 // =====================================================
 
-
-// CADASTRO
 export async function cadastro(
     payload: CadastroPayLoad
 ): Promise<CadastroResponse> {
@@ -61,7 +60,7 @@ export async function cadastro(
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     });
 
     const data = await response.json().catch(() => null);
@@ -76,7 +75,10 @@ export async function cadastro(
 }
 
 
+// =====================================================
 // REFRESH TOKEN
+// =====================================================
+
 export async function refreshToken(): Promise<string> {
 
     const refresh = localStorage.getItem("refresh");
@@ -85,12 +87,15 @@ export async function refreshToken(): Promise<string> {
         throw new Error("Refresh token não encontrado");
     }
 
+    // IMPORTANTE: utilizar fetch diretamente.
+    // Não utilizar apiFetch nesta requisição.
+
     const response = await fetch(`${API_URL}/token/refresh/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify({ refresh }),
+        body: JSON.stringify({ refresh })
     });
 
     const data = await response.json().catch(() => null);
@@ -113,14 +118,20 @@ export async function refreshToken(): Promise<string> {
 }
 
 
+// =====================================================
 // LOGOUT LOCAL
+// =====================================================
+
 function logoutLocal() {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
 }
 
 
+// =====================================================
 // LOGOUT
+// =====================================================
+
 export async function logout() {
 
     const access = localStorage.getItem("access");
@@ -132,9 +143,9 @@ export async function logout() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${access}`,
+                    "Authorization": `Bearer ${access}`
                 },
-                body: JSON.stringify({ refresh }),
+                body: JSON.stringify({ refresh })
             });
         }
     } finally {
@@ -143,7 +154,10 @@ export async function logout() {
 }
 
 
+// =====================================================
 // RECUPERAR SENHA
+// =====================================================
+
 export async function recuperarSenha(
     payload: RecuperarSenhaPayload
 ): Promise<RecuperarSenhaResponse> {
@@ -153,7 +167,7 @@ export async function recuperarSenha(
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     });
 
     const data = await response.json().catch(() => null);
@@ -168,7 +182,10 @@ export async function recuperarSenha(
 }
 
 
+// =====================================================
 // VERIFICAR CÓDIGO
+// =====================================================
+
 export async function verificarCodigo(
     payload: VerificarCodigoPayload
 ): Promise<VerificarCodigoResponse> {
@@ -178,7 +195,7 @@ export async function verificarCodigo(
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     });
 
     const data = await response.json().catch(() => null);
@@ -193,7 +210,10 @@ export async function verificarCodigo(
 }
 
 
+// =====================================================
 // REDEFINIR SENHA
+// =====================================================
+
 export async function redefinirSenha(
     payload: RedefinirSenhaPayload
 ): Promise<RedefinirSenhaResponse> {
@@ -203,7 +223,7 @@ export async function redefinirSenha(
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
     });
 
     const data = await response.json().catch(() => null);
