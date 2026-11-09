@@ -1,21 +1,28 @@
 import labelStyle from "@/modules/public/auth/label.module.css";
 import inputStyle from "@/modules/public/auth/input.module.css";
 import submitStyle from "@/modules/public/auth/buttons.module.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { login }from "@/src/services/authService";
 
 type LoginProps = { //É um tipo para pegar as propriedades de setMode passadas em auth.tsx -> <Login setMode={setMode}
+    mode: "login" | "signup" | "recovery";
     setMode: (mode: "login" | "signup" | "recovery") => void;
 };
 
-export default function Login( { setMode }: LoginProps ) {
+export default function Login( { mode, setMode }: LoginProps ) {
 
     const [email, setEmail] = useState("");
 
     const [password, setPassword] = useState("");
 
     const [showPassword, setShowPassword] = useState(false);
+
+    useEffect(() => {
+        setEmail("");
+        setPassword("");
+        setShowPassword(false);
+    }, [mode])
 
 async function handleLogin() {
     try {
