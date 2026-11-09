@@ -2,13 +2,10 @@ import labelStyle from "@/modules/public/auth/label.module.css";
 import inputStyle from "@/modules/public/auth/input.module.css";
 import submitStyle from "@/modules/public/auth/buttons.module.css";
 import requirementStyle from "@/modules/public/auth/password_requirements.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 import { recuperarSenha, verificarCodigo, redefinirSenha } from '@/src/services/authService';
-
-
-
 
 // Criando tipos para pegar propriedades e definir modos
 
@@ -16,11 +13,12 @@ type RecoveryProps = {
     step: "email" | "code" | "redefinePassword" | "sucess";
     setStep: (mode: "email" | "code" | "redefinePassword" | "sucess") => void;
 
+    mode: "login" | "signup" | "recovery";
     setMode: (mode: "login" | "signup" | "recovery") => void;
 }
 
 //Funções principais
-export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
+export default function Recovery( { step, setStep, mode, setMode }: RecoveryProps ) {
 
     const [email, setEmail] = useState("");
     const [code, setCode] = useState(""); //Guardar o código do input para uso posterior em função
@@ -38,6 +36,17 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     const hasLowercase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
 
+    useEffect(() => {
+        setEmail("");
+        setCode("");
+
+        setPassword("");
+        setConfirmPassword("");
+        setShowPassword(false);
+        setShowConfirmPassword(false);
+    }, [mode]);
+
+
     async function handleSendCode () { //Enviar código ao e-mail
         try {
             await recuperarSenha({email});
@@ -51,6 +60,7 @@ export default function Recovery( { step, setStep, setMode }: RecoveryProps ) {
     async function handleConfirmCode(code: string) {
         try {
             await verificarCodigo({email, codigo: code});
+
             setStep("redefinePassword");
         } catch(error) {
             console.error(error);

@@ -67,15 +67,15 @@ export default function Auth() {
                     >
                         {mode === "login" ? (
                             <>
-                                <Login setMode={setMode} /> {/*Passa propriedades do setMode criado no início da função*/}
+                                <Login mode={mode} setMode={setMode} /> {/*Passa propriedades do setMode criado no início da função*/}
                             </>
                         ) : mode === "signup" ? (
                             <>
-                                <Signup setMode={setMode} />
+                                <Signup mode={mode} setMode={setMode} />
                             </>
                         ) : (
                             <>
-                                <Recovery step={step} setStep={setStep} setMode={setMode}/>
+                                <Recovery step={step} setStep={setStep} mode={mode} setMode={setMode}/>
                             </>
                         )}
 

@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import labelStyle from "@/modules/public/auth/label.module.css";
 import inputStyle from "@/modules/public/auth/input.module.css";
@@ -9,6 +9,7 @@ import { cadastro } from "@/src/services/authService";
 import type { CadastroPayLoad } from "@/src/types/api";
 
 type SignupProps = {
+    mode: "login" | "signup" | "recovery";
     setMode: (mode: "login" | "signup" | "recovery") => void;
 };
 
@@ -17,6 +18,13 @@ export default function Signup({ setMode }: SignupProps) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    useEffect(() => {
+        setNome("");
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+    })
 
     async function handleCadastro() {
         if (password !== confirmPassword) {
