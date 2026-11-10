@@ -10,7 +10,7 @@ export default function TesteAvaliacaoModal() {
     return (
         <main className="
             mx-auto w-full max-w-5xl
-            px-5 py-8
+            py-8
         ">
 
             <h1 className="
@@ -34,7 +34,7 @@ export default function TesteAvaliacaoModal() {
                 className="
                     mt-6 rounded-xl
                     bg-primary
-                    px-5 py-3
+                    py-3
                     font-semibold
                     text-light-blue-logo
                     hover:opacity-90

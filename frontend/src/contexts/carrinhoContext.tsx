@@ -97,7 +97,7 @@ export function CarrinhoProvider({
         </CarrinhoContext.Provider>
     );
 
-} // ← FECHAMENTO DO CARRINHOPROVIDER
+}
 
 
 // =====================================================
