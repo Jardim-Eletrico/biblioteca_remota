@@ -1,40 +1,65 @@
 import type {
     LivroResponse, LivroPayload
-} from '@/src/types/livro'
-
+} from '@/src/types/livro';
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
 
+// FUNÇÃO AUXILIAR PARA REQUISIÇÕES AUTENTICADAS
+async function requisicaoAutenticada(
+    url: string,
+    options: RequestInit = {}
+): Promise<Response> {
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+        throw new Error("Token de autenticação não encontrado");
+    }
+
+    return fetch(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            "Authorization": `Bearer ${access}`,
+        },
+    });
+}
+
+// LISTAR LIVROS
 export async function listarLivros(): Promise<LivroResponse[]> {
-    const response = await fetch(`${API_URL}/livros/`);
+    const response = await requisicaoAutenticada(`${API_URL}/livros/`);
 
     const data = await response.json();
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || "Erro ao buscar livros"
         );
-
     }
-    return data
+
+    return data;
 }
 
+// BUSCAR LIVRO POR ID
 export async function buscarLivro(id: number): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`);
+    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`);
 
     const data = await response.json();
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || "Erro ao buscar livro"
         );
-
     }
-    return data
+
+    return data;
 }
 
-export async function atualizarLivro(id: number, payload:LivroPayload): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+// ATUALIZAR LIVRO
+export async function atualizarLivro(
+    id: number,
+    payload: LivroPayload
+): Promise<LivroResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
@@ -43,18 +68,22 @@ export async function atualizarLivro(id: number, payload:LivroPayload): Promise<
     });
 
     const data = await response.json();
-    if (!response.ok){
+
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || 'Erro ao atualizar'
         );
     }
 
     return data;
-    
 }
 
-export async function atualizarLivroParcial(id: number, payload:Partial<LivroPayload>): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+// ATUALIZAR LIVRO PARCIALMENTE
+export async function atualizarLivroParcial(
+    id: number,
+    payload: Partial<LivroPayload>
+): Promise<LivroResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json"
@@ -63,17 +92,19 @@ export async function atualizarLivroParcial(id: number, payload:Partial<LivroPay
     });
 
     const data = await response.json();
-    if (!response.ok){
+
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || 'Erro ao atualizar'
         );
     }
-    
+
     return data;
 }
 
+// EXCLUIR LIVRO
 export async function excluirLivro(id: number): Promise<void> {
-    const response = await fetch(`${API_URL}/livros/${id}/`, {
+    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
         method: "DELETE"
     });
 
@@ -88,8 +119,11 @@ export async function excluirLivro(id: number): Promise<void> {
     }
 }
 
-export async function cadastrarLivro(payload: LivroPayload): Promise<LivroResponse> {
-    const response = await fetch(`${API_URL}/livros/cadastrar/`, {
+// CADASTRAR LIVRO
+export async function cadastrarLivro(
+    payload: LivroPayload
+): Promise<LivroResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/livros/cadastrar/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"

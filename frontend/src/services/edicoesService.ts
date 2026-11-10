@@ -1,7 +1,28 @@
-import type {EdicaoResponse, EdicaoPayload} from '@/src/types/edicao';
+import type { EdicaoResponse, EdicaoPayload } from '@/src/types/edicao';
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
 
+// FUNÇÃO AUXILIAR PARA REQUISIÇÕES AUTENTICADAS
+async function requisicaoAutenticada(
+    url: string,
+    options: RequestInit = {}
+): Promise<Response> {
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+        throw new Error("Token de autenticação não encontrado");
+    }
+
+    return fetch(url, {
+        ...options,
+        headers: {
+            ...options.headers,
+            "Authorization": `Bearer ${access}`,
+        },
+    });
+}
+
+// CRIAR FORMDATA
 function criarFormData(payload: EdicaoPayload | Partial<EdicaoPayload>) {
     const formData = new FormData();
 
@@ -36,75 +57,81 @@ function criarFormData(payload: EdicaoPayload | Partial<EdicaoPayload>) {
     return formData;
 }
 
+// LISTAR EDIÇÕES
 export async function listarEdicoes(): Promise<EdicaoResponse[]> {
-    const response = await fetch(`${API_URL}/edicoes/`);
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/`);
 
     const data = await response.json();
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || "Erro ao buscar edições"
         );
-
     }
-    return data
+
+    return data;
 }
 
+// BUSCAR EDIÇÃO POR ID
 export async function buscarEdicao(id: number): Promise<EdicaoResponse> {
-    const response = await fetch(`${API_URL}/edicoes/${id}/`);
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`);
 
     const data = await response.json();
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || "Erro ao buscar edição"
         );
-
     }
-    return data
+
+    return data;
 }
 
-export async function atualizarEdicao(id: number, payload:EdicaoPayload): Promise<EdicaoResponse> {
-    const response = await fetch(`${API_URL}/edicoes/${id}/`, {
+// ATUALIZAR EDIÇÃO
+export async function atualizarEdicao(
+    id: number,
+    payload: EdicaoPayload
+): Promise<EdicaoResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: criarFormData(payload)
     });
 
     const data = await response.json();
-    if (!response.ok){
+
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || 'Erro ao atualizar'
         );
     }
 
     return data;
-    
 }
 
-export async function atualizarEdicaoParcial(id: number, payload:Partial<EdicaoPayload>): Promise<EdicaoResponse> {
-    const response = await fetch(`${API_URL}/edicoes/${id}/`, {
+// ATUALIZAR EDIÇÃO PARCIALMENTE
+export async function atualizarEdicaoParcial(
+    id: number,
+    payload: Partial<EdicaoPayload>
+): Promise<EdicaoResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
         method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: criarFormData(payload)
     });
 
     const data = await response.json();
-    if (!response.ok){
+
+    if (!response.ok) {
         throw new Error(
             data.detail || data.erro || 'Erro ao atualizar'
         );
     }
-    
+
     return data;
 }
 
+// EXCLUIR EDIÇÃO
 export async function excluirEdicao(id: number): Promise<void> {
-    const response = await fetch(`${API_URL}/edicoes/${id}/`, {
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
         method: "DELETE"
     });
 
@@ -119,12 +146,12 @@ export async function excluirEdicao(id: number): Promise<void> {
     }
 }
 
-export async function cadastrarEdicao(payload: EdicaoPayload): Promise<EdicaoResponse> {
-    const response = await fetch(`${API_URL}/edicoes/`, {
+// CADASTRAR EDIÇÃO
+export async function cadastrarEdicao(
+    payload: EdicaoPayload
+): Promise<EdicaoResponse> {
+    const response = await requisicaoAutenticada(`${API_URL}/edicoes/`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: criarFormData(payload)
     });
 
