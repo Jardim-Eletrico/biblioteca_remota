@@ -1,60 +1,103 @@
-import type { ExemplarResponse, ExemplarLotePayload, ExemplarFiltroPublico, ExemplarFiltroAdmin, ExemplarBaixaPayload } from "../types/exemplar";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
+import type {
+    ExemplarResponse,
+    ExemplarLotePayload,
+    ExemplarFiltroPublico,
+    ExemplarFiltroAdmin,
+    ExemplarBaixaPayload
+} from "../types/exemplar";
 
-//METODOS PUBLICOS
-export async function listarExemplaresLeitor(edicaoId: number, status: ExemplarFiltroPublico = "todos"): Promise<ExemplarResponse[]> {
+import { apiFetch } from "./api";
+
+const API_URL = import.meta.env.VITE_API_URL
+    ?? "http://127.0.0.1:8000/api";
+
+
+// =====================================================
+// MÉTODOS PÚBLICOS
+// =====================================================
+
+// LISTAR EXEMPLARES PARA LEITORES
+export async function listarExemplaresLeitor(
+    edicaoId: number,
+    status: ExemplarFiltroPublico = "todos"
+): Promise<ExemplarResponse[]> {
+
     const params = new URLSearchParams({
         status: status
     });
 
-    const response = await fetch(`${API_URL}/edicoes/public/${edicaoId}/exemplares/?${params}`);
+    const response = await fetch(
+        `${API_URL}/edicoes/public/${edicaoId}/exemplares/?${params}`
+    );
 
-    if (!response.ok){
-        throw new Error("Erro ao listar exemplares");
-    }
+    const data = await response.json().catch(() => null);
 
-    return await response.json();
-    
-}
-
-export async function buscarExemplarLeitor(exemplarId: number): Promise<ExemplarResponse> {
-    const response = await fetch(`${API_URL}/exemplares/public/${exemplarId}/`);
-
-    const data = await response.json();
-
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || data.mensagem || "Erro ao buscar livro"
+            data?.detail || data?.erro || "Erro ao listar exemplares"
         );
     }
 
     return data;
 }
 
-//METODOS BIBLIOTECARIO
-export async function criarExemplaresLote(edicaoId: number, payload: ExemplarLotePayload) {
-    const response = await fetch(`${API_URL}/edicoes/${edicaoId}/exemplares/`, 
+
+// BUSCAR EXEMPLAR PARA LEITORES
+export async function buscarExemplarLeitor(
+    exemplarId: number
+): Promise<ExemplarResponse> {
+
+    const response = await fetch(
+        `${API_URL}/exemplares/public/${exemplarId}/`
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.erro ||
+            data?.mensagem ||
+            "Erro ao buscar exemplar"
+        );
+    }
+
+    return data;
+}
+
+
+// =====================================================
+// MÉTODOS DO BIBLIOTECÁRIO
+// =====================================================
+
+// CRIAR EXEMPLARES EM LOTE
+export async function criarExemplaresLote(
+    edicaoId: number,
+    payload: ExemplarLotePayload
+) {
+
+    const response = await apiFetch(
+        `/edicoes/${edicaoId}/exemplares/`,
         {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            method: "POST",
             body: JSON.stringify(payload)
         }
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
-    if (!response.ok){
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao criar exemplares"
+            data?.detail || data?.erro || "Erro ao criar exemplares"
         );
     }
 
     return data;
 }
 
+
+// LISTAR EXEMPLARES PARA BIBLIOTECÁRIOS
 export async function listarExemplaresBibliotecario(
     situacao: ExemplarFiltroAdmin = "nao_baixados",
     search?: string
@@ -68,41 +111,53 @@ export async function listarExemplaresBibliotecario(
         params.append("search", search);
     }
 
-    const response = await fetch(
-        `${API_URL}/exemplares/?${params}`
+    const response = await apiFetch(
+        `/exemplares/?${params}`
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao listar exemplares"
+            data?.detail || data?.erro || "Erro ao listar exemplares"
         );
     }
 
     return data;
 }
 
-export async function buscarExemplarBibliotecario(exemplarId: number): Promise<ExemplarResponse> {
-    const response = await fetch(`${API_URL}/exemplares/${exemplarId}/`);
 
-    const data = await response.json();
+// BUSCAR EXEMPLAR PARA BIBLIOTECÁRIOS
+export async function buscarExemplarBibliotecario(
+    exemplarId: number
+): Promise<ExemplarResponse> {
 
-    if (!response.ok){
+    const response = await apiFetch(
+        `/exemplares/${exemplarId}/`
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || data.mensagem || "Erro ao buscar livro"
+            data?.detail ||
+            data?.erro ||
+            data?.mensagem ||
+            "Erro ao buscar exemplar"
         );
     }
 
     return data;
 }
 
+
+// EXCLUIR EXEMPLAR
 export async function deletarExemplar(
     exemplarId: number
 ): Promise<void> {
 
-    const response = await fetch(
-        `${API_URL}/exemplares/${exemplarId}/`,
+    const response = await apiFetch(
+        `/exemplares/${exemplarId}/`,
         {
             method: "DELETE"
         }
@@ -119,34 +174,31 @@ export async function deletarExemplar(
     }
 }
 
+
+// DAR BAIXA EM EXEMPLAR
 export async function baixarExemplar(
     exemplarId: number,
     payload: ExemplarBaixaPayload
 ): Promise<{ mensagem: string }> {
 
-    const response = await fetch(
-        `${API_URL}/exemplares/${exemplarId}/baixa/`,
+    const response = await apiFetch(
+        `/exemplares/${exemplarId}/baixa/`,
         {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
             body: JSON.stringify(payload)
         }
     );
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail ||
-            data.erro ||
-            data.mensagem ||
+            data?.detail ||
+            data?.erro ||
+            data?.mensagem ||
             "Erro ao baixar exemplar"
         );
     }
 
     return data;
 }
-
-

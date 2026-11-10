@@ -2,6 +2,8 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 
+from django.db.models import Avg, Count, F
+
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.generics import (
@@ -45,6 +47,15 @@ from emprestimos.services import (
 )
 
 from livros.services import avaliar_livro
+
+def livros_com_avaliacoes():
+    return Livro.objects.annotate(
+        media_avaliacoes=Avg("avaliacoes__nota"),
+        quantidade_avaliacoes=Count(
+            "avaliacoes",
+            distinct=True
+        )
+    )
 
 class ExemplarBaixaView(APIView):
     permission_classes = [IsAuthenticated, IsBibliotecario]
@@ -203,19 +214,45 @@ class ExemplarListView(ListAPIView):
         })
     
 class LivroListView(generics.ListAPIView):
-    queryset = Livro.objects.all().order_by("titulo")
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+
+        queryset = livros_com_avaliacoes()
+
+        ordenar = self.request.query_params.get("ordenar")
+
+        if ordenar == "popularidade":
+            return queryset.order_by(
+                "-quantidade_avaliacoes",
+                "-media_avaliacoes",
+                "titulo"
+            )
+
+        elif ordenar == "melhor_nota":
+            return queryset.order_by(
+                F("media_avaliacoes").desc(nulls_last=True),
+                "-quantidade_avaliacoes",
+                "titulo"
+            )
+
+        return queryset.order_by("titulo")
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Livro.objects.all()
+    queryset = Livro.objects.annotate(
+        media_avaliacoes=Avg("avaliacoes__nota"),
+        quantidade_avaliacoes=Count(
+            "avaliacoes",
+            distinct=True
+        )
+    )
+
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario_or_Readonly]
 
-
 class LivroListCreateView(generics.ListCreateAPIView):
-    queryset = Livro.objects.all().order_by("titulo")
+    queryset = livros_com_avaliacoes()
     serializer_class = LivroSerializer
     permission_classes = [IsBibliotecario]
 
@@ -304,7 +341,7 @@ class AvaliarLivro(APIView):
         return Response(
             {
                 "mensagem": "Avalicação registrada com sucesso",
-                "avaliação_id": avaliacao.pk,
+                "avaliaçao_id": avaliacao.pk,
                 "livro_id": livro.pk,
                 "nota": avaliacao.nota,
                 "data_avaliacao": avaliacao.data_avaliacao,

@@ -129,6 +129,11 @@ class Avaliacao(models.Model):
             models.CheckConstraint(
                 condition=models.Q(nota__gte=1, nota__lte=5),
                 name="nota_entre_1_e_5"
+            ),
+
+            models.UniqueConstraint(
+                fields=["leitor", "livro"], #impede registros com mesma combinação de leitor e livro
+                name="avaliacao_unica_por_leitor_livro",
             )
         ]
 
