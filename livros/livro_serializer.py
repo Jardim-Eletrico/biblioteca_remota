@@ -10,12 +10,19 @@ from .models import (
 from emprestimos.models import Emprestimo
 
 class LivroSerializer(serializers.ModelSerializer):
+
+    media_avaliacoes = serializers.FloatField(
+        read_only = True,
+        allow_null = True
+    )
+
+    quantidade_avaliacoes = serializers.IntegerField(
+        read_only = True
+    )
+
     class Meta:
         model = Livro
         fields = "__all__"
-
-    def validate_isbn(self, value):
-        return value or None
 
     def validate_titulo(self, value):
         if not value.strip():
