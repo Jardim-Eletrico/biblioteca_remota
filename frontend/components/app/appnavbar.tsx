@@ -33,7 +33,7 @@ export default function Appnavbar() {
     return (
         <>
 
-            <header className="flex flex-row justify-between items-center w-full h-fit px-5 py-2.5 sticky top-0 isolate" ref={navbarRef}>
+            <header className="flex flex-row justify-between items-center w-full h-fit px-5 py-2.5 sticky top-0 isolate z-50" ref={navbarRef}>
                <div
                     className={`absolute grid w-full overflow-hidden -z-10 bg-white/70 dark:bg-black/70 backdrop-blur-sm top-0 left-0 right-0 transition-all duration-300 ease-in-out ${
                         openMenu ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
