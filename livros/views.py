@@ -44,6 +44,8 @@ from emprestimos.services import (
     devolver_emprestimo,
 )
 
+from rest_framework.pagination import LimitOffsetPagination
+
 from livros.services import avaliar_livro
 
 class ExemplarBaixaView(APIView):
@@ -257,9 +259,14 @@ class LivroCreateView(generics.CreateAPIView):
     permission_classes = [IsBibliotecario]
 
 
+class EdicaoPagination(LimitOffsetPagination):
+    default_limit = 16
+    max_limit = 100
+
 class EdicaoListCreateView(generics.ListCreateAPIView):
     queryset = Edicao.objects.select_related("livro").all()
     serializer_class = EdicaoSerializer
+    pagination_class = EdicaoPagination
 
     def get_permissions(self):
         if self.request.method == "POST":

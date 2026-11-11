@@ -9,20 +9,6 @@ from .models import (
 )
 from emprestimos.models import Emprestimo
 
-class LivroSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Livro
-        fields = "__all__"
-
-    def validate_isbn(self, value):
-        return value or None
-
-    def validate_titulo(self, value):
-        if not value.strip():
-            raise serializers.ValidationError(
-                "O título é obrigatório."
-            )
-        return value.strip()
 
 class EdicaoSerializer(serializers.ModelSerializer):
     total_exemplares = serializers.SerializerMethodField()
@@ -37,6 +23,25 @@ class EdicaoSerializer(serializers.ModelSerializer):
 
     def get_exemplares_disponiveis(self, obj):
         return obj.exemplares.filter(status='disponivel').count()
+
+
+class LivroSerializer(serializers.ModelSerializer):
+    edicoes = EdicaoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Livro
+        fields = "__all__"
+
+    def validate_isbn(self, value):
+        return value or None
+
+    def validate_titulo(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "O título é obrigatório."
+            )
+        return value.strip()
+
 
 class ExemplarListSerializer(serializers.ModelSerializer):
     titulo = serializers.CharField(
