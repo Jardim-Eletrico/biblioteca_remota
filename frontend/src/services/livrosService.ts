@@ -1,5 +1,5 @@
 import type {
-    LivroResponse, LivroPayload
+    LivroResponse, LivroPayload, LivrosPaginados
 } from '@/src/types/livro';
 
 const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
@@ -25,8 +25,10 @@ async function requisicaoAutenticada(
 }
 
 // LISTAR LIVROS
-export async function listarLivros(): Promise<LivroResponse[]> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/`);
+export async function listarLivros(offset: number = 0): Promise<LivrosPaginados> {
+    const response = await requisicaoAutenticada(
+        `${API_URL}/livros/?limit=10&offset=${offset}`
+    );
 
     const data = await response.json();
 
