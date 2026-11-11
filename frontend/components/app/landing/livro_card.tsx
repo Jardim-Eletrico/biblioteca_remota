@@ -10,7 +10,7 @@ export default function LivroCard( { autor, titulo, image }: CardProps) {
     const [imageError, setImageError] = useState(false);
 
     return (
-        <div className="flex flex-col items-center w-full h-full gap-0.75">
+        <div className="flex flex-col items-center w-full h-fit gap-0.75">
             {!imageError && image ? (
                 <img
                     src={image}
