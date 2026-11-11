@@ -47,23 +47,28 @@ export function CarrinhoProvider({
     const [itens, setItens] = useState<ItemCarrinho[]>([]);
 
 
-    // ADICIONAR ITEM
+// ADICIONAR ITEM
     function adicionarItem(item: ItemCarrinho) {
 
-        setItens((anteriores) => {
+    setItens((anteriores) => {
 
-            const jaAdicionado = anteriores.some(
-                (anterior) => anterior.edicaoId === item.edicaoId
-            );
+        // Verificar se o livro já está no carrinho
+        const livroJaAdicionado = anteriores.some(
+            (anterior) => anterior.livroId === item.livroId
+        );
 
-            if (jaAdicionado) {
-                return anteriores;
-            }
+        if (livroJaAdicionado) {
+            return anteriores;
+        }
 
-            return [...anteriores, item];
-        });
-    }
+        // Limite máximo de 2 livros
+        if (anteriores.length >= 2) {
+            return anteriores;
+        }
 
+        return [...anteriores, item];
+    });
+}
 
     // REMOVER ITEM
     function removerItem(edicaoId: number) {

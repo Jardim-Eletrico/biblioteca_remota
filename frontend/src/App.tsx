@@ -16,6 +16,7 @@ import Home from "./ui/pages/home/home";
 import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
 import TesteNotificacaoCard from "./ui/pages/TesteNotificacaoCard";
 import TesteAvaliacaoModal from "./ui/pages/TesteAvaliacaoModal";
+import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
 
 export default function App() {
 
@@ -61,6 +62,11 @@ export default function App() {
                         <Route
                             path="/teste-avaliacao"
                             element={<TesteAvaliacaoModal />}
+                        />
+
+                        <Route
+                            path="/teste-detalhes-livro/:edicaoId"
+                            element={<TesteLivroDetalhes />}
                         />
 
                     </Route>

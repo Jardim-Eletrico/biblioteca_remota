@@ -3,6 +3,19 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 import random
 import string
 
+import re
+from django.core.exceptions import ValidationError
+
+
+def validar_ano_original(valor):
+    padrao = r"^(c\.\s*)?\d{1,4}(\s*(a\.C\.|d\.C\.))?$"
+
+    if not re.fullmatch(padrao, valor.strip()):
+        raise ValidationError(
+            "Informe um ano válido. Exemplos: 1880, 1937, c. 340 a.C."
+        )
+
+
 # Create your models here.
 class CDD(models.Model):
     codigo = models.CharField(max_length=20, unique=True)
@@ -33,8 +46,9 @@ class Livro(models.Model):
     autor = models.CharField(max_length = 200)
     descricao = models.CharField(max_length=1000, blank=True)
     generos = models.CharField(max_length=90, blank=True)
-    ano_original = models.PositiveIntegerField(
-        validators = [MinValueValidator(1000), MaxValueValidator(9999)]
+    ano_original = models.CharField(
+    max_length=30,
+    validators=[validar_ano_original]
     )
     def __str__(self):
         return self.titulo
