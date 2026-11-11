@@ -203,11 +203,16 @@ class ExemplarListView(ListAPIView):
         raise ValidationError({
             "situacao": "Filtro inválido."
         })
+
+class LivroPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
     
 class LivroListView(generics.ListAPIView):
-    queryset = Livro.objects.all().order_by("titulo")
+    queryset = Livro.objects.prefetch_related("edicoes").order_by("titulo")
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LivroPagination
 
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -260,8 +265,8 @@ class LivroCreateView(generics.CreateAPIView):
 
 
 class EdicaoPagination(LimitOffsetPagination):
-    default_limit = 16
-    max_limit = 100
+    default_limit = 10
+    max_limit = 10
 
 class EdicaoListCreateView(generics.ListCreateAPIView):
     queryset = Edicao.objects.select_related("livro").all()
