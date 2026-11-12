@@ -51,6 +51,8 @@ export default function GestaoEmprestimos() {
     useState<number | "">("");
 
   const [dataPrevista, setDataPrevista] = useState("");
+  const [codigoConfirmacao, setCodigoConfirmacao] = useState("");
+
   const [carregandoExemplares, setCarregandoExemplares] = useState(false);
 
   // Carregar pedidos.
@@ -170,6 +172,7 @@ export default function GestaoEmprestimos() {
     setExemplares([]);
     setExemplarSelecionado("");
     setDataPrevista("");
+    setCodigoConfirmacao("");
     setCarregandoExemplares(true);
 
     try {
@@ -212,6 +215,7 @@ export default function GestaoEmprestimos() {
     setExemplares([]);
     setExemplarSelecionado("");
     setDataPrevista("");
+    setCodigoConfirmacao("");
   }
 
   // Efetivar empréstimo.
@@ -223,6 +227,11 @@ export default function GestaoEmprestimos() {
       return;
     }
 
+    if (!/^\d{6}$/.test(codigoConfirmacao)) {
+      setErro("Informe um código de confirmação válido com 6 dígitos.");
+      return;
+    }
+
     setErro("");
     setSucesso("");
     setPedidoEmAcao(pedidoSelecionado.id);
@@ -230,6 +239,7 @@ export default function GestaoEmprestimos() {
     try {
       const payload = {
         exemplar_id: exemplarSelecionado,
+        codigo_confirmacao: codigoConfirmacao,
         ...(dataPrevista
           ? { data_prevista_devolucao: dataPrevista }
           : {}),
@@ -443,11 +453,13 @@ export default function GestaoEmprestimos() {
           exemplares={exemplares}
           exemplarSelecionado={exemplarSelecionado}
           dataPrevista={dataPrevista}
+          codigoConfirmacao={codigoConfirmacao}
           carregandoExemplares={carregandoExemplares}
           pedidoEmAcao={pedidoEmAcao}
           onFechar={fecharModal}
           onExemplarChange={setExemplarSelecionado}
           onDataPrevistaChange={setDataPrevista}
+          onCodigoConfirmacaoChange={setCodigoConfirmacao}
           onSubmit={handleEfetivar}
         />
       )}

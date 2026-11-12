@@ -16,6 +16,7 @@ export interface EmprestimoResponse {
 
 export interface EfetivarEmprestimoPayload {
   exemplar_id: number;
+  codigo_confirmacao: string;
   data_prevista_devolucao?: string;
 }
 
