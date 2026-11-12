@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/baloo-tamma-2": "^5.3.0",
     "@fontsource-variable/roboto": "^5.3.0",
     "@fontsource-variable/space-grotesk": "^5.3.0",
     "@fontsource/source-serif-pro": "^5.3.0",
