@@ -25,9 +25,12 @@ async function requisicaoAutenticada(
 }
 
 // LISTAR LIVROS
-export async function listarLivros(offset: number = 0): Promise<LivrosPaginados> {
+export async function listarLivros(
+    offset: number = 0,
+    busca: string = ""
+): Promise<LivrosPaginados> {
     const response = await requisicaoAutenticada(
-        `${API_URL}/livros/?limit=10&offset=${offset}`
+        `${API_URL}/livros/?limit=10&offset=${offset}&search=${encodeURIComponent(busca)}`
     );
 
     const data = await response.json();
