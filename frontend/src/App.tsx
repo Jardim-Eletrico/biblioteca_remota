@@ -11,6 +11,7 @@ import TesteAvaliacaoModal from "./ui/pages/TesteAvaliacaoModal";
 
 
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
+import CadastroBibliotecario from "@/src/ui/pages/bibliotecario/CadastroBibliotecario";
 
 export default function App() {
     return (
@@ -28,6 +29,7 @@ export default function App() {
                         <Route path="/teste-notificacoes" element={<TesteNotificacaoCard />}></Route>
                         <Route path="/teste-avaliacao" element={<TesteAvaliacaoModal />}></Route>
                         <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />}/>
+                        <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />}/>
                     </Route>
 
                 </Routes>
