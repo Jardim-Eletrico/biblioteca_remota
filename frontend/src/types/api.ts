@@ -5,6 +5,18 @@ export interface LoginResponse {
     refresh : string;
 }
 
+export interface CadastroBibliotecarioPayload{
+    nome: string;
+    email: string;
+    password: string;
+}
+
+export interface CadastroBibliotecarioResponse{
+    id: number;
+    nome: string;
+    email: string;
+}
+
 export interface CadastroPayLoad {
     email: string;
     password: string;
