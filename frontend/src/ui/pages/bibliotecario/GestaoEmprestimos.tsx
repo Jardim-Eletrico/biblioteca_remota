@@ -127,12 +127,11 @@ export default function GestaoEmprestimos() {
   }
 
   async function atualizarDados() {
-    setErro("");
-    await Promise.all([
-      carregarPedidos(),
-      carregarEmprestimos(),
-    ]);
-  }
+  await Promise.all([
+    carregarPedidos(),
+    carregarEmprestimos(),
+  ]);
+}
 
   useEffect(() => {
     void atualizarDados();
@@ -199,35 +198,50 @@ export default function GestaoEmprestimos() {
   }
 
   // Abrir modal e buscar exemplares disponíveis.
-  async function abrirModalEfetivacao(pedido: PedidoResponse) {
-    setErro("");
-    setSucesso("");
+ // Abrir modal e buscar o exemplar reservado para o pedido.
+async function abrirModalEfetivacao(pedido: PedidoResponse) {
+  setErro("");
+  setSucesso("");
 
-    setPedidoSelecionado(pedido);
-    setExemplares([]);
-    setExemplarSelecionado("");
-    setDataPrevista("");
-    setCarregandoExemplares(true);
+  setPedidoSelecionado(pedido);
+  setExemplares([]);
+  setExemplarSelecionado("");
+  setDataPrevista("");
+  setCarregandoExemplares(true);
 
-    try {
-      const dados = await listarExemplaresDaEdicao(
-        pedido.edicao,
-        "disponivel"
-      );
+  try {
+    const dados = await listarExemplaresDaEdicao(
+      pedido.edicao,
+      "todos"
+    );
 
-      setExemplares(dados);
-    } catch (error) {
+    const exemplarReservado = dados.filter(
+      (exemplar) =>
+        exemplar.id === pedido.exemplar &&
+        exemplar.status === "reservado"
+    );
+
+    setExemplares(exemplarReservado);
+
+    if (exemplarReservado.length === 1) {
+      setExemplarSelecionado(exemplarReservado[0].id);
+    } else {
       setErro(
-        error instanceof Error
-          ? error.message
-          : "Não foi possível carregar os exemplares."
+        "Não foi encontrado o exemplar reservado para este pedido."
       );
-
-      setPedidoSelecionado(null);
-    } finally {
-      setCarregandoExemplares(false);
     }
+  } catch (error) {
+    setErro(
+      error instanceof Error
+        ? error.message
+        : "Não foi possível carregar os exemplares."
+    );
+
+    setPedidoSelecionado(null);
+  } finally {
+    setCarregandoExemplares(false);
   }
+}
 
   function fecharModal() {
     setPedidoSelecionado(null);

@@ -14,13 +14,42 @@ from emprestimos.models import Emprestimo
 class Command(BaseCommand):
     help = "Cria pedidos e empréstimos fictícios para testar o painel do bibliotecário."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--limpar",
+            action="store_true",
+            help="Apaga pedidos e empréstimos existentes antes de repovoar.",
+        )
+
     @transaction.atomic
     def handle(self, *args, **options):
+
+        # Limpa somente os pedidos e empréstimos de teste.
+        if options["limpar"]:
+            Emprestimo.objects.all().delete()
+            Pedido.objects.all().delete()
+
+            Exemplar.objects.filter(
+                status__in=["reservado", "emprestado"]
+            ).update(status="disponivel")
+
+            self.stdout.write(
+                self.style.WARNING(
+                    "Pedidos e empréstimos anteriores foram apagados."
+                )
+            )
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    "Exemplares reservados e emprestados foram restaurados."
+                )
+            )
+
         # Não misturar os dados de teste com registros existentes.
-        if Pedido.objects.exists() or Emprestimo.objects.exists():
+        elif Pedido.objects.exists() or Emprestimo.objects.exists():
             raise CommandError(
                 "Já existem pedidos ou empréstimos no banco. "
-                "O comando foi interrompido para preservar os dados existentes."
+                "Utilize --limpar para apagá-los e repovoar."
             )
 
         leitores = list(
@@ -37,8 +66,7 @@ class Command(BaseCommand):
 
         # Localiza uma edição que tenha exatamente um exemplar disponível.
         edicao_fila = (
-            Edicao.objects.annotate()
-            .filter(exemplares__status="disponivel")
+            Edicao.objects.filter(exemplares__status="disponivel")
             .order_by("id")
             .distinct()
         )
@@ -62,42 +90,11 @@ class Command(BaseCommand):
             )
 
         def criar_pedido(leitor, edicao, status, exemplar=None):
-            pedido = Pedido.objects.create(
+            return Pedido.objects.create(
                 leitor=leitor,
                 edicao=edicao,
                 exemplar=exemplar,
                 status=status,
-            )
-
-            # A data do pedido é ajustada para permitir visualizar
-            # diferentes datas na interface.
-            return pedido
-
-        def criar_emprestimo(
-            pedido,
-            exemplar,
-            dias_retirada,
-            dias_devolucao,
-            devolvido=False,
-        ):
-            retirada = agora - timedelta(days=dias_retirada)
-
-            data_devolucao = (
-                agora - timedelta(days=dias_devolucao)
-                if devolvido
-                else None
-            )
-
-            return Emprestimo.objects.create(
-                pedido=pedido,
-                exemplar=exemplar,
-                data_retirada=retirada,
-                data_prevista_devolucao=(
-                    hoje + timedelta(days=dias_retirada * 0 - 7)
-                    if dias_retirada == 21
-                    else hoje + timedelta(days=7)
-                ),
-                data_devolucao=data_devolucao,
             )
 
         # -------------------------------------------------
@@ -153,7 +150,7 @@ class Command(BaseCommand):
         )
 
         # -------------------------------------------------
-        # 4. Empréstimo em andamento
+        # Função auxiliar para obter exemplares disponíveis
         # -------------------------------------------------
 
         def obter_exemplar_disponivel(edicoes_excluidas):
@@ -164,6 +161,10 @@ class Command(BaseCommand):
                 .order_by("id")
                 .first()
             )
+
+        # -------------------------------------------------
+        # 4. Empréstimo em andamento
+        # -------------------------------------------------
 
         exemplar_ativo = obter_exemplar_disponivel(
             [edicao_unica.pk, edicao_recusado.pk]
@@ -247,7 +248,7 @@ class Command(BaseCommand):
         exemplar_devolvido.status = "disponivel"
         exemplar_devolvido.save(update_fields=["status"])
 
-        Emprestimo.objects.create(
+        emprestimo_devolvido = Emprestimo.objects.create(
             pedido=pedido_devolvido,
             exemplar=exemplar_devolvido,
             data_retirada=agora - timedelta(days=10),
@@ -255,8 +256,10 @@ class Command(BaseCommand):
             data_devolucao=agora - timedelta(days=5),
         )
 
-        # Ajusta datas dos pedidos para que não apareçam todos
-        # com a mesma data.
+        # -------------------------------------------------
+        # Ajusta datas das respostas dos pedidos
+        # -------------------------------------------------
+
         Pedido.objects.filter(pk=pedido_aprovado.pk).update(
             data_resposta=agora - timedelta(days=2)
         )
@@ -273,10 +276,12 @@ class Command(BaseCommand):
             data_resposta=agora - timedelta(days=10)
         )
 
+        # -------------------------------------------------
+        # Resultado
+        # -------------------------------------------------
+
         self.stdout.write(
-            self.style.SUCCESS(
-                "\nDados de teste criados com sucesso!"
-            )
+            self.style.SUCCESS("\nDados de teste criados com sucesso!")
         )
 
         self.stdout.write("Pedidos:")
@@ -288,5 +293,3 @@ class Command(BaseCommand):
         self.stdout.write("  1 em andamento")
         self.stdout.write("  1 atrasado")
         self.stdout.write("  1 devolvido")
-
-

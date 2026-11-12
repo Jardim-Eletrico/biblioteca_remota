@@ -14,6 +14,7 @@ export interface PedidoResponse {
   status: PedidoStatus;
   data_pedido: string;
   data_resposta: string | null;
+  exemplar: number | null;
 }
 
 export interface PedidoResponderPayload {
