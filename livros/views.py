@@ -214,6 +214,9 @@ class LivroListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = LivroPagination
 
+    filter_backends = [SearchFilter]
+    search_fields = ["titulo", "autor"]
+
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.all()
