@@ -3,6 +3,13 @@ export type EmprestimoSituacao =
   | "Atrasado"
   | "Em andamento";
 
+
+export type FiltroEmprestimo =
+  | "Todos"
+  | "Em andamento"
+  | "Atrasados"
+  | "Devolvidos";
+  
 export interface EmprestimoResponse {
   id: number;
   leitor: string;

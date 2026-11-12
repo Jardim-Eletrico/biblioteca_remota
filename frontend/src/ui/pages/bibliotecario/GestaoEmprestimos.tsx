@@ -2,7 +2,10 @@
 import { useEffect, useState } from "react";
 
 import type { PedidoResponse } from "@/src/types/pedido";
-import type { EmprestimoResponse } from "@/src/types/emprestimo";
+import type {
+  EmprestimoResponse,
+  FiltroEmprestimo,
+} from "@/src/types/emprestimo";
 import type { ExemplarPublicoResponse } from "@/src/types/exemplar";
 
 import PedidoCard from "@/components/bibliotecario/emprestimos/PedidoCard";
@@ -27,6 +30,11 @@ type Aba = "pedidos" | "emprestimos";
 
 export default function GestaoEmprestimos() {
   const [aba, setAba] = useState<Aba>("pedidos");
+
+  // Filtro mantido no componente pai para não ser perdido
+  // quando a tabela for desmontada e montada novamente.
+  const [filtroEmprestimos, setFiltroEmprestimos] =
+    useState<FiltroEmprestimo>("Todos");
 
   const [pedidos, setPedidos] = useState<PedidoResponse[]>([]);
   const [emprestimos, setEmprestimos] = useState<EmprestimoResponse[]>([]);
@@ -440,6 +448,8 @@ export default function GestaoEmprestimos() {
                 emprestimos={emprestimos}
                 emprestimoEmAcao={emprestimoEmAcao}
                 onDevolver={handleDevolver}
+                filtro={filtroEmprestimos}
+                onFiltroChange={setFiltroEmprestimos}
               />
             )}
           </section>
