@@ -53,48 +53,65 @@ export default function Home() {
 
     async function carregarMaisLivros() {
 
+        console.log("CHAMOU CARREGAR MAIS");
+        console.log("Quantidade atual:", livros.length);
+        console.log("Tem mais:", temMaisLivros);
+
         if (carregandoMais.current || !temMaisLivros) return;
+
         carregandoMais.current = true;
-        
-        const resposta = await listarLivros(livros.length);
 
-        setLivros(livrosAtuais => [
-            ...livrosAtuais,
-            ...resposta.results
-        ]);
+        try {
+            const resposta = await listarLivros(livros.length);
+            console.log("Resposta da API:", resposta);
+            console.log("Resultados:", resposta.results);
 
-        setTemMaisLivros(resposta.next !== null);
+            setLivros(livrosAtuais => [
+                ...livrosAtuais,
+                ...resposta.results
+            ]);
+
+            setTemMaisLivros(resposta.next !== null);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            carregandoMais.current = false;
+        }
     }
 
     return (
-        
-        <InfiniteScroll
-            className="grid relative grid-cols-2 w-full gap-7.5"
-            dataLength={livros.length}
-            next={carregarMaisLivros}
-            hasMore={temMaisLivros}
-            loader={
-                <div className="flex col-span-2 justify-center items-center w-full">
-                    <Loader />
-                </div>
-            }
-            style={{ overflow: "visible"}}
-            scrollThreshold={0.2}
-        >
-            
-                {livros.map(livro => (
-                    livro.edicoes.map(edicao => (
-                        <LivroCard
-                            key={edicao.id}
-                            autor={livro.autor}
-                            titulo={livro.titulo}
-                            image={edicao.capa ?? ""}
-                        />
-                    ))
-                ))}
 
+        <>
+        
+            <InfiniteScroll
+                className="grid relative grid-cols-2 w-full gap-7.5 sm:grid-cols-3 md:grid-cols-6 object-contain"
+                dataLength={livros.length}
+                next={carregarMaisLivros}
+                hasMore={temMaisLivros}
+                loader={
+                    <div className="flex col-span-2 sm:col-span-3 justify-center items-center w-full">
+                        <Loader />
+                    </div>
+                }
+                style={{ overflow: "visible"}}
+                scrollThreshold={0.2}
+            >
                 
-            
-        </InfiniteScroll>
+                    {livros.map(livro => (
+                        livro.edicoes.map(edicao => (
+                            <LivroCard
+                                key={edicao.id}
+                                autor={livro.autor}
+                                titulo={livro.titulo}
+                                image={edicao.capa ?? ""}
+                            />
+                        ))
+                    ))}
+
+                    
+                
+            </InfiniteScroll>
+
+        </>
     );
 }
