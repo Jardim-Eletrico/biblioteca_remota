@@ -6,7 +6,7 @@ export default function Applayout() {
         <div className="min-h-screen flex flex-col bg-gray-background dark:bg-gray-900 transition-all duration-300 ease-in-out">
             <Appnavbar />
 
-            <main>
+            <main className="px-5">
                 
                 <Outlet />
             </main>

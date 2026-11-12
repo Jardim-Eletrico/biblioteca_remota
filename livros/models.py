@@ -8,13 +8,19 @@ from django.core.exceptions import ValidationError
 
 
 
+
+
 def validar_ano_original(valor):
     padrao = r"^(c\.\s*)?\d{1,4}(\s*(a\.C\.|d\.C\.))?$"
 
-    if not re.fullmatch(padrao, valor.strip()):
+    if not re.match(padrao, valor):
         raise ValidationError(
             "Informe um ano válido. Exemplos: 1880, 1937, c. 340 a.C."
         )
+
+
+
+
 
 # Create your models here.
 class CDD(models.Model):
@@ -47,9 +53,9 @@ class Livro(models.Model):
     descricao = models.CharField(max_length=1000, blank=True)
     generos = models.CharField(max_length=90, blank=True)
     ano_original = models.CharField(
-        max_length=20,
-        validators=[validar_ano_original]
-        )
+    max_length=30,
+    validators=[validar_ano_original]
+    )
     def __str__(self):
         return self.titulo
 

@@ -307,7 +307,12 @@ class EdicaoListCreateView(generics.ListCreateAPIView):
 class EdicaoDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Edicao.objects.all()
     serializer_class = EdicaoSerializer
-    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    def get_permissions(self):
+        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+            return [IsAuthenticated()]
+
+        return [IsAuthenticated(), IsBibliotecario()]
 
 class AvaliarLivro(APIView):
     permission_classes = [IsAuthenticated]
