@@ -68,6 +68,8 @@ class Edicao(models.Model):
     edicao = models.CharField(max_length=20, null=True)
     capa = models.ImageField(upload_to="capas/", blank=True)
     isbn = models.CharField(max_length=17, unique=True, null=True, blank=True)
+    data_de_criacao = models.DateTimeField(auto_now_add=True)
+    
 
     def __str__(self):
         return f"{self.livro.titulo} - {self.editora}"
