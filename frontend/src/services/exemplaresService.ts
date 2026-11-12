@@ -202,3 +202,29 @@ export async function baixarExemplar(
 
     return data;
 }
+
+
+
+import type { ExemplarPublicoResponse } from "../types/exemplar";
+
+// Lista os exemplares de uma edição.
+export async function listarExemplaresDaEdicao(
+  edicaoId: number,
+  status: ExemplarFiltroPublico = "disponivel"
+): Promise<ExemplarPublicoResponse[]> {
+  const response = await apiFetch(
+    `/edicoes/public/${edicaoId}/exemplares/?status=${status}`
+  );
+
+  const dados = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      dados?.detail ||
+      dados?.erro ||
+      "Não foi possível listar os exemplares."
+    );
+  }
+
+  return Array.isArray(dados) ? dados : dados.results;
+}

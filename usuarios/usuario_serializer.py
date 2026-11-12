@@ -3,6 +3,8 @@ from django.db import transaction
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from django.core.exceptions import ValidationError as DjangoValidationError
+
 from .models import (
     Usuario,
     Leitor,
@@ -34,6 +36,11 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return usuario
 
 class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(
+        write_only = True,
+        trim_whitespace = False
+    )
+
     class Meta:
         model = Usuario
         fields = (
@@ -42,9 +49,18 @@ class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
             "password",
             "nome",
         )
-        extra_kwargs = {
-            "password": {"write_only": True}
-        }
+
+        read_only_fields = ("id",)
+
+
+        def validate_password(self, value):
+            try:
+                self.validate_password(value)
+            except DjangoValidationError as erro:
+                raise serializers.ValidationError(erro.messages)
+
+            return value
+        
     @transaction.atomic
     def create(self, validated_data): #Cria um usuário já com hash em seus dados.
         usuario = Usuario.objects.create_user(
@@ -57,10 +73,19 @@ class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
 
         return usuario
     
+
 class LeitorSerializer(serializers.ModelSerializer):
+    nome = serializers.CharField(source="usuario.nome", read_only=True)
+    email = serializers.EmailField(source="usuario.email", read_only=True)
+
     class Meta:
         model = Leitor
-        fields = "__all__" 
+        fields = [
+            "id",
+            "nome",
+            "email",
+        ]
+
 
 class BibliotecarioSerializer(serializers.ModelSerializer):
     class Meta:

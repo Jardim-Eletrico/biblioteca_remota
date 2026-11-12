@@ -8,6 +8,7 @@ from rest_framework_simplejwt.views import (
 from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
+
 # Views de livros
 from livros.views import (
     LivroListView,
@@ -112,6 +113,7 @@ urlpatterns = [
     path("pedidos/meus/ativos/",MeusPedidosAtivosView.as_view(),name="meus-pedidos-ativos"),
     path("pedidos/<int:pedido_id>/cancelar/",PedidoCancelarView.as_view(),name="pedido-cancelar",),
     path("pedidos/ativos/",TodosPedidosAtivosView.as_view(),name="todos-pedidos-ativos",),
+    path("pedidos/<int:pedido_id>/reenviar-codigo/",ReenviarCodigoConfirmacao.as_view(),name="reenviar-codigo-confirmacao",),
 
     # Acessos Bibliotecario:
     path('leitores/', ListarLeitores.as_view(), name='listar-leitores'),

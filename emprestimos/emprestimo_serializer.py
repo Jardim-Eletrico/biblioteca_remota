@@ -12,6 +12,14 @@ class EfetivarEmprestimoSerializer(serializers.Serializer):
         source='exemplar',
     )
 
+    codigo_confirmacao = serializers.RegexField(
+        regex=r"^\d{6}$",
+        write_only=True,
+        error_messages = {
+            "invalid": "O código de confirmação deve ter 6 dígitos"
+        }
+    )
+
     data_prevista_devolucao = serializers.DateField(
         required=False,
     )
