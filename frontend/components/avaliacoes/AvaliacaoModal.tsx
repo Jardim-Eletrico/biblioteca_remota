@@ -57,7 +57,7 @@ export default function AvaliacaoModal({
             flex items-center justify-center
             bg-black/40 dark:bg-black/60
             backdrop-blur-md
-            px-5 py-6
+            py-6
             ">
 
                 <section
