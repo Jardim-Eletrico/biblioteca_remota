@@ -73,10 +73,19 @@ class BibliotecarioCadastroSerializer(serializers.ModelSerializer):
 
         return usuario
     
+
 class LeitorSerializer(serializers.ModelSerializer):
+    nome = serializers.CharField(source="usuario.nome", read_only=True)
+    email = serializers.EmailField(source="usuario.email", read_only=True)
+
     class Meta:
         model = Leitor
-        fields = "__all__" 
+        fields = [
+            "id",
+            "nome",
+            "email",
+        ]
+
 
 class BibliotecarioSerializer(serializers.ModelSerializer):
     class Meta:

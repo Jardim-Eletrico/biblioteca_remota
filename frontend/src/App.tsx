@@ -12,6 +12,7 @@ import TesteAvaliacaoModal from "./ui/pages/TesteAvaliacaoModal";
 
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
 import CadastroBibliotecario from "@/src/ui/pages/bibliotecario/CadastroBibliotecario";
+import GestaoLeitores from "./ui/pages/bibliotecario/GestaoLeitores";
 
 export default function App() {
     return (
@@ -30,6 +31,7 @@ export default function App() {
                         <Route path="/teste-avaliacao" element={<TesteAvaliacaoModal />}></Route>
                         <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />}/>
                         <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />}/>
+                        <Route path="/gestao-leitores" element={<GestaoLeitores />}/>
                     </Route>
 
                 </Routes>
