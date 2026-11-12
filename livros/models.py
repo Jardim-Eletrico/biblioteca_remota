@@ -7,13 +7,19 @@ import re
 from django.core.exceptions import ValidationError
 
 
+
+
+
 def validar_ano_original(valor):
     padrao = r"^(c\.\s*)?\d{1,4}(\s*(a\.C\.|d\.C\.))?$"
 
-    if not re.fullmatch(padrao, valor.strip()):
+    if not re.match(padrao, valor):
         raise ValidationError(
             "Informe um ano válido. Exemplos: 1880, 1937, c. 340 a.C."
         )
+
+
+
 
 
 # Create your models here.
