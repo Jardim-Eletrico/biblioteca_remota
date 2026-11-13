@@ -10,6 +10,8 @@ export interface EdicaoResponse {
 
     total_exemplares: number;
     exemplares_disponiveis: number;
+
+    data_de_criacao: string;
 }
 
 export interface EdicaoPayload {

@@ -54,7 +54,7 @@ export default function Auth() {
                     </>
                 ) : null}
 
-                <div className={cardStyles.card}>
+                <div className={`${cardStyles.card} sm:max-w-[80%] md:max-w-[70%]`}>
                     <form className="flex flex-col w-full gap-4" action=""
                         onSubmit={(event) => {
                             event.preventDefault();

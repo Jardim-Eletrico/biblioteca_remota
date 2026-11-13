@@ -46,8 +46,26 @@ from emprestimos.services import (
     devolver_emprestimo,
 )
 
+from rest_framework.pagination import LimitOffsetPagination
+
 from livros.services import avaliar_livro
 
+from django.db.models import Max
+
+from datetime import timedelta
+
+from django.db.models import (
+    Count,
+    Max,
+    OuterRef,
+    Subquery,
+    IntegerField,
+    Value,
+)
+from django.db.models.functions import Coalesce
+from django.utils import timezone
+
+from emprestimos.models import Emprestimo
 def livros_com_avaliacoes():
     return Livro.objects.annotate(
         media_avaliacoes=Avg("avaliacoes__nota"),
@@ -212,10 +230,80 @@ class ExemplarListView(ListAPIView):
         raise ValidationError({
             "situacao": "Filtro inválido."
         })
+
+class LivroPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
     
 class LivroListView(generics.ListAPIView):
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LivroPagination
+
+    filter_backends = [SearchFilter]
+    search_fields = ["titulo", "autor"]
+
+    def get_queryset(self):
+        queryset = Livro.objects.prefetch_related("edicoes")
+
+        ordenacao = self.request.query_params.get("ordenacao")
+
+        # Mais lidos: empréstimos totais
+        if ordenacao == "mais_lidos":
+
+            emprestimos = (
+                Emprestimo.objects
+                .filter(
+                    pedido__edicao__livro=OuterRef("pk"),
+                    data_retirada__isnull=False
+                )
+                .order_by()
+                .values("pedido__edicao__livro")
+                .annotate(total=Count("pk"))
+                .values("total")[:1]
+            )
+
+            queryset = queryset.annotate(
+                total_emprestimos=Coalesce(
+                    Subquery(emprestimos, output_field=IntegerField()),
+                    Value(0)
+                )
+            ).order_by("-total_emprestimos", "titulo")
+
+        # Em destaque: empréstimos nos últimos 7 dias
+        elif ordenacao == "destaque":
+
+            emprestimos = (
+                Emprestimo.objects
+                .filter(
+                    pedido__edicao__livro=OuterRef("pk"),
+                    data_retirada__gte=timezone.now() - timedelta(days=7),
+                    data_retirada__isnull=False
+                )
+                .order_by()
+                .values("pedido__edicao__livro")
+                .annotate(total=Count("pk"))
+                .values("total")[:1]
+            )
+
+            queryset = queryset.annotate(
+                emprestimos_semana=Coalesce(
+                    Subquery(emprestimos, output_field=IntegerField()),
+                    Value(0)
+                )
+            ).order_by("-emprestimos_semana", "titulo")
+
+        # Novos: data de cadastro da edição mais recente
+        elif ordenacao == "recentes":
+
+            queryset = queryset.annotate(
+                data_ultima_edicao=Max("edicoes__data_de_criacao")
+            ).order_by("-data_ultima_edicao")
+
+        else:
+            queryset = queryset.order_by("titulo")
+
+        return queryset
 
     def get_queryset(self):
 
@@ -294,9 +382,14 @@ class LivroCreateView(generics.CreateAPIView):
     permission_classes = [IsBibliotecario]
 
 
+class EdicaoPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
+
 class EdicaoListCreateView(generics.ListCreateAPIView):
     queryset = Edicao.objects.select_related("livro").all()
     serializer_class = EdicaoSerializer
+    pagination_class = EdicaoPagination
 
     def get_permissions(self):
         if self.request.method == "POST":

@@ -1,4 +1,3 @@
-
 import type {
     EdicaoResponse,
     EdicaoPayload
@@ -13,7 +12,6 @@ import { apiFetch } from "./api";
 function criarFormData(
     payload: EdicaoPayload | Partial<EdicaoPayload>
 ): FormData {
-
     const formData = new FormData();
 
     if (payload.livro !== undefined) {
@@ -47,13 +45,11 @@ function criarFormData(
     return formData;
 }
 
-
 // =====================================================
 // LISTAR EDIÇÕES
 // =====================================================
 
 export async function listarEdicoes(): Promise<EdicaoResponse[]> {
-
     const response = await apiFetch("/edicoes/");
 
     const data = await response.json().catch(() => null);
@@ -67,13 +63,11 @@ export async function listarEdicoes(): Promise<EdicaoResponse[]> {
     return data;
 }
 
-
 // =====================================================
 // BUSCAR EDIÇÃO
 // =====================================================
 
 export async function buscarEdicao(id: number): Promise<EdicaoResponse> {
-
     const response = await apiFetch(`/edicoes/${id}/`);
 
     const data = await response.json().catch(() => null);
@@ -87,7 +81,6 @@ export async function buscarEdicao(id: number): Promise<EdicaoResponse> {
     return data;
 }
 
-
 // =====================================================
 // ATUALIZAR EDIÇÃO
 // =====================================================
@@ -96,7 +89,6 @@ export async function atualizarEdicao(
     id: number,
     payload: EdicaoPayload
 ): Promise<EdicaoResponse> {
-
     const response = await apiFetch(`/edicoes/${id}/`, {
         method: "PUT",
         body: criarFormData(payload)
@@ -113,7 +105,6 @@ export async function atualizarEdicao(
     return data;
 }
 
-
 // =====================================================
 // ATUALIZAR EDIÇÃO PARCIALMENTE
 // =====================================================
@@ -122,7 +113,6 @@ export async function atualizarEdicaoParcial(
     id: number,
     payload: Partial<EdicaoPayload>
 ): Promise<EdicaoResponse> {
-
     const response = await apiFetch(`/edicoes/${id}/`, {
         method: "PATCH",
         body: criarFormData(payload)
@@ -139,13 +129,11 @@ export async function atualizarEdicaoParcial(
     return data;
 }
 
-
 // =====================================================
 // EXCLUIR EDIÇÃO
 // =====================================================
 
 export async function excluirEdicao(id: number): Promise<void> {
-
     const response = await apiFetch(`/edicoes/${id}/`, {
         method: "DELETE"
     });
@@ -161,7 +149,6 @@ export async function excluirEdicao(id: number): Promise<void> {
     }
 }
 
-
 // =====================================================
 // CADASTRAR EDIÇÃO
 // =====================================================
@@ -169,7 +156,6 @@ export async function excluirEdicao(id: number): Promise<void> {
 export async function cadastrarEdicao(
     payload: EdicaoPayload
 ): Promise<EdicaoResponse> {
-
     const response = await apiFetch("/edicoes/", {
         method: "POST",
         body: criarFormData(payload)
