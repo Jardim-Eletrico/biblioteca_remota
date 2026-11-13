@@ -1,149 +1,141 @@
 import type {
-    LivroResponse, LivroPayload, LivrosPaginados
-} from '@/src/types/livro';
+    LivroResponse,
+    LivroPayload,
+    LivrosPaginados
+} from "@/src/types/livro";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
+import { apiFetch } from "./api";
 
-// FUNÇÃO AUXILIAR PARA REQUISIÇÕES AUTENTICADAS
-async function requisicaoAutenticada(
-    url: string,
-    options: RequestInit = {}
-): Promise<Response> {
-    const access = localStorage.getItem("access");
-
-    if (!access) {
-        throw new Error("Token de autenticação não encontrado");
-    }
-
-    return fetch(url, {
-        ...options,
-        headers: {
-            ...options.headers,
-            "Authorization": `Bearer ${access}`,
-        },
-    });
-}
-
+// =====================================================
 // LISTAR LIVROS
+// =====================================================
+
 export async function listarLivros(
     offset: number = 0,
     busca: string = "",
     ordenacao: string = ""
 ): Promise<LivrosPaginados> {
-    const response = await requisicaoAutenticada(
-        `${API_URL}/livros/?limit=10&offset=${offset}&search=${encodeURIComponent(busca)}&ordenacao=${ordenacao}`
-    );
+    const params = new URLSearchParams({
+        limit: "10",
+        offset: String(offset),
+        search: busca,
+        ordenacao: ordenacao
+    });
 
-    const data = await response.json();
+    const response = await apiFetch(`/livros/?${params.toString()}`);
+
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar livros"
+            data?.detail || data?.erro || "Erro ao buscar livros"
         );
     }
 
     return data;
 }
 
-// BUSCAR LIVRO POR ID
+// =====================================================
+// BUSCAR LIVRO
+// =====================================================
+
 export async function buscarLivro(id: number): Promise<LivroResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`);
+    const response = await apiFetch(`/livros/${id}/`);
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar livro"
+            data?.detail || data?.erro || "Erro ao buscar livro"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // ATUALIZAR LIVRO
+// =====================================================
+
 export async function atualizarLivro(
     id: number,
     payload: LivroPayload
 ): Promise<LivroResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar livro"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // ATUALIZAR LIVRO PARCIALMENTE
+// =====================================================
+
 export async function atualizarLivroParcial(
     id: number,
     payload: Partial<LivroPayload>
 ): Promise<LivroResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "PATCH",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar livro"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // EXCLUIR LIVRO
+// =====================================================
+
 export async function excluirLivro(id: number): Promise<void> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/${id}/`, {
+    const response = await apiFetch(`/livros/${id}/`, {
         method: "DELETE"
     });
 
     if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
 
         throw new Error(
-            data.detail ||
-            data.erro ||
-            "Erro ao excluir livro."
+            data?.detail || data?.erro || "Erro ao excluir livro."
         );
     }
 }
 
+// =====================================================
 // CADASTRAR LIVRO
+// =====================================================
+
 export async function cadastrarLivro(
     payload: LivroPayload
 ): Promise<LivroResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/livros/cadastrar/`, {
+    const response = await apiFetch("/livros/cadastrar/", {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
         body: JSON.stringify(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail ||
-            data.erro ||
-            "Erro ao cadastrar livro."
+            data?.detail || data?.erro || "Erro ao cadastrar livro."
         );
     }
 

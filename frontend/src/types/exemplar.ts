@@ -43,3 +43,13 @@ export interface ExemplarLotePayload {
 export interface ExemplarBaixaPayload {
     motivo_baixa: string;
 }
+
+export interface ExemplarPublicoResponse {
+  id: number;
+  tombo: string;
+  status: ExemplarStatus;
+  titulo: string;
+  autor: string;
+  ano_publicacao: number;
+  editora: string;
+}

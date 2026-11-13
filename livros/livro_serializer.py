@@ -9,6 +9,27 @@ from .models import (
 )
 from emprestimos.models import Emprestimo
 
+class LivroSerializer(serializers.ModelSerializer):
+
+    media_avaliacoes = serializers.FloatField(
+        read_only = True,
+        allow_null = True
+    )
+
+    quantidade_avaliacoes = serializers.IntegerField(
+        read_only = True
+    )
+
+    class Meta:
+        model = Livro
+        fields = "__all__"
+
+    def validate_titulo(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "O título é obrigatório."
+            )
+        return value.strip()
 
 class EdicaoSerializer(serializers.ModelSerializer):
     total_exemplares = serializers.SerializerMethodField()

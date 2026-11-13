@@ -47,9 +47,9 @@ class Livro(models.Model):
     descricao = models.CharField(max_length=1000, blank=True)
     generos = models.CharField(max_length=90, blank=True)
     ano_original = models.CharField(
-        max_length=20,
-        validators=[validar_ano_original]
-        )
+    max_length=30,
+    validators=[validar_ano_original]
+    )
     def __str__(self):
         return self.titulo
 

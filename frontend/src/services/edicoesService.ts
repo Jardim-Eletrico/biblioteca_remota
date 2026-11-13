@@ -1,29 +1,17 @@
-import type { EdicaoResponse, EdicaoPayload } from '@/src/types/edicao';
+import type {
+    EdicaoResponse,
+    EdicaoPayload
+} from "@/src/types/edicao";
 
-const API_URL = import.meta.env.VITE_API_URL ?? "http://127.0.0.1:8000/api";
+import { apiFetch } from "./api";
 
-// FUNÇÃO AUXILIAR PARA REQUISIÇÕES AUTENTICADAS
-async function requisicaoAutenticada(
-    url: string,
-    options: RequestInit = {}
-): Promise<Response> {
-    const access = localStorage.getItem("access");
-
-    if (!access) {
-        throw new Error("Token de autenticação não encontrado");
-    }
-
-    return fetch(url, {
-        ...options,
-        headers: {
-            ...options.headers,
-            "Authorization": `Bearer ${access}`,
-        },
-    });
-}
-
+// =====================================================
 // CRIAR FORMDATA
-function criarFormData(payload: EdicaoPayload | Partial<EdicaoPayload>) {
+// =====================================================
+
+function criarFormData(
+    payload: EdicaoPayload | Partial<EdicaoPayload>
+): FormData {
     const formData = new FormData();
 
     if (payload.livro !== undefined) {
@@ -57,110 +45,128 @@ function criarFormData(payload: EdicaoPayload | Partial<EdicaoPayload>) {
     return formData;
 }
 
+// =====================================================
 // LISTAR EDIÇÕES
+// =====================================================
+
 export async function listarEdicoes(): Promise<EdicaoResponse[]> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/`);
+    const response = await apiFetch("/edicoes/");
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar edições"
+            data?.detail || data?.erro || "Erro ao buscar edições"
         );
     }
 
     return data;
 }
 
-// BUSCAR EDIÇÃO POR ID
+// =====================================================
+// BUSCAR EDIÇÃO
+// =====================================================
+
 export async function buscarEdicao(id: number): Promise<EdicaoResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`);
+    const response = await apiFetch(`/edicoes/${id}/`);
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || "Erro ao buscar edição"
+            data?.detail || data?.erro || "Erro ao buscar edição"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // ATUALIZAR EDIÇÃO
+// =====================================================
+
 export async function atualizarEdicao(
     id: number,
     payload: EdicaoPayload
 ): Promise<EdicaoResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
+    const response = await apiFetch(`/edicoes/${id}/`, {
         method: "PUT",
         body: criarFormData(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar edição"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // ATUALIZAR EDIÇÃO PARCIALMENTE
+// =====================================================
+
 export async function atualizarEdicaoParcial(
     id: number,
     payload: Partial<EdicaoPayload>
 ): Promise<EdicaoResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
+    const response = await apiFetch(`/edicoes/${id}/`, {
         method: "PATCH",
         body: criarFormData(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail || data.erro || 'Erro ao atualizar'
+            data?.detail || data?.erro || "Erro ao atualizar edição"
         );
     }
 
     return data;
 }
 
+// =====================================================
 // EXCLUIR EDIÇÃO
+// =====================================================
+
 export async function excluirEdicao(id: number): Promise<void> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/${id}/`, {
+    const response = await apiFetch(`/edicoes/${id}/`, {
         method: "DELETE"
     });
 
     if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json().catch(() => null);
 
         throw new Error(
-            data.detail ||
-            data.erro ||
+            data?.detail ||
+            data?.erro ||
             "Erro ao excluir edição."
         );
     }
 }
 
+// =====================================================
 // CADASTRAR EDIÇÃO
+// =====================================================
+
 export async function cadastrarEdicao(
     payload: EdicaoPayload
 ): Promise<EdicaoResponse> {
-    const response = await requisicaoAutenticada(`${API_URL}/edicoes/`, {
+    const response = await apiFetch("/edicoes/", {
         method: "POST",
         body: criarFormData(payload)
     });
 
-    const data = await response.json();
+    const data = await response.json().catch(() => null);
 
     if (!response.ok) {
         throw new Error(
-            data.detail ||
-            data.erro ||
+            data?.detail ||
+            data?.erro ||
             "Erro ao cadastrar edição."
         );
     }
