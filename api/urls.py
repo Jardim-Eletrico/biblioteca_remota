@@ -89,6 +89,7 @@ urlpatterns = [
     path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
     path('emprestimos/', EmprestimoListView.as_view(), name="listar-emprestimos"),
+    path('emprestimos/<int:emprestimo_id>/regularizar/', RegularizarEmprestimoView.as_view(), name='regularizar-emprestimo'),
     path("pedidos/meus/ativos/",MeusPedidosAtivosView.as_view(),name="meus-pedidos-ativos"),
     path("pedidos/<int:pedido_id>/cancelar/",PedidoCancelarView.as_view(),name="pedido-cancelar",),
     path("pedidos/ativos/",TodosPedidosAtivosView.as_view(),name="todos-pedidos-ativos",),

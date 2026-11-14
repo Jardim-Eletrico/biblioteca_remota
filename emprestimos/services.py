@@ -195,3 +195,45 @@ def devolver_emprestimo(emprestimo_id):
     notificar_usuarios_lista_desejos(edicao)
 
     return emprestimo
+
+@transaction.atomic
+def regularizar_emprestimo(emprestimo_id, motivo):
+    try:
+        emprestimo = (
+            Emprestimo.objects
+            .select_for_update()
+            .get(pk=emprestimo_id)
+        )
+    except Emprestimo.DoesNotExist:
+        raise ValidationError("Empréstimo não encontrado.")
+
+    if emprestimo.situacao_encerramento != Emprestimo.SituacaoEncerramento.PERDIDO:
+        raise ValidationError(
+            "Somente empréstimos encerrados como perdidos podem ser regularizados."
+        )
+
+    if emprestimo.regularizado:
+        raise ValidationError(
+            "Este empréstimo já foi regularizado."
+        )
+
+    motivo = motivo.strip()
+
+    if not motivo:
+        raise ValidationError(
+            "Informe o motivo da regularização."
+        )
+
+    emprestimo.regularizado = True
+    emprestimo.data_regularizacao = timezone.now()
+    emprestimo.motivo_regularizacao = motivo
+
+    emprestimo.save(
+        update_fields=[
+            "regularizado",
+            "data_regularizacao",
+            "motivo_regularizacao",
+        ]
+    )
+
+    return emprestimo

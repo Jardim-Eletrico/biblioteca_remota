@@ -44,6 +44,9 @@ class EmprestimoSerializer(serializers.ModelSerializer):
     situacao = serializers.SerializerMethodField()
 
     def get_situacao(self, obj):
+        if obj.regularizado:
+            return "Regularizado"
+
         if obj.situacao_encerramento == Emprestimo.SituacaoEncerramento.PERDIDO:
             return "Perdido"
 
@@ -54,7 +57,7 @@ class EmprestimoSerializer(serializers.ModelSerializer):
             return "Atrasado"
 
         return "Em andamento"
-
+    
     class Meta:
         model = Emprestimo
         fields = [
@@ -67,3 +70,10 @@ class EmprestimoSerializer(serializers.ModelSerializer):
             "data_devolucao",
             "situacao",
         ]
+
+class RegularizarEmprestimoSerializer(serializers.Serializer):
+    motivo_regularizacao = serializers.CharField(
+        required=True,
+        allow_blank=False,
+        trim_whitespace=True,
+    )

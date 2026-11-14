@@ -16,25 +16,22 @@ import {
     listarEmprestimos,
     efetivarEmprestimo,
     devolverEmprestimo,
+    regularizarEmprestimo,
 } from "@/src/services/emprestimoService";
 
 import { listarExemplaresDaEdicao } from "@/src/services/exemplaresService";
 
 export default function useGestaoEmprestimo() {
-    // Dados
     const [pedidos, setPedidos] = useState<PedidoResponse[]>([]);
     const [emprestimos, setEmprestimos] = useState<EmprestimoResponse[]>([]);
 
-    // Carregamento
     const [carregandoPedidos, setCarregandoPedidos] = useState(true);
     const [carregandoEmprestimos, setCarregandoEmprestimos] = useState(true);
     const [carregandoExemplares, setCarregandoExemplares] = useState(false);
 
-    // Ações
     const [pedidoEmAcao, setPedidoEmAcao] = useState<number | null>(null);
     const [emprestimoEmAcao, setEmprestimoEmAcao] = useState<number | null>(null);
 
-    // Mensagens
     const [erro, setErro] = useState("");
     const [sucesso, setSucesso] = useState("");
 
@@ -51,7 +48,12 @@ export default function useGestaoEmprestimo() {
     const [dataPrevista, setDataPrevista] = useState("");
     const [codigoConfirmacao, setCodigoConfirmacao] = useState("");
 
-    // Carregar pedidos
+    // Modal de regularização
+    const [emprestimoSelecionado, setEmprestimoSelecionado] =
+        useState<EmprestimoResponse | null>(null);
+
+    const [motivoRegularizacao, setMotivoRegularizacao] = useState("");
+
     const carregarPedidos = useCallback(async () => {
         setCarregandoPedidos(true);
 
@@ -69,7 +71,6 @@ export default function useGestaoEmprestimo() {
         }
     }, []);
 
-    // Carregar empréstimos
     const carregarEmprestimos = useCallback(async () => {
         setCarregandoEmprestimos(true);
 
@@ -87,7 +88,6 @@ export default function useGestaoEmprestimo() {
         }
     }, []);
 
-    // Atualizar os dados
     const atualizarDados = useCallback(async () => {
         await Promise.all([
             carregarPedidos(),
@@ -99,7 +99,6 @@ export default function useGestaoEmprestimo() {
         void atualizarDados();
     }, [atualizarDados]);
 
-    // Recusar pedido
     async function handleRecusar(pedidoId: number) {
         const confirmar = window.confirm(
             "Tem certeza de que deseja recusar este pedido?"
@@ -112,9 +111,7 @@ export default function useGestaoEmprestimo() {
         setPedidoEmAcao(pedidoId);
 
         try {
-            await responderPedido(pedidoId, {
-                status: "recusado",
-            });
+            await responderPedido(pedidoId, { status: "recusado" });
 
             setSucesso("Pedido recusado com sucesso.");
             await carregarPedidos();
@@ -129,7 +126,6 @@ export default function useGestaoEmprestimo() {
         }
     }
 
-    // Cancelar pedido
     async function handleCancelar(pedidoId: number) {
         const confirmar = window.confirm(
             "Tem certeza de que deseja cancelar este pedido?"
@@ -157,7 +153,6 @@ export default function useGestaoEmprestimo() {
         }
     }
 
-    // Abrir modal e buscar o exemplar reservado
     async function abrirModalEfetivacao(pedido: PedidoResponse) {
         setErro("");
         setSucesso("");
@@ -203,7 +198,6 @@ export default function useGestaoEmprestimo() {
         }
     }
 
-    // Fechar modal
     function fecharModal() {
         setPedidoSelecionado(null);
         setExemplares([]);
@@ -212,7 +206,6 @@ export default function useGestaoEmprestimo() {
         setCodigoConfirmacao("");
     }
 
-    // Efetivar empréstimo
     async function handleEfetivar(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -239,13 +232,9 @@ export default function useGestaoEmprestimo() {
                     : {}),
             };
 
-            await efetivarEmprestimo(
-                pedidoSelecionado.id,
-                payload
-            );
+            await efetivarEmprestimo(pedidoSelecionado.id, payload);
 
             setSucesso("Empréstimo efetivado com sucesso.");
-
             fecharModal();
 
             await atualizarDados();
@@ -260,7 +249,6 @@ export default function useGestaoEmprestimo() {
         }
     }
 
-    // Registrar devolução
     async function handleDevolver(emprestimoId: number) {
         const confirmar = window.confirm(
             "Confirma o registro da devolução deste empréstimo?"
@@ -282,6 +270,59 @@ export default function useGestaoEmprestimo() {
                 error instanceof Error
                     ? error.message
                     : "Não foi possível registrar a devolução."
+            );
+        } finally {
+            setEmprestimoEmAcao(null);
+        }
+    }
+
+    // Abrir modal de regularização
+    function abrirModalRegularizacao(emprestimo: EmprestimoResponse) {
+        setErro("");
+        setSucesso("");
+        setMotivoRegularizacao("");
+        setEmprestimoSelecionado(emprestimo);
+    }
+
+    // Fechar modal de regularização
+    function fecharModalRegularizacao() {
+        setEmprestimoSelecionado(null);
+        setMotivoRegularizacao("");
+    }
+
+    // Regularizar empréstimo
+    async function handleRegularizar(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (!emprestimoSelecionado) return;
+
+        const motivo = motivoRegularizacao.trim();
+
+        if (!motivo) {
+            setErro("Informe o motivo da regularização.");
+            return;
+        }
+
+        const emprestimoId = emprestimoSelecionado.id;
+
+        setErro("");
+        setSucesso("");
+        setEmprestimoEmAcao(emprestimoId);
+
+        try {
+            await regularizarEmprestimo(emprestimoId, {
+                motivo_regularizacao: motivo,
+            });
+
+            setSucesso("Empréstimo regularizado com sucesso.");
+            fecharModalRegularizacao();
+
+            await carregarEmprestimos();
+        } catch (error) {
+            setErro(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível regularizar o empréstimo."
             );
         } finally {
             setEmprestimoEmAcao(null);
@@ -313,6 +354,10 @@ export default function useGestaoEmprestimo() {
         codigoConfirmacao,
         setCodigoConfirmacao,
 
+        emprestimoSelecionado,
+        motivoRegularizacao,
+        setMotivoRegularizacao,
+
         atualizarDados,
         handleRecusar,
         handleCancelar,
@@ -320,5 +365,9 @@ export default function useGestaoEmprestimo() {
         fecharModal,
         handleEfetivar,
         handleDevolver,
+
+        abrirModalRegularizacao,
+        fecharModalRegularizacao,
+        handleRegularizar,
     };
 }

@@ -45,6 +45,17 @@ class Emprestimo(models.Model):
         blank=True,
     )
 
+    regularizado = models.BooleanField(default=False)
+
+    data_regularizacao = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    motivo_regularizacao = models.TextField(
+        blank=True,
+    )
+
     class Meta:
         ordering = ["-data_retirada"]
 
