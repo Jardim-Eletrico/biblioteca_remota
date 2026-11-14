@@ -18,7 +18,7 @@ from rest_framework.filters import SearchFilter
 
 from drf_spectacular.utils import extend_schema
 
-from livros.models import Livro, Edicao, Exemplar
+from livros.models import Livro, Edicao, Exemplar, CDD
 from livros.livro_serializer import (
     LivroSerializer,
     EdicaoSerializer,

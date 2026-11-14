@@ -22,6 +22,7 @@ import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
 import CadastroBibliotecario from "@/src/ui/pages/bibliotecario/CadastroBibliotecario";
 import GestaoLeitores from "./ui/pages/bibliotecario/GestaoLeitores";
+import CadastroLivro from "./ui/pages/bibliotecario/CadastroLivro";
 
 export default function App() {
 
@@ -55,6 +56,7 @@ export default function App() {
                         <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />}/>
                         <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />}/>
                         <Route path="/gestao-leitores" element={<GestaoLeitores />}/>
+                        <Route path="/cadastro-livro" element={<CadastroLivro />}/>
 
                         <Route
                             path="/home"
