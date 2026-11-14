@@ -1,11 +1,20 @@
 import type { EdicaoResponse } from "./edicao";
 
+export interface CDDResponse {
+    id: number;
+    codigo: string;
+    descricao: string;
+    pai: number | null;
+}
+
 export interface LivroResponse {
     id: number;
+    cdd: number | null;
     titulo: string;
-    subtitulo: string | null;
+    subtitulo: string;
     autor: string;
-    descricao: string | null;
+    descricao: string;
+    generos: string;
     ano_original: string;
 
     media_avalicoes: number | null;
@@ -14,10 +23,12 @@ export interface LivroResponse {
 }
 
 export interface LivroPayload {
+    cdd?: number | null;
     titulo: string;
-    subtitulo?: string | null;
+    subtitulo?: string;
     autor: string;
-    descricao?: string | null;
+    descricao?: string;
+    generos?: string;
     ano_original: string;
 }
 

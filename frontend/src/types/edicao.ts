@@ -3,8 +3,8 @@ export interface EdicaoResponse {
     livro: number;
     ano_publicacao: number;
     editora: string;
-    numero_paginas: number | null;
-    edicao: number | null;
+    numero_paginas: number;
+    edicao: string;
     capa: string | null;
     isbn: string | null;
 
@@ -16,8 +16,8 @@ export interface EdicaoPayload {
     livro: number;
     ano_publicacao: number;
     editora: string;
-    numero_paginas: number | null;
-    edicao: number | null;
+    numero_paginas: number;
+    edicao: string;
     capa?: File | null;
     isbn: string | null;
 }
