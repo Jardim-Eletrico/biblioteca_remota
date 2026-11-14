@@ -244,11 +244,11 @@ class LivroListView(generics.ListAPIView):
     search_fields = ["titulo", "autor"]
 
     def get_queryset(self):
-        queryset = Livro.objects.prefetch_related("edicoes")
+        queryset = livros_com_avaliacoes().prefetch_related("edicoes")
 
         ordenacao = self.request.query_params.get("ordenacao")
 
-        # Mais lidos: empréstimos totais
+        # MAIS LIDOS: empréstimos totais
         if ordenacao == "mais_lidos":
 
             emprestimos = (
@@ -270,7 +270,7 @@ class LivroListView(generics.ListAPIView):
                 )
             ).order_by("-total_emprestimos", "titulo")
 
-        # Em destaque: empréstimos nos últimos 7 dias
+        # EM DESTAQUE: empréstimos nos últimos 7 dias
         elif ordenacao == "destaque":
 
             emprestimos = (
@@ -293,39 +293,37 @@ class LivroListView(generics.ListAPIView):
                 )
             ).order_by("-emprestimos_semana", "titulo")
 
-        # Novos: data de cadastro da edição mais recente
+        # NOVOS: data de cadastro da edição mais recente
         elif ordenacao == "recentes":
 
             queryset = queryset.annotate(
                 data_ultima_edicao=Max("edicoes__data_de_criacao")
-            ).order_by("-data_ultima_edicao")
+            ).order_by(
+                F("data_ultima_edicao").desc(nulls_last=True),
+                "titulo"
+            )
 
         else:
-            queryset = queryset.order_by("titulo")
+            ordenar = self.request.query_params.get("ordenar")
+
+            if ordenar == "popularidade":
+                queryset = queryset.order_by(
+                    "-quantidade_avaliacoes",
+                    "-media_avaliacoes",
+                    "titulo"
+                )
+
+            elif ordenar == "melhor_nota":
+                queryset = queryset.order_by(
+                    F("media_avaliacoes").desc(nulls_last=True),
+                    "-quantidade_avaliacoes",
+                    "titulo"
+                )
+
+            else:
+                queryset = queryset.order_by("titulo")
 
         return queryset
-
-    def get_queryset(self):
-
-        queryset = livros_com_avaliacoes()
-
-        ordenar = self.request.query_params.get("ordenar")
-
-        if ordenar == "popularidade":
-            return queryset.order_by(
-                "-quantidade_avaliacoes",
-                "-media_avaliacoes",
-                "titulo"
-            )
-
-        elif ordenar == "melhor_nota":
-            return queryset.order_by(
-                F("media_avaliacoes").desc(nulls_last=True),
-                "-quantidade_avaliacoes",
-                "titulo"
-            )
-
-        return queryset.order_by("titulo")
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.annotate(

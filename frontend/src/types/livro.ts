@@ -8,7 +8,7 @@ export interface LivroResponse {
     descricao: string | null;
     ano_original: string;
 
-    media_avalicoes: number | null;
+    media_avaliacoes: number | null;
     quantidade_avaliacoes: number;
     total_emprestimos: number;
 }

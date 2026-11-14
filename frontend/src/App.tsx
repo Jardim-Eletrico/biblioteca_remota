@@ -1,4 +1,3 @@
-
 import {
     BrowserRouter,
     Routes,
@@ -18,18 +17,14 @@ import TesteNotificacaoCard from "./ui/pages/TesteNotificacaoCard";
 import TesteAvaliacaoModal from "./ui/pages/TesteAvaliacaoModal";
 import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
 
-
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
 import CadastroBibliotecario from "@/src/ui/pages/bibliotecario/CadastroBibliotecario";
 import GestaoLeitores from "./ui/pages/bibliotecario/GestaoLeitores";
 
 export default function App() {
-
     return (
         <BrowserRouter>
-
             <CarrinhoProvider>
-
                 <Routes>
 
                     {/* ROTAS PÚBLICAS */}
@@ -45,17 +40,8 @@ export default function App() {
                         />
                     </Route>
 
-
                     {/* ROTAS AUTENTICADAS */}
                     <Route element={<Applayout />}>
-                        <Route path="/home" element={<Home />}></Route>
-                        <Route path="/teste-desejos" element={<TesteDesejoCard />}></Route>
-                        <Route path="/teste-notificacoes" element={<TesteNotificacaoCard />}></Route>
-                        <Route path="/teste-avaliacao" element={<TesteAvaliacaoModal />}></Route>
-                        <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />}/>
-                        <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />}/>
-                        <Route path="/gestao-leitores" element={<GestaoLeitores />}/>
-
                         <Route
                             path="/home"
                             element={<Home />}
@@ -81,12 +67,24 @@ export default function App() {
                             element={<TesteLivroDetalhes />}
                         />
 
+                        <Route
+                            path="/gestao-emprestimos"
+                            element={<GestaoEmprestimos />}
+                        />
+
+                        <Route
+                            path="/cadastro-bibliotecario"
+                            element={<CadastroBibliotecario />}
+                        />
+
+                        <Route
+                            path="/gestao-leitores"
+                            element={<GestaoLeitores />}
+                        />
                     </Route>
 
                 </Routes>
-
             </CarrinhoProvider>
-
         </BrowserRouter>
     );
 }

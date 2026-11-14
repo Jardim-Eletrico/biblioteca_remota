@@ -131,16 +131,15 @@ export default function LivroDetalhes({
                         src={edicao.capa}
                         alt={`Capa de ${livro.titulo}`}
                         className="
-                            block w-full
-                            aspect-[2/3]
-                            max-h-[650px]
+                            w-full
+                            aspect-3/4.5
                             object-cover
                         "
                     />
                 ) : (
                     <div className="
-                        flex aspect-[2/3]
-                        max-h-[500px]
+                        flex aspect-3/4.5
+                        max-h-125
                         items-center justify-center
                         text-text-muted
                         dark:text-text-light
@@ -226,7 +225,7 @@ export default function LivroDetalhes({
             <div className="mt-1">
 
                 <AvaliacaoMedia
-                    media={livro.media_avalicoes}
+                    media={livro.media_avaliacoes}
                     quantidade={livro.quantidade_avaliacoes}
                 />
 

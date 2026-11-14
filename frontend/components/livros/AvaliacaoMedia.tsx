@@ -9,7 +9,7 @@ export default function AvaliacaoMedia({
     quantidade
 }: AvaliacaoMediaProps) {
 
-    if (media === null || quantidade === 0) {
+    if (media == null || quantidade === 0) {
         return (
             <p className="
                 text-sm text-text-muted
