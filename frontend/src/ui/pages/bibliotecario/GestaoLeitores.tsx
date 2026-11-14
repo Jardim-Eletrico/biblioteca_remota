@@ -15,7 +15,15 @@ import FiltrosLeitores, {
 function formatarData(data: string): string {
     if (!data) return "Não informada";
 
-    return new Date(`${data}T00:00:00`).toLocaleDateString("pt-BR");
+    const dataValida = new Date(data);
+
+    if (Number.isNaN(dataValida.getTime())) {
+        return "Data inválida";
+    }
+
+    return dataValida.toLocaleDateString("pt-BR", {
+        timeZone: "America/Sao_Paulo",
+    });
 }
 
 export default function GestaoLeitores() {
