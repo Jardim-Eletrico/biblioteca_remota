@@ -24,26 +24,30 @@ class EfetivarEmprestimoSerializer(serializers.Serializer):
         required=False,
     )
 
+
 class EmprestimoSerializer(serializers.ModelSerializer):
     leitor = serializers.CharField(
-        source = 'pedido.leitor.usuario.nome',
-        read_only = True
+        source="pedido.leitor.usuario.nome",
+        read_only=True
     )
 
     livro = serializers.CharField(
-        source = "pedido.edicao.livro.titulo",
-        read_only = True
+        source="pedido.edicao.livro.titulo",
+        read_only=True
     )
 
     tombo = serializers.CharField(
-        source = "exemplar.tombo",
-        read_only = True
+        source="exemplar.tombo",
+        read_only=True
     )
 
     situacao = serializers.SerializerMethodField()
 
     def get_situacao(self, obj):
-        if obj.data_devolucao is not None:
+        if obj.situacao_encerramento == Emprestimo.SituacaoEncerramento.PERDIDO:
+            return "Perdido"
+
+        if obj.situacao_encerramento == Emprestimo.SituacaoEncerramento.DEVOLVIDO:
             return "Devolvido"
 
         if obj.data_prevista_devolucao < timezone.localdate():
@@ -62,4 +66,4 @@ class EmprestimoSerializer(serializers.ModelSerializer):
             "data_prevista_devolucao",
             "data_devolucao",
             "situacao",
-            ]
+        ]

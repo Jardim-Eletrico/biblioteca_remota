@@ -9,7 +9,7 @@ import LivrosRecomendados from "./LivrosRecomendados";
 
 import type {
     LivroResponse,
-    LivroComEdicao
+    LivroComEdicoes
 } from "@/src/types/livro";
 
 import type { EdicaoResponse } from "@/src/types/edicao";
@@ -17,7 +17,7 @@ import type { EdicaoResponse } from "@/src/types/edicao";
 interface LivroDetalhesProps {
     livro: LivroResponse;
     edicao: EdicaoResponse;
-    recomendados?: LivroComEdicao[];
+    recomendados?: LivroComEdicoes[];
 
     // Integração com a lista de desejos
     estaNaListaDesejos?: boolean;
@@ -226,7 +226,7 @@ export default function LivroDetalhes({
             <div className="mt-1">
 
                 <AvaliacaoMedia
-                    media={livro.media_avalicoes}
+                    media={livro.media_avaliacoes}
                     quantidade={livro.quantidade_avaliacoes}
                 />
 

@@ -1,8 +1,16 @@
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { LivroResponse, LivroPayload } from "@/src/types/livro";
 import type { EdicaoResponse, EdicaoPayload } from "@/src/types/edicao";
+import type { ExemplarResponse } from "@/src/types/exemplar";
+
+import {
+    listarExemplaresBibliotecario,
+    baixarExemplar,
+} from "@/src/services/exemplaresService";
+
+import TabelaExemplaresEdicao from "./TabelaExemplaresEdicao";
 
 interface DetalhesLivroProps {
     livro: LivroResponse;
@@ -33,6 +41,11 @@ export default function DetalhesLivro({
     const [editandoLivro, setEditandoLivro] = useState(false);
     const [edicaoEmEdicao, setEdicaoEmEdicao] = useState<number | null>(null);
 
+    const [exemplares, setExemplares] = useState<ExemplarResponse[]>([]);
+    const [carregandoExemplares, setCarregandoExemplares] = useState(false);
+    const [salvandoBaixa, setSalvandoBaixa] = useState(false);
+    const [erroExemplares, setErroExemplares] = useState<string | null>(null);
+
     const [titulo, setTitulo] = useState(livro.titulo);
     const [subtitulo, setSubtitulo] = useState(livro.subtitulo);
     const [autor, setAutor] = useState(livro.autor);
@@ -43,6 +56,7 @@ export default function DetalhesLivro({
         livro.cdd === null ? "" : String(livro.cdd)
     );
 
+    // Atualiza os dados do formulário quando o livro selecionado muda.
     useEffect(() => {
         setTitulo(livro.titulo);
         setSubtitulo(livro.subtitulo);
@@ -51,10 +65,62 @@ export default function DetalhesLivro({
         setGeneros(livro.generos);
         setAnoOriginal(livro.ano_original);
         setCdd(livro.cdd === null ? "" : String(livro.cdd));
+
         setEditandoLivro(false);
         setEdicaoEmEdicao(null);
     }, [livro]);
 
+    // Carrega todos os exemplares cadastrados para o bibliotecário.
+    const carregarExemplares = useCallback(async () => {
+        try {
+            setCarregandoExemplares(true);
+            setErroExemplares(null);
+
+            const dados = await listarExemplaresBibliotecario("todos");
+
+            setExemplares(dados);
+        } catch (error) {
+            setErroExemplares(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível carregar os exemplares."
+            );
+        } finally {
+            setCarregandoExemplares(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        carregarExemplares();
+    }, [carregarExemplares, livro.id]);
+
+    // Realiza a baixa patrimonial de um exemplar.
+    async function realizarBaixa(id: number, motivo: string) {
+        try {
+            setSalvandoBaixa(true);
+            setErroExemplares(null);
+
+            await baixarExemplar(id, {
+                motivo_baixa: motivo,
+            });
+
+            await carregarExemplares();
+
+            return true;
+        } catch (error) {
+            setErroExemplares(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível realizar a baixa patrimonial."
+            );
+
+            return false;
+        } finally {
+            setSalvandoBaixa(false);
+        }
+    }
+
+    // Salva as alterações do livro.
     async function salvarLivro(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
 
@@ -76,6 +142,7 @@ export default function DetalhesLivro({
     return (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4">
             <section className="my-8 w-full max-w-4xl rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-900">
+                {/* Cabeçalho */}
                 <div className="mb-6 flex items-center justify-between gap-3">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -96,6 +163,7 @@ export default function DetalhesLivro({
                     </button>
                 </div>
 
+                {/* Informações do livro */}
                 <div className="mb-8 rounded-xl border border-gray-200 p-5 dark:border-gray-700">
                     <div className="mb-4 flex items-center justify-between gap-3">
                         <h3 className="font-semibold text-gray-900 dark:text-white">
@@ -235,6 +303,7 @@ export default function DetalhesLivro({
                             <Informacao label="Autor" valor={livro.autor} />
                             <Informacao label="Ano original" valor={livro.ano_original} />
                             <Informacao label="Gêneros" valor={livro.generos} />
+
                             <Informacao
                                 label="CDD"
                                 valor={livro.cdd === null ? "Não informado" : String(livro.cdd)}
@@ -250,10 +319,17 @@ export default function DetalhesLivro({
                     )}
                 </div>
 
+                {/* Edições */}
                 <div>
                     <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
                         Edições ({edicoes.length})
                     </h3>
+
+                    {erroExemplares && (
+                        <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-400">
+                            {erroExemplares}
+                        </p>
+                    )}
 
                     {edicoes.length === 0 ? (
                         <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-400">
@@ -267,6 +343,12 @@ export default function DetalhesLivro({
                                     edicao={edicao}
                                     editando={edicaoEmEdicao === edicao.id}
                                     salvando={salvando}
+                                    exemplares={exemplares.filter(
+                                        (exemplar) => exemplar.edicao === edicao.id
+                                    )}
+                                    carregandoExemplares={carregandoExemplares}
+                                    salvandoBaixa={salvandoBaixa}
+                                    onBaixar={realizarBaixa}
                                     onEditar={() => setEdicaoEmEdicao(edicao.id)}
                                     onCancelar={() => setEdicaoEmEdicao(null)}
                                     onSalvar={async (dados) => {
@@ -316,6 +398,11 @@ interface CardEdicaoGestaoProps {
     onEditar: () => void;
     onCancelar: () => void;
     onSalvar: (dados: Partial<EdicaoPayload>) => Promise<void>;
+
+    exemplares: ExemplarResponse[];
+    carregandoExemplares: boolean;
+    salvandoBaixa: boolean;
+    onBaixar: (id: number, motivo: string) => Promise<boolean>;
 }
 
 function CardEdicaoGestao({
@@ -325,6 +412,10 @@ function CardEdicaoGestao({
     onEditar,
     onCancelar,
     onSalvar,
+    exemplares,
+    carregandoExemplares,
+    salvandoBaixa,
+    onBaixar,
 }: CardEdicaoGestaoProps) {
     const [anoPublicacao, setAnoPublicacao] = useState(String(edicao.ano_publicacao));
     const [editora, setEditora] = useState(edicao.editora);
@@ -453,7 +544,7 @@ function CardEdicaoGestao({
                             disabled={salvando}
                             className="rounded-lg bg-blue-600 px-3 py-2 text-sm text-white hover:bg-blue-700 disabled:opacity-50"
                         >
-                            Salvar edição
+                            {salvando ? "Salvando..." : "Salvar edição"}
                         </button>
                     </div>
                 </form>
@@ -480,6 +571,20 @@ function CardEdicaoGestao({
                     />
                 </div>
             )}
+
+            {/* Gestão de exemplares */}
+            <div className="mt-6 border-t border-gray-200 pt-5 dark:border-gray-700">
+                <h5 className="mb-3 font-semibold text-gray-900 dark:text-white">
+                    Gestão de exemplares ({exemplares.length})
+                </h5>
+
+                <TabelaExemplaresEdicao
+                    exemplares={exemplares}
+                    carregando={carregandoExemplares}
+                    salvando={salvandoBaixa}
+                    onBaixar={onBaixar}
+                />
+            </div>
         </article>
     );
 }

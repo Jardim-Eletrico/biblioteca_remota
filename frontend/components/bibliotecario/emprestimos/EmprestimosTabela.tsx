@@ -42,6 +42,9 @@ export default function EmprestimoTabela({
       case "Devolvidos":
         return emprestimo.situacao === "Devolvido";
 
+      case "Perdidos":
+        return emprestimo.situacao === "Perdido";
+
       default:
         return true;
     }
@@ -52,6 +55,7 @@ export default function EmprestimoTabela({
     "Em andamento",
     "Atrasados",
     "Devolvidos",
+    "Perdidos",
   ];
 
   return (
@@ -91,60 +95,59 @@ export default function EmprestimoTabela({
 
           <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
             {emprestimosFiltrados.length > 0 ? (
-              emprestimosFiltrados.map((emprestimo) => {
-                console.log("ID:", emprestimo.id);
-                console.log("Data de retirada:", emprestimo.data_retirada);
-                console.log("Tipo:", typeof emprestimo.data_retirada);
+              emprestimosFiltrados.map((emprestimo) => (
+                <tr
+                  key={emprestimo.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                >
+                  <td className="px-5 py-4 font-medium">
+                    {emprestimo.leitor}
+                  </td>
 
-                return (
-                  <tr
-                    key={emprestimo.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/40"
-                  >
-                    <td className="px-5 py-4 font-medium">
-                      {emprestimo.leitor}
-                    </td>
+                  <td className="px-5 py-4">
+                    {emprestimo.livro}
+                  </td>
 
-                    <td className="px-5 py-4">
-                      {emprestimo.livro}
-                    </td>
+                  <td className="px-5 py-4">
+                    {emprestimo.tombo}
+                  </td>
 
-                    <td className="px-5 py-4">
-                      {emprestimo.tombo}
-                    </td>
+                  <td className="px-5 py-4">
+                    {formatarData(emprestimo.data_retirada)}
+                  </td>
 
-                    <td className="px-5 py-4">
-                      {formatarData(emprestimo.data_retirada)}
-                    </td>
+                  <td className="px-5 py-4">
+                    {formatarData(emprestimo.data_prevista_devolucao)}
+                  </td>
 
-                    <td className="px-5 py-4">
-                      {formatarData(emprestimo.data_prevista_devolucao)}
-                    </td>
+                  <td className="px-5 py-4">
+                    <StatusBadge status={emprestimo.situacao} />
+                  </td>
 
-                    <td className="px-5 py-4">
-                      <StatusBadge status={emprestimo.situacao} />
-                    </td>
-
-                    <td className="px-5 py-4">
-                      {emprestimo.situacao !== "Devolvido" ? (
-                        <button
-                          type="button"
-                          disabled={emprestimoEmAcao === emprestimo.id}
-                          onClick={() => onDevolver(emprestimo.id)}
-                          className="whitespace-nowrap rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
-                        >
-                          Registrar devolução
-                        </button>
-                      ) : (
-                        <span className="text-xs text-gray-400">
-                          Devolvido em{" "}
-                          {formatarData(emprestimo.data_devolucao)}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                );
-              })
+                  <td className="px-5 py-4">
+                    {emprestimo.situacao === "Em andamento" ||
+                    emprestimo.situacao === "Atrasado" ? (
+                      <button
+                        type="button"
+                        disabled={emprestimoEmAcao === emprestimo.id}
+                        onClick={() => onDevolver(emprestimo.id)}
+                        className="whitespace-nowrap rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                      >
+                        Registrar devolução
+                      </button>
+                    ) : emprestimo.situacao === "Perdido" ? (
+                      <span className="text-xs text-gray-400">
+                        Exemplar perdido
+                      </span>
+                    ) : (
+                      <span className="text-xs text-gray-400">
+                        Devolvido em{" "}
+                        {formatarData(emprestimo.data_devolucao)}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))
             ) : (
               <tr>
                 <td
@@ -156,7 +159,6 @@ export default function EmprestimoTabela({
               </tr>
             )}
           </tbody>
-
         </table>
       </div>
     </div>

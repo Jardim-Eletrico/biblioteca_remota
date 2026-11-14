@@ -124,6 +124,7 @@ def efetivar_emprestimo(
 
     return emprestimo
 
+
 @transaction.atomic
 def devolver_emprestimo(emprestimo_id):
     emprestimo = Emprestimo.objects.select_for_update().get(
@@ -149,7 +150,14 @@ def devolver_emprestimo(emprestimo_id):
     )
 
     emprestimo.data_devolucao = timezone.now()
-    emprestimo.save(update_fields=["data_devolucao"])
+    emprestimo.situacao_encerramento = (
+        Emprestimo.SituacaoEncerramento.DEVOLVIDO
+    )
+
+    emprestimo.save(update_fields=[
+        "data_devolucao",
+        "situacao_encerramento",
+    ])
 
     pedido = Pedido.objects.select_for_update().filter(
         edicao=edicao,
@@ -174,6 +182,7 @@ def devolver_emprestimo(emprestimo_id):
         exemplar.save(update_fields=["status"])
 
         notificar_aprovacao_pedido(pedido)
+
         transaction.on_commit(
             lambda: gerar_e_enviar_codigo(pedido)
         )

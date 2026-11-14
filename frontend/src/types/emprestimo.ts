@@ -1,15 +1,17 @@
+
 export type EmprestimoSituacao =
   | "Devolvido"
+  | "Perdido"
   | "Atrasado"
   | "Em andamento";
-
 
 export type FiltroEmprestimo =
   | "Todos"
   | "Em andamento"
   | "Atrasados"
-  | "Devolvidos";
-  
+  | "Devolvidos"
+  | "Perdidos";
+
 export interface EmprestimoResponse {
   id: number;
   leitor: string;
@@ -49,4 +51,3 @@ export interface DevolverEmprestimoResponse {
   exemplar_id: number;
   status_exemplar: string;
 }
-
