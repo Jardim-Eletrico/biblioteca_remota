@@ -10,35 +10,10 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 
 # Views de livros
-from livros.views import (
-    LivroListView,
-    LivroDetailView,
-    LivroListCreateView,
-    LivroCreateView,
-    EdicaoListCreateView,
-    EdicaoDetailView,
-    ExemplarBaixaView,
-    ExemplarDetailView,
-    ExemplarPublicoListView,
-    ExemplarPublicoDetailView,
-    ExemplarListView,
-    ExemplarLoteCreateView,
-    AvaliarLivro,
-)
+from livros.views import *
 
 # Views de usuários
-from usuarios.views import (
-    LoginView,
-    LogoutView,
-    MeuPerfilView,
-    UsuarioCreateView,
-    BibliotecarioCreateView,
-    ListarLeitores,
-    BuscarLeitor,
-    SolicitarRecuperacaoView,
-    ValidarCodigoRecuperacaoView,
-    RedefinirSenhaView,
-)
+from usuarios.views import *
 
 from desejos.views import *
 
@@ -50,6 +25,10 @@ from emprestimos.views import *
 from notificacoes.views import *
 
 urlpatterns = [
+
+    # CDDs
+    path("cdds/", ListarCDDsView.as_view(), name="listar-cdds"),
+
     # Livros
     path("livros/", LivroListView.as_view(), name="livros"),
     path("livros/cadastrar/", LivroCreateView.as_view(), name="cadastrar_livro"),

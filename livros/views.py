@@ -27,6 +27,7 @@ from livros.livro_serializer import (
     ExemplarLoteSerializer,
     ExemplarBaixaSerializer,
     AvalicaoSerializer,
+    CDDSerializer
 )
 
 from usuarios.models import Leitor
@@ -212,7 +213,13 @@ class ExemplarListView(ListAPIView):
         raise ValidationError({
             "situacao": "Filtro inválido."
         })
-    
+
+
+class ListarCDDsView(generics.ListAPIView):
+    queryset = CDD.objects.all().order_by("codigo")
+    serializer_class = CDDSerializer
+    permission_classes = [IsAuthenticated]
+
 class LivroListView(generics.ListAPIView):
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]

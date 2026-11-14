@@ -6,6 +6,7 @@ from .models import (
     Livro,
     Edicao,
     Exemplar,
+    CDD,
 )
 from emprestimos.models import Emprestimo
 
@@ -56,7 +57,7 @@ class ExemplarListSerializer(serializers.ModelSerializer):
         read_only = True
     )
 
-    ano_original = serializers.IntegerField(
+    ano_original = serializers.CharField(
         source = 'edicao.livro.ano_original',
         read_only = True
     )
@@ -182,3 +183,7 @@ class AvalicaoSerializer(serializers.Serializer):
         max_value=5
     )
 
+class CDDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CDD
+        fields = ["id", "codigo", "descricao", "pai"]
