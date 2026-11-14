@@ -14,8 +14,8 @@ import Applayout from "../layouts/applayout";
 import Home from "./ui/pages/home/home";
 
 import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
-import TesteNotificacaoCard from "./ui/pages/TesteNotificacaoCard";
-import TesteAvaliacaoModal from "./ui/pages/TesteAvaliacaoModal";
+import TesteNotificacaoCard from "./ui/pages/test/TesteNotificacaoCard";
+import TesteAvaliacaoModal from "./ui/pages/test/TesteAvaliacaoModal";
 import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
 
 
