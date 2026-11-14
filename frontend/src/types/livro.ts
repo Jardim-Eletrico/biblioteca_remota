@@ -1,3 +1,4 @@
+
 import type { EdicaoResponse } from "./edicao";
 
 export interface CDDResponse {
@@ -17,9 +18,8 @@ export interface LivroResponse {
     generos: string;
     ano_original: string;
 
-    media_avalicoes: number | null;
+    media_avaliacoes: number | null;
     quantidade_avaliacoes: number;
-    total_emprestimos: number;
 }
 
 export interface LivroPayload {
@@ -32,7 +32,7 @@ export interface LivroPayload {
     ano_original: string;
 }
 
-export interface LivroComEdicao {
+export interface LivroComEdicoes {
     livro: LivroResponse;
-    edicao: EdicaoResponse;
+    edicoes: EdicaoResponse[];
 }
