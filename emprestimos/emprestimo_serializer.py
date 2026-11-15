@@ -69,6 +69,9 @@ class EmprestimoSerializer(serializers.ModelSerializer):
             "data_prevista_devolucao",
             "data_devolucao",
             "situacao",
+            "regularizado",
+            "data_regularizacao",
+            "motivo_regularizacao",
         ]
 
 class RegularizarEmprestimoSerializer(serializers.Serializer):
