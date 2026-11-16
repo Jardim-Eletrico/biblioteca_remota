@@ -23,6 +23,7 @@ from livros.views import (
     ExemplarListView,
     ExemplarLoteCreateView,
     AvaliarLivro,
+    LivrosRecomendadosView
 )
 
 # Views de usuários
@@ -54,6 +55,7 @@ urlpatterns = [
     path("livros/cadastrar/", LivroCreateView.as_view(), name="cadastrar_livro"),
     path("livros/<int:pk>/", LivroDetailView.as_view(), name="detalhar_livro"),
     path("livros/<int:livro_id>/avaliar/", AvaliarLivro.as_view(), name="avaliar_livro"),
+    path("livros/<int:livro_id>/recomendados", LivrosRecomendadosView.as_view(), name="livros-recomendados"),
 
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
