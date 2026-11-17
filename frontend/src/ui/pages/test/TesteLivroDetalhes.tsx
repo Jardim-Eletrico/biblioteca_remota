@@ -23,7 +23,6 @@ export default function TesteLivroDetalhes() {
     const navigate = useNavigate();
 
     function abrirLivroRecomendado(
-        livroId: number,
         edicaoId: number
     ) {
         navigate(`/teste-detalhes-livro/${edicaoId}`);

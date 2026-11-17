@@ -170,15 +170,15 @@ export default function LivroDetalhes({
                         alt={`Capa de ${livro.titulo}`}
                         className="
                             block w-full
-                            aspect-[2/3]
-                            max-h-[650px]
+                            aspect-2/3
+                            max-h-162.5
                             object-cover
                         "
                     />
                 ) : (
                     <div className="
-                        flex aspect-[2/3]
-                        max-h-[500px]
+                        flex aspect-2/3
+                        max-h-125
                         items-center justify-center
                         text-text-muted
                         dark:text-text-light
