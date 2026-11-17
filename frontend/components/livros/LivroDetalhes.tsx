@@ -182,12 +182,7 @@ export default function LivroDetalhes({
     };
 
     return (
-        <main className="
-            mx-auto w-full max-w-5xl
-            px-3 py-4
-            sm:px-5 sm:py-6
-        ">
-
+        <>
             
             {/* CAPA */}
             <div className="
@@ -207,7 +202,6 @@ export default function LivroDetalhes({
                         className="
                             block w-full
                             aspect-2/3
-                            max-h-162.5
                             object-cover
                         "
                     />
@@ -375,6 +369,6 @@ export default function LivroDetalhes({
                 livros={recomendacoesExibidas}
             />
 
-        </main>
+        </>
     );
 }
