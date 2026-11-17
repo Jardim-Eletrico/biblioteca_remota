@@ -13,11 +13,11 @@ export default function LivroCard( { autor, titulo, image, disponibilidade }: Ca
     return (
         <div className="flex flex-col items-center w-full h-fit gap-0.75">
             {!imageError && image ? (
-                <div className="relative w-full aspect-3/4.5">
+                <div className="relative w-full aspect-2/3">
                     <img
                         src={image}
                         onError={() => setImageError(true)}
-                        className="w-full aspect-3/4.5 bg-cover rounded-xl object-cover"
+                        className="w-full aspect-2/3 bg-cover rounded-xl object-cover"
                         alt={`Capa de ${titulo}`}
                     />
 
