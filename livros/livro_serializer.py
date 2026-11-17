@@ -201,3 +201,20 @@ class AvalicaoSerializer(serializers.Serializer):
         max_value=5
     )
 
+
+
+class LivroRecomendadoLivroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Livro
+        fields = [
+            "id",
+            "titulo",
+            "autor",
+        ]
+
+class LivroRecomendadoEdicaoSerializer(EdicaoSerializer):
+    pass
+
+class LivroRecomendadoSerializer(serializers.Serializer):
+    livro = LivroRecomendadoLivroSerializer(read_only=True)
+    edicao = LivroRecomendadoEdicaoSerializer(read_only=True)

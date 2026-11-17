@@ -1,7 +1,7 @@
 import {
     BrowserRouter,
     Routes,
-    Route
+    Route,
 } from "react-router-dom";
 
 import { CarrinhoProvider } from "@/src/contexts/carrinhoContext";

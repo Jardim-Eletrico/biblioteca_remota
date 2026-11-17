@@ -1,6 +1,7 @@
 import type {
     LivroResponse,
     LivroPayload,
+    LivroComEdicao,
     LivrosPaginados
 } from "@/src/types/livro";
 
@@ -136,6 +137,28 @@ export async function cadastrarLivro(
     if (!response.ok) {
         throw new Error(
             data?.detail || data?.erro || "Erro ao cadastrar livro."
+        );
+    }
+
+    return data;
+}
+
+
+// BUSCAR LIVROS RECOMENDADOS
+export async function buscarLivrosRecomendados(
+    livroId: number
+): Promise<LivroComEdicao[]> {
+    const response = await apiFetch(
+        `/livros/${livroId}/recomendados`
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.erro ||
+            "Erro ao buscar livros recomendados."
         );
     }
 

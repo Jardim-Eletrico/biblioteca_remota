@@ -40,7 +40,7 @@ export default function DescricaoLivro({
                         pointer-events-none
                         absolute bottom-0 left-0
                         h-10 w-full
-                        bg-gradient-to-t
+                        bg-linear-to-t
                         from-gray-background
                         to-transparent
                         dark:from-surface-dark
