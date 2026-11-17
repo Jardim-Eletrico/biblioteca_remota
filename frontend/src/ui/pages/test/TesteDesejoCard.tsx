@@ -2,48 +2,60 @@
 import { useEffect, useState } from "react";
 
 import DesejoCard from "@/components/desejo/DesejoCard";
-import { listarDesejos } from "@/src/services/desejoService";
+import {
+    listarDesejos,
+    removerDesejo as removerDesejoApi
+} from "@/src/services/desejoService";
 
 import type { ListaDesejoResponse } from "@/src/types/desejo";
+import Loader from "@/components/app/loader_animation/loader";
 
 export default function TesteDesejoCard() {
-    const [temaEscuro, setTemaEscuro] = useState(false);
-
     const [desejos, setDesejos] = useState<ListaDesejoResponse[]>([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
     // Buscar desejos da API
-    useEffect(() => {
-        async function carregarDesejos() {
-            try {
-                setCarregando(true);
-                setErro(null);
+    async function carregarDesejos() {
+        try {
+            setCarregando(true);
+            setErro(null);
 
-                const dados = await listarDesejos();
-                console.log("Capa retornada pela API:", dados[0]?.capa);
+            const dados = await listarDesejos();
 
-                setDesejos(dados);
+            setDesejos(dados);
 
-            } catch (error) {
-                setErro(
-                    error instanceof Error
-                        ? error.message
-                        : "Erro ao carregar os desejos."
-                );
-            } finally {
-                setCarregando(false);
-            }
+        } catch (error) {
+            setErro(
+                error instanceof Error
+                    ? error.message
+                    : "Erro ao carregar os desejos."
+            );
+        } finally {
+            setCarregando(false);
         }
+    }
 
+    useEffect(() => {
         carregarDesejos();
     }, []);
 
-    // Remover apenas da visualização de teste
-    function removerDesejo(id: number) {
-        setDesejos((anteriores) =>
-            anteriores.filter((desejo) => desejo.id !== id)
-        );
+    // Remover desejo e atualizar a lista
+    async function removerDesejo(edicaoId: number) {
+        try {
+            await removerDesejoApi(edicaoId);
+
+            await carregarDesejos();
+
+        } catch (error) {
+            console.error("Erro ao remover desejo:", error);
+
+            setErro(
+                error instanceof Error
+                    ? error.message
+                    : "Erro ao remover desejo."
+            );
+        }
     }
 
     function reservarEdicao(edicaoId: number) {
@@ -51,37 +63,28 @@ export default function TesteDesejoCard() {
     }
 
     return (
-        <div className={`
-            min-h-screen p-6
-            bg-slate-100 text-slate-900
-            dark:bg-zinc-950 dark:text-white
-            ${temaEscuro ? "dark" : ""}
-        `}>
-
-            <div className="mx-auto max-w-5xl">
+        <div>
+            <div className="mx-auto">
 
                 {/* Cabeçalho */}
                 <div className="mb-8 flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">
+                        <h1 className="text-2xl font-bold dark:text-white">
                             Lista de desejos
                         </h1>
 
-                        <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                        <p className="mt-1 text-sm text-zinc-500">
                             {desejos.length} livros na sua lista
                         </p>
                     </div>
-
-
                 </div>
 
                 {/* Carregamento */}
                 {carregando && (
-                    <p className="text-center">
-                        Carregando desejos...
-                    </p>
+                    <div className="flex col-span-2 sm:col-span-3 justify-center items-center w-full">
+                        <Loader />
+                    </div>
                 )}
-
                 {/* Erro */}
                 {erro && (
                     <p className="text-center text-red-500">
@@ -94,7 +97,7 @@ export default function TesteDesejoCard() {
                     desejos.length > 0 ? (
                         <div className="
                             grid grid-cols-1 gap-5
-                            md:grid-cols-2
+                            md:grid-cols-2 relative
                         ">
                             {desejos.map((desejo) => (
                                 <DesejoCard
