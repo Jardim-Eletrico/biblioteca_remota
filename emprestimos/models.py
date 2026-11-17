@@ -42,3 +42,17 @@ class Emprestimo(models.Model):
             f'{self.pedido.leitor} -'
             f'{self.exemplar.tombo}'
         )
+
+
+#CODIGO DE CONFIRMACAO
+class CodigoConfirmacao(models.Model):
+    pedido = models.OneToOneField(
+        "pedidos.Pedido",
+        on_delete=models.CASCADE,
+        related_name="codigo_confirmacao"
+    )
+
+    codigo_hash = models.CharField(max_length=128)
+    data_expiracao = models.DateTimeField()
+    utilizado = models.BooleanField(default=False)
+    tentativas = models.PositiveIntegerField(default=0)

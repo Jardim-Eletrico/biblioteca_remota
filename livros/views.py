@@ -47,8 +47,26 @@ from emprestimos.services import (
     devolver_emprestimo,
 )
 
+from rest_framework.pagination import LimitOffsetPagination
+
 from livros.services import avaliar_livro
 
+from django.db.models import Max
+
+from datetime import timedelta
+
+from django.db.models import (
+    Count,
+    Max,
+    OuterRef,
+    Subquery,
+    IntegerField,
+    Value,
+)
+from django.db.models.functions import Coalesce
+from django.utils import timezone
+
+from emprestimos.models import Emprestimo
 def livros_com_avaliacoes():
     return Livro.objects.annotate(
         media_avaliacoes=Avg("avaliacoes__nota"),
@@ -213,32 +231,100 @@ class ExemplarListView(ListAPIView):
         raise ValidationError({
             "situacao": "Filtro inválido."
         })
+
+class LivroPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
     
 class LivroListView(generics.ListAPIView):
     serializer_class = LivroSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = LivroPagination
+
+    filter_backends = [SearchFilter]
+    search_fields = ["titulo", "autor"]
 
     def get_queryset(self):
+        queryset = livros_com_avaliacoes().prefetch_related("edicoes")
 
-        queryset = livros_com_avaliacoes()
+        ordenacao = self.request.query_params.get("ordenacao")
 
-        ordenar = self.request.query_params.get("ordenar")
+        # MAIS LIDOS: empréstimos totais
+        if ordenacao == "mais_lidos":
 
-        if ordenar == "popularidade":
-            return queryset.order_by(
-                "-quantidade_avaliacoes",
-                "-media_avaliacoes",
+            emprestimos = (
+                Emprestimo.objects
+                .filter(
+                    pedido__edicao__livro=OuterRef("pk"),
+                    data_retirada__isnull=False
+                )
+                .order_by()
+                .values("pedido__edicao__livro")
+                .annotate(total=Count("pk"))
+                .values("total")[:1]
+            )
+
+            queryset = queryset.annotate(
+                total_emprestimos=Coalesce(
+                    Subquery(emprestimos, output_field=IntegerField()),
+                    Value(0)
+                )
+            ).order_by("-total_emprestimos", "titulo")
+
+        # EM DESTAQUE: empréstimos nos últimos 7 dias
+        elif ordenacao == "destaque":
+
+            emprestimos = (
+                Emprestimo.objects
+                .filter(
+                    pedido__edicao__livro=OuterRef("pk"),
+                    data_retirada__gte=timezone.now() - timedelta(days=7),
+                    data_retirada__isnull=False
+                )
+                .order_by()
+                .values("pedido__edicao__livro")
+                .annotate(total=Count("pk"))
+                .values("total")[:1]
+            )
+
+            queryset = queryset.annotate(
+                emprestimos_semana=Coalesce(
+                    Subquery(emprestimos, output_field=IntegerField()),
+                    Value(0)
+                )
+            ).order_by("-emprestimos_semana", "titulo")
+
+        # NOVOS: data de cadastro da edição mais recente
+        elif ordenacao == "recentes":
+
+            queryset = queryset.annotate(
+                data_ultima_edicao=Max("edicoes__data_de_criacao")
+            ).order_by(
+                F("data_ultima_edicao").desc(nulls_last=True),
                 "titulo"
             )
 
-        elif ordenar == "melhor_nota":
-            return queryset.order_by(
-                F("media_avaliacoes").desc(nulls_last=True),
-                "-quantidade_avaliacoes",
-                "titulo"
-            )
+        else:
+            ordenar = self.request.query_params.get("ordenar")
 
-        return queryset.order_by("titulo")
+            if ordenar == "popularidade":
+                queryset = queryset.order_by(
+                    "-quantidade_avaliacoes",
+                    "-media_avaliacoes",
+                    "titulo"
+                )
+
+            elif ordenar == "melhor_nota":
+                queryset = queryset.order_by(
+                    F("media_avaliacoes").desc(nulls_last=True),
+                    "-quantidade_avaliacoes",
+                    "titulo"
+                )
+
+            else:
+                queryset = queryset.order_by("titulo")
+
+        return queryset
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.annotate(
@@ -295,9 +381,14 @@ class LivroCreateView(generics.CreateAPIView):
     permission_classes = [IsBibliotecario]
 
 
+class EdicaoPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
+
 class EdicaoListCreateView(generics.ListCreateAPIView):
     queryset = Edicao.objects.select_related("livro").all()
     serializer_class = EdicaoSerializer
+    pagination_class = EdicaoPagination
 
     def get_permissions(self):
         if self.request.method == "POST":

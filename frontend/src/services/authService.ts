@@ -8,7 +8,9 @@ import type {
     VerificarCodigoPayload,
     VerificarCodigoResponse,
     RedefinirSenhaPayload,
-    RedefinirSenhaResponse
+    RedefinirSenhaResponse,
+    CadastroBibliotecarioPayload,
+    CadastroBibliotecarioResponse,
 } from "../types/api";
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -231,6 +233,43 @@ export async function redefinirSenha(
     if (!response.ok) {
         throw new Error(
             data?.detail ?? data?.erro ?? "Erro ao redefinir senha"
+        );
+    }
+
+    return data;
+}
+
+
+// =====================================================
+// CADASTRO DE BIBLIOTECÁRIO
+// =====================================================
+
+export async function cadastrarBibliotecario(
+    payload: CadastroBibliotecarioPayload
+): Promise<CadastroBibliotecarioResponse> {
+
+    const access = localStorage.getItem("access");
+
+    if (!access) {
+        throw new Error("Sessão não encontrada. Faça login novamente.");
+    }
+
+    const response = await fetch(`${API_URL}/cadastro-bibliotecario/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ??
+            data?.erro ??
+            "Erro ao cadastrar bibliotecário."
         );
     }
 

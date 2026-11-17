@@ -1,0 +1,24 @@
+.scrollbar_custom::-webkit-scrollbar {
+    height: 15px;
+}
+
+.scrollbar_custom::-webkit-scrollbar-track {
+    background: var(--color-gray-500);
+    border-radius: 999px;
+}
+
+.scrollbar_custom::-webkit-scrollbar-thumb {
+    background: var(--color-dark-blue);
+    border-radius: 999px;
+}
+
+@media (max-width: 639px) {
+    .scrollbar_custom {
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE */
+    }
+
+    .scrollbar_custom::-webkit-scrollbar {
+        display: none; /* Chrome, Safari e Edge */
+    }
+}

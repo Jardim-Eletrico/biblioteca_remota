@@ -17,6 +17,7 @@ from usuarios.usuario_serializer import (
     LogoutSerializer,
     MeuPerfilSerializer,
     BibliotecarioSerializer,
+    BibliotecarioCadastroSerializer,
     SolicitarRecuperacaoSerializer,
     ValidarCodigoSerializer,
     RedefinirSenhaSerializer,
@@ -73,7 +74,7 @@ class MeuPerfilView(generics.RetrieveAPIView):
         return self.request.user
 
 class BibliotecarioCreateView(generics.CreateAPIView):
-    serializer_class = BibliotecarioSerializer
+    serializer_class = BibliotecarioCadastroSerializer
     permission_classes = [IsBibliotecario]
 
 class ListarLeitores(APIView):

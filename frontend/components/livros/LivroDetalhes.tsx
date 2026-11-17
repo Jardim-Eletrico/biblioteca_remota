@@ -264,7 +264,7 @@ export default function LivroDetalhes({
             <div className="mt-1">
 
                 <AvaliacaoMedia
-                    media={livro.media_avalicoes}
+                    media={livro.media_avaliacoes}
                     quantidade={livro.quantidade_avaliacoes}
                 />
 

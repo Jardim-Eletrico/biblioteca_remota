@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from pedidos.models import Pedido
 from livros.models import Exemplar, Edicao
 
+from emprestimos.confirmacao_service import gerar_e_enviar_codigo
 from notificacoes.services import notificar_aprovacao_pedido, notificar_cancelamento_pedido
 
 
@@ -81,6 +82,9 @@ def criar_pedido(leitor, edicao_id):
         exemplar.save(update_fields=["status"])
 
         notificar_aprovacao_pedido(pedido)
+        transaction.on_commit(
+            lambda: gerar_e_enviar_codigo(pedido)
+        )
 
     return pedido
 
@@ -154,6 +158,9 @@ def cancelar_pedido(pedido_id):
             ])
 
             notificar_aprovacao_pedido(proximo_pedido)
+            transaction.on_commit(
+                lambda: gerar_e_enviar_codigo(proximo_pedido)
+            )
 
             exemplar.status = "reservado"
 

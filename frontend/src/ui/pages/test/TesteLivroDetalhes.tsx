@@ -55,6 +55,19 @@ export default function TesteLivroDetalhes() {
                     edicaoEncontrada.livro
                 );
 
+
+                console.log("Edição encontrada:", edicaoEncontrada);
+                console.log("Livro encontrado:", livroEncontrado);
+
+                console.log("ID do livro na edição:", edicaoEncontrada.livro);
+                console.log("ID do livro retornado:", livroEncontrado.id);
+
+                console.log("Tipos:", {
+                    livroNaEdicao: typeof edicaoEncontrada.livro,
+                    idDoLivro: typeof livroEncontrado.id
+                });
+
+
                 // Verificar relacionamento
                 if (edicaoEncontrada.livro !== livroEncontrado.id) {
                     throw new Error(
