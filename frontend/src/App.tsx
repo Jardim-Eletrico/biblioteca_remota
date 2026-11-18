@@ -20,6 +20,7 @@ import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
 import CadastroBibliotecario from "@/src/ui/pages/bibliotecario/CadastroBibliotecario";
 import GestaoLeitores from "./ui/pages/bibliotecario/GestaoLeitores";
+import Perfil from "./ui/pages/perfil/perfil";
 
 export default function App() {
     return (
@@ -81,6 +82,8 @@ export default function App() {
                             path="/gestao-leitores"
                             element={<GestaoLeitores />}
                         />
+
+                        <Route path="/perfil" element={<Perfil />}/>
                     </Route>
 
                 </Routes>

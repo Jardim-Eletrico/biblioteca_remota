@@ -66,7 +66,7 @@ class LogoutView(APIView):
                 {'detail': 'Refresh token inválido'}, status=status.HTTP_404_NOT_FOUND
             )
 
-class MeuPerfilView(generics.RetrieveAPIView):
+class MeuPerfilView(generics.RetrieveUpdateAPIView):
     serializer_class = MeuPerfilSerializer
     permission_classes = [IsAuthenticated]
 
