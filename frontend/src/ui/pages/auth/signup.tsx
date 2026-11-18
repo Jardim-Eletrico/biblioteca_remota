@@ -24,7 +24,7 @@ export default function Signup({ setMode }: SignupProps) {
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-    })
+    }, [])
 
     async function handleCadastro() {
         if (password !== confirmPassword) {
