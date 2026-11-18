@@ -85,21 +85,22 @@ export default function Appnavbar() {
                                 <>
                                     {isBibliotecario ? (
                                         <>
-                                        <Link to="/home" onClick={fecharMenu}>
-                                        <div className={MenuLinkStyle.link}>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                width="35"
-                                                height="35"
-                                                fill="currentColor"
-                                                className="bi bi-house dark:text-white sm:size-8"
-                                                viewBox="0 0 16 16"
-                                            >
-                                                <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
-                                            </svg>
-                                            <span className="dark:text-white">INÍCIO</span>
-                                        </div>
-                                    </Link>
+                                            <Link to="/home" onClick={fecharMenu}>
+                                                <div className={MenuLinkStyle.link}>
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="35"
+                                                        height="35"
+                                                        fill="currentColor"
+                                                        className="bi bi-house dark:text-white sm:size-8"
+                                                        viewBox="0 0 16 16"
+                                                    >
+                                                        <path d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z"/>
+                                                    </svg>
+                                                    <span className="dark:text-white">INÍCIO</span>
+                                                </div>
+                                            </Link>
+
                                             <Link to="/gestao-emprestimos" onClick={fecharMenu}>
                                                 <div className={MenuLinkStyle.link}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-book dark:text-white sm:size-8" viewBox="0 0 16 16">
@@ -111,9 +112,9 @@ export default function Appnavbar() {
 
                                             <Link to="/gestao-leitores" onClick={fecharMenu}>
                                                 <div className={MenuLinkStyle.link}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" 
-                                                    className="bi bi-person-lines-fill dark:text-white" viewBox="0 0 16 16">
-                                                    <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                                                        className="bi bi-person-lines-fill dark:text-white" viewBox="0 0 16 16">
+                                                        <path d="M6 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5 6s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zM11 3.5a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5m.5 2.5a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1zm2 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1zm0 3a.5.5 0 0 0 0 1h2a.5.5 0 0 0 0-1z"/>
                                                     </svg>
                                                     <span className="dark:text-white">GESTÃO DE LEITORES</span>
                                                 </div>
@@ -162,9 +163,9 @@ export default function Appnavbar() {
 
                                             <Link to="/notificacoes" onClick={fecharMenu}>
                                                 <div className={MenuLinkStyle.link}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" 
-                                                    className="bi bi-bell dark:text-white" viewBox="0 0 16 16 ">
-                                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
+                                                        className="bi bi-bell dark:text-white" viewBox="0 0 16 16 ">
+                                                        <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
                                                     </svg>
                                                     <span className="dark:text-white">NOTIFICAÇÕES</span>
                                                 </div>
@@ -173,7 +174,7 @@ export default function Appnavbar() {
                                             <Link to="/emprestimos" onClick={fecharMenu}>
                                                 <div className={MenuLinkStyle.link}>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-book dark:text-white sm:size-8" viewBox="0 0 16 16">
-                                                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
+                                                        <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94 2.773 1.093 1.245 1.612.293 2.045A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783"/>
                                                     </svg>
                                                     <span className="dark:text-white">MEUS EMPRÉSTIMOS</span>
                                                 </div>
@@ -251,45 +252,57 @@ export default function Appnavbar() {
                     </button>
                 </div>
 
-                {!isBibliotecario && (
-    <>
-        <Link to="/emprestimos">
-            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bag dark:text-white sm:size-10" viewBox="0 0 16 16">
-                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
-            </svg>
-        </Link>
+                {/* Acesso rápido e perfil */}
+        <div className={`flex flex-row items-center w-fit h-hug ${
+            isBibliotecario
+                ? ""
+                : `px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out ${
+                    openMenu ? "bg-white/0 dark:bg-white/0" : "bg-navbar-light"
+                }`
+        }`}>
+            {!isBibliotecario && (
+                <>
+                    <Link to="/emprestimos">
+                        {/* SVG do ícone de empréstimos */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bag dark:text-white sm:size-10" viewBox="0 0 16 16">
+                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
+                        </svg>
+                    </Link>
 
-        <Link to="/desejos">
-            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bookmark dark:text-white sm:size-10" viewBox="0 0 16 16">
-                <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
-            </svg>
-        </Link>
+                    <Link to="/desejos">
+                        {/* SVG do ícone de lista de desejos */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bookmark dark:text-white sm:size-10" viewBox="0 0 16 16">
+                            <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1z"/>
+                        </svg>
+                    </Link>
 
-        <Link to="/notificacoes">
-            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bell dark:text-white sm:size-10" viewBox="0 0 16 16">
-                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
-            </svg>
-        </Link>
-    </>
-)}
+                    <Link to="/notificacoes">
+                        {/* SVG do ícone de notificações */}
+                        <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bell dark:text-white sm:size-10" viewBox="0 0 16 16">
+                            <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                        </svg>
+                    </Link>
+                </>
+            )}
 
-<button
-    type="button"
-    onClick={() => navigate("/perfil")}
-    aria-label="Meu perfil"
-    className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-400 hover:bg-gray-300 transition-colors cursor-pointer"
->
-    <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="22"
-        height="22"
-        fill="currentColor"
-        className="bi bi-person text-black dark:text-white"
-        viewBox="0 0 16 16"
-    >
-        <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 4 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
-    </svg>
-</button>
+            <button
+                type="button"
+                onClick={() => navigate("/perfil")}
+                aria-label="Meu perfil"
+                className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-400 hover:bg-gray-300 transition-colors cursor-pointer"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="22"
+                    height="22"
+                    fill="currentColor"
+                    className="bi bi-person text-black dark:text-white"
+                    viewBox="0 0 16 16"
+                >
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 4 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+                </svg>
+            </button>
+        </div>
             </header>
         </>
     );
