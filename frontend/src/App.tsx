@@ -48,7 +48,7 @@ export default function App() {
                         />
 
                         <Route
-                            path="/teste-desejos"
+                            path="/desejos"
                             element={<TesteDesejoCard />}
                         />
 

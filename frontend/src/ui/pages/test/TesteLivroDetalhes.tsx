@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 
 import LivroDetalhes from "@/components/livros/LivroDetalhes";
 
@@ -19,14 +19,6 @@ export default function TesteLivroDetalhes() {
 
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
-
-    const navigate = useNavigate();
-
-    function abrirLivroRecomendado(
-        edicaoId: number
-    ) {
-        navigate(`/teste-detalhes-livro/${edicaoId}`);
-    }
 
     // BUSCAR DADOS DO LIVRO E DA EDIÇÃO
     useEffect(() => {
@@ -162,7 +154,6 @@ export default function TesteLivroDetalhes() {
         <LivroDetalhes
             livro={livro}
             edicao={edicao}
-            onAbrirLivroRecomendado={abrirLivroRecomendado}
         />
     );
 }
