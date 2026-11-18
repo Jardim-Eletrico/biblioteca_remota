@@ -26,6 +26,25 @@ export default function Home() {
     const [currentSection, setCurrentSection] = useState<topSection>("Mais lidos");
     const [livrosTopSection, setLivrosTopSection] = useState<LivroComEdicoes[]>([]);
 
+
+    useEffect(() => {
+        if (livros.length === 0) return;
+
+        console.log("Livros:", livros);
+
+        livros.forEach(livro => {
+            console.log("Livro:", livro.titulo, "ID:", livro.id);
+
+            livro.edicoes.forEach(edicao => {
+                console.log(
+                    "Edição:", edicao.id,
+                    "| Livro relacionado:", edicao.livro
+                );
+            });
+        });
+    }, [livros]);
+
+
     useEffect(() => {
         if (carregamentoInicial.current) return;
 
@@ -149,7 +168,7 @@ export default function Home() {
                     <div className="flex w-max gap-7.5 h-fit">
                         {livrosTopSection.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} className="w-40 shrink-0">
+                                <div key={edicao.id} className="w-40 shrink-0" onClick={() => navigate(`/teste-detalhes-livro/${edicao.id}`)}>
                                     <LivroCard
                                         autor={livro.autor}
                                         titulo={livro.titulo}
@@ -213,13 +232,15 @@ export default function Home() {
                     ) : (
                         livros.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <LivroCard
-                                    key={edicao.id}
-                                    autor={livro.autor}
-                                    titulo={livro.titulo}
-                                    image={edicao.capa ?? ""}
-                                    disponibilidade={edicao.exemplares_disponiveis}
-                                />
+                                <div key={edicao.id} onClick={() => navigate(`/teste-detalhes-livro/${edicao.id}`)}>
+                                    <LivroCard
+                                        key={edicao.id}
+                                        autor={livro.autor}
+                                        titulo={livro.titulo}
+                                        image={edicao.capa ?? ""}
+                                        disponibilidade={edicao.exemplares_disponiveis}
+                                    />
+                                </div>
                             ))
                         ))
                     )}

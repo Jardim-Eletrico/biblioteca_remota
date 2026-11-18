@@ -1,11 +1,13 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useCarrinho } from "@/src/contexts/carrinhoContext";
 
 import AvaliacaoMedia from "./AvaliacaoMedia";
 import DescricaoLivro from "./DescricaoLivro";
 import LivrosRecomendados from "./LivrosRecomendados";
+
+import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 
 import type {
     LivroResponse,
@@ -33,7 +35,7 @@ interface LivroDetalhesProps {
 export default function LivroDetalhes({
     livro,
     edicao,
-    recomendados = [],
+    recomendados,
     estaNaListaDesejos = false,
     onAlternarDesejo,
     onAbrirLivroRecomendado
@@ -51,6 +53,42 @@ export default function LivroDetalhes({
         "sucesso" | "erro" | null
     >(null);
 
+    const [recomendacoesApi, setRecomendacoesApi] = useState<LivroComEdicao[]>([]);
+
+    useEffect(() => {
+        if (recomendados !== undefined) {
+            return;
+        }
+
+        let ativo = true;
+
+        async function carregarRecomendacoes() {
+            try{
+                const dados = await buscarLivrosRecomendados(livro.id);
+
+                if(ativo) {
+                    setRecomendacoesApi(dados);
+                }
+            } catch(error) {
+                console.error(
+                    "Erro ao carregar as recomendações", error
+                );
+
+                if (ativo) {
+                    setRecomendacoesApi([]);
+                }
+            }
+            
+        }
+
+        carregarRecomendacoes();
+
+        return () => {
+            ativo = false;
+        };
+    }, [livro.id, recomendados]);
+
+    const recomendacoesExibidas = recomendados ?? recomendacoesApi;
     // VERIFICAR SE O LIVRO JÁ ESTÁ NO CARRINHO
     const itemNoCarrinho = itens.find(
         (item) => item.livroId === livro.id
@@ -132,15 +170,15 @@ export default function LivroDetalhes({
                         alt={`Capa de ${livro.titulo}`}
                         className="
                             block w-full
-                            aspect-[2/3]
-                            max-h-[650px]
+                            aspect-2/3
+                            max-h-162.5
                             object-cover
                         "
                     />
                 ) : (
                     <div className="
-                        flex aspect-[2/3]
-                        max-h-[500px]
+                        flex aspect-2/3
+                        max-h-125
                         items-center justify-center
                         text-text-muted
                         dark:text-text-light
@@ -226,7 +264,7 @@ export default function LivroDetalhes({
             <div className="mt-1">
 
                 <AvaliacaoMedia
-                    media={livro.media_avalicoes}
+                    media={livro.media_avaliacoes}
                     quantidade={livro.quantidade_avaliacoes}
                 />
 
@@ -285,7 +323,7 @@ export default function LivroDetalhes({
 
             {/* RECOMENDAÇÕES */}
             <LivrosRecomendados
-                livros={recomendados}
+                livros={recomendacoesExibidas}
                 onAbrirLivro={onAbrirLivroRecomendado}
             />
 

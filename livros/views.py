@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 
-from django.db.models import Avg, Count, F
+from django.db.models import Avg, Count, F, Prefetch, Q
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -27,6 +27,7 @@ from livros.livro_serializer import (
     ExemplarLoteSerializer,
     ExemplarBaixaSerializer,
     AvalicaoSerializer,
+    LivroRecomendadoSerializer,
 )
 
 from usuarios.models import Leitor
@@ -244,11 +245,11 @@ class LivroListView(generics.ListAPIView):
     search_fields = ["titulo", "autor"]
 
     def get_queryset(self):
-        queryset = Livro.objects.prefetch_related("edicoes")
+        queryset = livros_com_avaliacoes().prefetch_related("edicoes")
 
         ordenacao = self.request.query_params.get("ordenacao")
 
-        # Mais lidos: empréstimos totais
+        # MAIS LIDOS: empréstimos totais
         if ordenacao == "mais_lidos":
 
             emprestimos = (
@@ -270,7 +271,7 @@ class LivroListView(generics.ListAPIView):
                 )
             ).order_by("-total_emprestimos", "titulo")
 
-        # Em destaque: empréstimos nos últimos 7 dias
+        # EM DESTAQUE: empréstimos nos últimos 7 dias
         elif ordenacao == "destaque":
 
             emprestimos = (
@@ -293,39 +294,37 @@ class LivroListView(generics.ListAPIView):
                 )
             ).order_by("-emprestimos_semana", "titulo")
 
-        # Novos: data de cadastro da edição mais recente
+        # NOVOS: data de cadastro da edição mais recente
         elif ordenacao == "recentes":
 
             queryset = queryset.annotate(
                 data_ultima_edicao=Max("edicoes__data_de_criacao")
-            ).order_by("-data_ultima_edicao")
+            ).order_by(
+                F("data_ultima_edicao").desc(nulls_last=True),
+                "titulo"
+            )
 
         else:
-            queryset = queryset.order_by("titulo")
+            ordenar = self.request.query_params.get("ordenar")
+
+            if ordenar == "popularidade":
+                queryset = queryset.order_by(
+                    "-quantidade_avaliacoes",
+                    "-media_avaliacoes",
+                    "titulo"
+                )
+
+            elif ordenar == "melhor_nota":
+                queryset = queryset.order_by(
+                    F("media_avaliacoes").desc(nulls_last=True),
+                    "-quantidade_avaliacoes",
+                    "titulo"
+                )
+
+            else:
+                queryset = queryset.order_by("titulo")
 
         return queryset
-
-    def get_queryset(self):
-
-        queryset = livros_com_avaliacoes()
-
-        ordenar = self.request.query_params.get("ordenar")
-
-        if ordenar == "popularidade":
-            return queryset.order_by(
-                "-quantidade_avaliacoes",
-                "-media_avaliacoes",
-                "titulo"
-            )
-
-        elif ordenar == "melhor_nota":
-            return queryset.order_by(
-                F("media_avaliacoes").desc(nulls_last=True),
-                "-quantidade_avaliacoes",
-                "titulo"
-            )
-
-        return queryset.order_by("titulo")
 
 class LivroDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Livro.objects.annotate(
@@ -446,6 +445,132 @@ class AvaliarLivro(APIView):
             },
             status=status.HTTP_201_CREATED,
         )
+
+
+
+class LivrosRecomendadosView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    QUANTIDADE_RECOMENDACOES = 10
+
+    def normalizar_generos(self, generos):
+        return {
+            genero.strip().casefold()
+            for genero in generos.split(",")
+            if genero.strip()
+        }
+
+    def calcular_pontuacao(self, livro_atual, candidato):
+        generos_atuais = self.normalizar_generos(
+            livro_atual.generos
+        )
+
+        generos_candidato = self.normalizar_generos(
+            candidato.generos
+        )
+
+        generos_comuns = generos_atuais & generos_candidato
+
+        # Cada gênero em comum acrescenta 3 pontos.
+        pontuacao = len(generos_comuns) * 3
+
+        cdd_atual = livro_atual.cdd
+        cdd_candidato = candidato.cdd
+
+        if cdd_atual and cdd_candidato:
+            # Mesmo CDD.
+            if cdd_atual.pk == cdd_candidato.pk:
+                pontuacao += 5
+
+            # CDD pai ou filho diretamente relacionado.
+            elif (
+                cdd_atual.pai_id == cdd_candidato.pk
+                or cdd_candidato.pai_id == cdd_atual.pk
+            ):
+                pontuacao += 2
+
+        return pontuacao
+
+    def get(self, request, livro_id):
+        livro_atual = get_object_or_404(
+            Livro.objects.select_related("cdd", "cdd__pai"),
+            pk=livro_id,
+        )
+
+        edicoes_com_disponibilidade = (
+            Edicao.objects.annotate(
+                exemplares_disponiveis=Count(
+                    "exemplares",
+                    filter=Q(exemplares__status="disponivel"),
+                )
+            )
+            .order_by(
+                "-exemplares_disponiveis",
+                "-ano_publicacao",
+                "id",
+            )
+        )
+
+        candidatos = (
+            Livro.objects.filter(edicoes__isnull=False)
+            .exclude(pk=livro_atual.pk)
+            .select_related("cdd", "cdd__pai")
+            .prefetch_related(
+                Prefetch(
+                    "edicoes",
+                    queryset=edicoes_com_disponibilidade,
+                    to_attr="edicoes_recomendacao",
+                )
+            )
+            .distinct()
+        )
+
+        recomendacoes = []
+
+        for candidato in candidatos:
+            pontuacao = self.calcular_pontuacao(
+                livro_atual,
+                candidato,
+            )
+
+            if pontuacao == 0:
+                continue
+
+            if not candidato.edicoes_recomendacao:
+                continue
+
+            # Prioriza a edição com mais exemplares disponíveis.
+            edicao = candidato.edicoes_recomendacao[0]
+
+            recomendacoes.append({
+                "livro": candidato,
+                "edicao": edicao,
+                "pontuacao": pontuacao,
+            })
+
+        recomendacoes.sort(
+            key=lambda item: (
+                -item["pontuacao"],
+                item["livro"].titulo.casefold(),
+            )
+        )
+
+        resultados = [
+            {
+                "livro": item["livro"],
+                "edicao": item["edicao"],
+            }
+            for item in recomendacoes[:self.QUANTIDADE_RECOMENDACOES]
+        ]
+
+        serializer = LivroRecomendadoSerializer(
+            resultados,
+            many=True,
+            context={"request": request},
+        )
+
+        return Response(serializer.data)
+
 # -------------------------------------------
 class EmprestimoListView(ListAPIView):
     queryset = Emprestimo.objects.select_related(
