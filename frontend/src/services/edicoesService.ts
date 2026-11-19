@@ -49,6 +49,7 @@ function criarFormData(
 // LISTAR EDIÇÕES
 // =====================================================
 
+
 export async function listarEdicoes(): Promise<EdicaoResponse[]> {
     const response = await apiFetch("/edicoes/");
 
@@ -60,8 +61,15 @@ export async function listarEdicoes(): Promise<EdicaoResponse[]> {
         );
     }
 
-    return data;
+    const edicoes = Array.isArray(data) ? data : data?.results;
+
+    if (!Array.isArray(edicoes)) {
+        throw new Error("Formato inesperado ao carregar edições.");
+    }
+
+    return edicoes;
 }
+
 
 // =====================================================
 // BUSCAR EDIÇÃO
