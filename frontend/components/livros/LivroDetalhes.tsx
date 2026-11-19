@@ -272,6 +272,7 @@ export default function LivroDetalhes({
 
     return (
         <>
+            <div className="flex flex-col">
             {/* CAPA */}
             <div className="
                 w-full
@@ -371,8 +372,8 @@ export default function LivroDetalhes({
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
-                        width="30"
-                        height="30"
+                        width="40"
+                        height="40"
                         fill={
                             estaNaListaDesejos
                                 ? "currentColor"
@@ -399,6 +400,7 @@ export default function LivroDetalhes({
                 />
 
             </div>
+            </div>
 
             {/* ADICIONAR AO CARRINHO */}
             <button
@@ -411,7 +413,7 @@ export default function LivroDetalhes({
                     (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
                 }
                 className="
-                    mt-6 w-full rounded-xl
+                    w-full rounded-xl
                     bg-primary
                     px-5 py-3
                     font-semibold
