@@ -105,6 +105,8 @@ export default function GestaoLivros() {
                     onFechar={() => gestao.selecionarLivro(null)}
                     onSalvarLivro={gestao.atualizarLivro}
                     onSalvarEdicao={gestao.atualizarEdicao}
+                    onCriarEdicao={gestao.criarEdicao}
+                    onAtualizarDados={gestao.carregarDados}
                     salvando={gestao.salvando}
                 />
             )}

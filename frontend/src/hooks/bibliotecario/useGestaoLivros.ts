@@ -19,6 +19,7 @@ import {
 import {
     listarEdicoes,
     atualizarEdicaoParcial,
+    cadastrarEdicao,
 } from "@/src/services/edicoesService";
 
 const LIVROS_POR_PAGINA = 10;
@@ -244,6 +245,36 @@ export default function useGestaoLivros() {
         }
     }
 
+    // Cadastrar nova edição
+async function criarEdicao(dados: EdicaoPayload) {
+    try {
+        setSalvando(true);
+        setErro(null);
+        setSucesso(null);
+
+        const novaEdicao = await cadastrarEdicao(dados);
+
+        setEdicoes((anteriores) => [
+            ...anteriores,
+            novaEdicao,
+        ]);
+
+        setSucesso("Edição cadastrada com sucesso.");
+
+        return true;
+    } catch (error) {
+        setErro(
+            error instanceof Error
+                ? error.message
+                : "Erro ao cadastrar edição."
+        );
+
+        return false;
+    } finally {
+        setSalvando(false);
+    }
+}
+
     return {
         livros,
         edicoes,
@@ -275,5 +306,6 @@ export default function useGestaoLivros() {
         carregarDados,
         atualizarLivro,
         atualizarEdicao,
+        criarEdicao,
     };
 }
