@@ -30,18 +30,25 @@ export default function PedidoCard({
   const carregando = pedidoEmAcao === pedido.id;
 
   return (
-    <article className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <article className="
+      rounded-xl border border-gray-200
+      bg-white p-5 shadow-sm
+      text-gray-900
+      dark:border-gray-700
+      dark:bg-gray-900
+      dark:text-gray-100
+    ">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             Pedido #{pedido.id}
           </p>
 
-          <h2 className="mt-1 font-semibold">
+          <h2 className="mt-1 font-semibold text-gray-900 dark:text-gray-100">
             {pedido.titulo}
           </h2>
 
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
             {pedido.autor}
           </p>
         </div>
@@ -49,7 +56,12 @@ export default function PedidoCard({
         <StatusBadge status={pedido.status} />
       </div>
 
-      <div className="space-y-2 border-t border-gray-100 pt-4 text-sm dark:border-gray-800">
+      <div className="
+        space-y-2 border-t border-gray-100
+        pt-4 text-sm text-gray-800
+        dark:border-gray-700
+        dark:text-gray-200
+      ">
         <p>
           <span className="text-gray-500 dark:text-gray-400">
             Leitor:{" "}
@@ -78,7 +90,16 @@ export default function PedidoCard({
             type="button"
             disabled={carregando}
             onClick={() => onRecusar(pedido.id)}
-            className="rounded-lg border border-red-300 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:opacity-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/40"
+            className="
+              rounded-lg border border-red-300
+              px-3 py-2 text-sm font-medium
+              text-red-700 transition
+              hover:bg-red-50
+              disabled:opacity-50
+              dark:border-red-800
+              dark:text-red-300
+              dark:hover:bg-red-950/40
+            "
           >
             Recusar
           </button>
@@ -89,7 +110,15 @@ export default function PedidoCard({
             type="button"
             disabled={carregando}
             onClick={() => onEfetivar(pedido)}
-            className="rounded-lg bg-blue-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:opacity-50"
+            className="
+              rounded-lg bg-blue-600
+              px-3 py-2 text-sm font-medium
+              text-white transition
+              hover:bg-blue-700
+              disabled:opacity-50
+              dark:bg-blue-500
+              dark:hover:bg-blue-600
+            "
           >
             Efetivar empréstimo
           </button>
@@ -99,7 +128,16 @@ export default function PedidoCard({
           type="button"
           disabled={carregando}
           onClick={() => onCancelar(pedido.id)}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium transition hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:hover:bg-gray-800"
+          className="
+            rounded-lg border border-gray-300
+            px-3 py-2 text-sm font-medium
+            text-gray-700 transition
+            hover:bg-gray-100
+            disabled:opacity-50
+            dark:border-gray-600
+            dark:text-gray-200
+            dark:hover:bg-gray-800
+          "
         >
           Cancelar
         </button>

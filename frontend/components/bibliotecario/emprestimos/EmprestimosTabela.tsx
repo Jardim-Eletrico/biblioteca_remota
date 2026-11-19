@@ -37,19 +37,14 @@ export default function EmprestimoTabela({
         switch (filtro) {
             case "Em andamento":
                 return emprestimo.situacao === "Em andamento";
-
             case "Atrasados":
                 return emprestimo.situacao === "Atrasado";
-
             case "Devolvidos":
                 return emprestimo.situacao === "Devolvido";
-
             case "Perdidos":
                 return emprestimo.situacao === "Perdido";
-
             case "Regularizados":
                 return emprestimo.situacao === "Regularizado";
-
             default:
                 return true;
         }
@@ -75,8 +70,8 @@ export default function EmprestimoTabela({
                         onClick={() => onFiltroChange(item)}
                         className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
                             filtro === item
-                                ? "bg-blue-600 text-white"
-                                : "border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
+                                ? "bg-blue-600 text-white dark:bg-blue-500"
+                                : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:hover:bg-gray-800"
                         }`}
                     >
                         {item}
@@ -85,9 +80,25 @@ export default function EmprestimoTabela({
             </div>
 
             {/* Tabela */}
-            <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
-                <table className="w-full min-w-[900px] text-left text-sm">
-                    <thead className="border-b border-gray-200 bg-gray-50 text-xs uppercase text-gray-500 dark:border-gray-800 dark:bg-gray-800/50 dark:text-gray-400">
+            <div className="
+                overflow-x-auto rounded-xl
+                border border-gray-200 bg-white
+                dark:border-gray-800 dark:bg-gray-900
+            ">
+                <table className="
+                    w-full min-w-[900px]
+                    text-left text-sm
+                    text-gray-800
+                    dark:text-gray-200
+                ">
+                    <thead className="
+                        border-b border-gray-200
+                        bg-gray-50 text-xs uppercase
+                        text-gray-600
+                        dark:border-gray-800
+                        dark:bg-gray-800/50
+                        dark:text-gray-400
+                    ">
                         <tr>
                             <th className="px-5 py-4">Leitor</th>
                             <th className="px-5 py-4">Livro</th>
@@ -99,30 +110,37 @@ export default function EmprestimoTabela({
                         </tr>
                     </thead>
 
-                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                    <tbody className="
+                        divide-y divide-gray-100
+                        dark:divide-gray-800
+                    ">
                         {emprestimosFiltrados.length > 0 ? (
                             emprestimosFiltrados.map((emprestimo) => (
                                 <tr
                                     key={emprestimo.id}
-                                    className="hover:bg-gray-50 dark:hover:bg-gray-800/40"
+                                    className="
+                                        transition
+                                        hover:bg-gray-50
+                                        dark:hover:bg-gray-800/40
+                                    "
                                 >
-                                    <td className="px-5 py-4 font-medium">
+                                    <td className="px-5 py-4 font-medium text-gray-900 dark:text-gray-100">
                                         {emprestimo.leitor}
                                     </td>
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-gray-800 dark:text-gray-200">
                                         {emprestimo.livro}
                                     </td>
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-gray-700 dark:text-gray-300">
                                         {emprestimo.tombo}
                                     </td>
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-gray-700 dark:text-gray-300">
                                         {formatarData(emprestimo.data_retirada)}
                                     </td>
 
-                                    <td className="px-5 py-4">
+                                    <td className="px-5 py-4 text-gray-700 dark:text-gray-300">
                                         {formatarData(emprestimo.data_prevista_devolucao)}
                                     </td>
 
@@ -137,7 +155,15 @@ export default function EmprestimoTabela({
                                                 type="button"
                                                 disabled={emprestimoEmAcao === emprestimo.id}
                                                 onClick={() => onDevolver(emprestimo.id)}
-                                                className="whitespace-nowrap rounded-lg bg-green-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-50"
+                                                className="
+                                                    whitespace-nowrap rounded-lg
+                                                    bg-green-600 px-3 py-2
+                                                    text-xs font-semibold text-white
+                                                    transition hover:bg-green-700
+                                                    disabled:opacity-50
+                                                    dark:bg-green-700
+                                                    dark:hover:bg-green-600
+                                                "
                                             >
                                                 Registrar devolução
                                             </button>
@@ -146,21 +172,29 @@ export default function EmprestimoTabela({
                                                 type="button"
                                                 disabled={emprestimoEmAcao === emprestimo.id}
                                                 onClick={() => onRegularizar(emprestimo)}
-                                                className="whitespace-nowrap rounded-lg bg-blue-600 px-3 py-2 text-xs font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
+                                                className="
+                                                    whitespace-nowrap rounded-lg
+                                                    bg-blue-600 px-3 py-2
+                                                    text-xs font-semibold text-white
+                                                    transition hover:bg-blue-700
+                                                    disabled:opacity-50
+                                                    dark:bg-blue-500
+                                                    dark:hover:bg-blue-600
+                                                "
                                             >
                                                 {emprestimoEmAcao === emprestimo.id
                                                     ? "Aguarde..."
                                                     : "Regularizar"}
                                             </button>
                                         ) : emprestimo.situacao === "Regularizado" ? (
-                                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                                            <div className="text-xs text-gray-600 dark:text-gray-400">
                                                 <p>Regularizado em</p>
-                                                <p className="font-medium">
+                                                <p className="font-medium text-gray-800 dark:text-gray-200">
                                                     {formatarData(emprestimo.data_regularizacao)}
                                                 </p>
                                             </div>
                                         ) : (
-                                            <span className="text-xs text-gray-400">
+                                            <span className="text-xs text-gray-600 dark:text-gray-400">
                                                 Devolvido em{" "}
                                                 {formatarData(emprestimo.data_devolucao)}
                                             </span>
@@ -172,7 +206,11 @@ export default function EmprestimoTabela({
                             <tr>
                                 <td
                                     colSpan={7}
-                                    className="px-5 py-10 text-center text-sm text-gray-500 dark:text-gray-400"
+                                    className="
+                                        px-5 py-10 text-center
+                                        text-sm text-gray-500
+                                        dark:text-gray-400
+                                    "
                                 >
                                     Nenhum empréstimo encontrado nesta categoria.
                                 </td>
