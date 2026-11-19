@@ -124,6 +124,7 @@ def efetivar_emprestimo(
 
     return emprestimo
 
+
 @transaction.atomic
 def devolver_emprestimo(emprestimo_id):
     emprestimo = Emprestimo.objects.select_for_update().get(
@@ -149,7 +150,14 @@ def devolver_emprestimo(emprestimo_id):
     )
 
     emprestimo.data_devolucao = timezone.now()
-    emprestimo.save(update_fields=["data_devolucao"])
+    emprestimo.situacao_encerramento = (
+        Emprestimo.SituacaoEncerramento.DEVOLVIDO
+    )
+
+    emprestimo.save(update_fields=[
+        "data_devolucao",
+        "situacao_encerramento",
+    ])
 
     pedido = Pedido.objects.select_for_update().filter(
         edicao=edicao,
@@ -174,6 +182,7 @@ def devolver_emprestimo(emprestimo_id):
         exemplar.save(update_fields=["status"])
 
         notificar_aprovacao_pedido(pedido)
+
         transaction.on_commit(
             lambda: gerar_e_enviar_codigo(pedido)
         )
@@ -184,5 +193,47 @@ def devolver_emprestimo(emprestimo_id):
     exemplar.save(update_fields=["status"])
 
     notificar_usuarios_lista_desejos(edicao)
+
+    return emprestimo
+
+@transaction.atomic
+def regularizar_emprestimo(emprestimo_id, motivo):
+    try:
+        emprestimo = (
+            Emprestimo.objects
+            .select_for_update()
+            .get(pk=emprestimo_id)
+        )
+    except Emprestimo.DoesNotExist:
+        raise ValidationError("Empréstimo não encontrado.")
+
+    if emprestimo.situacao_encerramento != Emprestimo.SituacaoEncerramento.PERDIDO:
+        raise ValidationError(
+            "Somente empréstimos encerrados como perdidos podem ser regularizados."
+        )
+
+    if emprestimo.regularizado:
+        raise ValidationError(
+            "Este empréstimo já foi regularizado."
+        )
+
+    motivo = motivo.strip()
+
+    if not motivo:
+        raise ValidationError(
+            "Informe o motivo da regularização."
+        )
+
+    emprestimo.regularizado = True
+    emprestimo.data_regularizacao = timezone.now()
+    emprestimo.motivo_regularizacao = motivo
+
+    emprestimo.save(
+        update_fields=[
+            "regularizado",
+            "data_regularizacao",
+            "motivo_regularizacao",
+        ]
+    )
 
     return emprestimo

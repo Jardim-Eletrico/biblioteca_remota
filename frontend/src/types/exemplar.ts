@@ -17,16 +17,17 @@ export type ExemplarFiltroAdmin =
 
 export interface ExemplarResponse {
     id: number;
+    edicao: number;
     tombo: string;
     status: ExemplarStatus;
 
     titulo: string;
     autor: string;
-    ano_original: number | null;
+    ano_original: string | null;
 
     ano_publicacao: number;
     editora: string;
-    numero_edicao: number | null;
+    numero_edicao: string | null;
     capa: string | null;
 
     emprestado: boolean;

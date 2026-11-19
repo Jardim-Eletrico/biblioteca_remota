@@ -1,9 +1,16 @@
+
 import type {
     LivroResponse,
     LivroPayload,
-    LivroComEdicao,
-    LivrosPaginados
+    LivroComEdicoes,
+    LivrosPaginados,
+    CDDResponse,
 } from "@/src/types/livro";
+
+import type {
+    EdicaoResponse,
+    EdicaoPayload,
+} from "@/src/types/edicao";
 
 import { apiFetch } from "./api";
 
@@ -24,7 +31,6 @@ export async function listarLivros(
     });
 
     const response = await apiFetch(`/livros/?${params.toString()}`);
-
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -42,7 +48,6 @@ export async function listarLivros(
 
 export async function buscarLivro(id: number): Promise<LivroResponse> {
     const response = await apiFetch(`/livros/${id}/`);
-
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -143,11 +148,13 @@ export async function cadastrarLivro(
     return data;
 }
 
-
+// =====================================================
 // BUSCAR LIVROS RECOMENDADOS
+// =====================================================
+
 export async function buscarLivrosRecomendados(
     livroId: number
-): Promise<LivroComEdicao[]> {
+): Promise<LivroComEdicoes[]> {
     const response = await apiFetch(
         `/livros/${livroId}/recomendados`
     );
@@ -163,4 +170,57 @@ export async function buscarLivrosRecomendados(
     }
 
     return data;
+}
+
+// =====================================================
+// LISTAR CDDs
+// =====================================================
+
+export async function listarCDDs(): Promise<CDDResponse[]> {
+    const response = await apiFetch("/cdds/");
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error("Não foi possível carregar os CDDs.");
+    }
+
+    return dados;
+}
+
+// =====================================================
+// CADASTRAR EDIÇÃO
+// =====================================================
+
+export async function cadastrarEdicao(
+    payload: EdicaoPayload
+): Promise<EdicaoResponse> {
+    const formData = new FormData();
+
+    formData.append("livro", String(payload.livro));
+    formData.append("ano_publicacao", String(payload.ano_publicacao));
+    formData.append("editora", payload.editora);
+    formData.append("numero_paginas", String(payload.numero_paginas));
+    formData.append("edicao", payload.edicao);
+    formData.append("isbn", payload.isbn ?? "");
+
+    if (payload.capa) {
+        formData.append("capa", payload.capa);
+    }
+
+    const response = await apiFetch("/edicoes/", {
+        method: "POST",
+        body: formData,
+    });
+
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            dados?.detail ||
+            dados?.erro ||
+            "Não foi possível cadastrar a edição."
+        );
+    }
+
+    return dados;
 }

@@ -5,6 +5,8 @@ import type {
   EfetivarEmprestimoPayload,
   EfetivarEmprestimoResponse,
   DevolverEmprestimoResponse,
+  RegularizarEmprestimoResponse,
+  RegularizarEmprestimoPayload,
 } from "../types/emprestimo";
 
 interface ListaPaginada<T> {
@@ -100,6 +102,35 @@ export async function devolverEmprestimo(
   if (!response.ok) {
     throw new Error(
       obterMensagemErro(dados, "Não foi possível registrar a devolução.")
+    );
+  }
+
+  return dados;
+}
+
+export async function regularizarEmprestimo(
+  emprestimoId: number,
+  payload: RegularizarEmprestimoPayload
+): Promise<RegularizarEmprestimoResponse> {
+  const response = await apiFetch(
+    `/emprestimos/${emprestimoId}/regularizar/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+
+  const dados = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    throw new Error(
+      obterMensagemErro(
+        dados,
+        "Não foi possível regularizar o empréstimo."
+      )
     );
   }
 

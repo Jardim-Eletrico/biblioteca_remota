@@ -11,7 +11,7 @@ import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 
 import type {
     LivroResponse,
-    LivroComEdicao
+    LivroComEdicoes
 } from "@/src/types/livro";
 
 import type { EdicaoResponse } from "@/src/types/edicao";
@@ -19,7 +19,7 @@ import type { EdicaoResponse } from "@/src/types/edicao";
 interface LivroDetalhesProps {
     livro: LivroResponse;
     edicao: EdicaoResponse;
-    recomendados?: LivroComEdicao[];
+    recomendados?: LivroComEdicoes[];
 
     // Integração com a lista de desejos
     estaNaListaDesejos?: boolean;

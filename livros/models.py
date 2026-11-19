@@ -64,8 +64,8 @@ class Edicao(models.Model):
             )
 
     editora = models.CharField(max_length = 200)
-    numero_paginas = models.IntegerField(null=True)
-    edicao = models.CharField(max_length=20, null=True)
+    numero_paginas = models.IntegerField()
+    edicao = models.CharField(max_length=20)
     capa = models.ImageField(upload_to="capas/", blank=True)
     isbn = models.CharField(max_length=17, unique=True, null=True, blank=True)
     data_de_criacao = models.DateTimeField(auto_now_add=True)

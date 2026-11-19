@@ -3,10 +3,14 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.exceptions import ValidationError as DRFValidationError
+
+from django.core.exceptions import ValidationError as DjangoValidationError
 
 from django.shortcuts import get_object_or_404
 
 from django.utils import timezone
+
 
 from drf_spectacular.utils import extend_schema
 from pedidos.models import Pedido
@@ -17,8 +21,9 @@ from .confirmacao_service import gerar_e_enviar_codigo
 from .emprestimo_serializer import (
     EmprestimoSerializer,
     EfetivarEmprestimoSerializer,
+    RegularizarEmprestimoSerializer,
 )
-from .services import efetivar_emprestimo, devolver_emprestimo
+from .services import efetivar_emprestimo, devolver_emprestimo, regularizar_emprestimo
 from api.permissions import *
 
 
@@ -163,6 +168,40 @@ class DevolverEmprestimo(APIView):
                 "data_devolucao": emprestimo.data_devolucao,
                 "exemplar_id": emprestimo.exemplar_id,
                 "status_exemplar": "disponivel",
+            },
+            status=status.HTTP_200_OK,
+        )
+
+class RegularizarEmprestimoView(APIView):
+    permission_classes = [IsAuthenticated, IsBibliotecario]
+
+    @extend_schema(
+        request=RegularizarEmprestimoSerializer,
+        responses={200: None},
+    )
+    def post(self, request, emprestimo_id):
+        serializer = RegularizarEmprestimoSerializer(
+            data=request.data
+        )
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            emprestimo = regularizar_emprestimo(
+                emprestimo_id=emprestimo_id,
+                motivo=serializer.validated_data["motivo_regularizacao"],
+            )
+        except DjangoValidationError as exc:
+            raise DRFValidationError(
+                {"detail": exc.messages}
+            )
+
+        return Response(
+            {
+                "mensagem": "Empréstimo regularizado com sucesso.",
+                "emprestimo_id": emprestimo.pk,
+                "regularizado": emprestimo.regularizado,
+                "data_regularizacao": emprestimo.data_regularizacao,
+                "motivo_regularizacao": emprestimo.motivo_regularizacao,
             },
             status=status.HTTP_200_OK,
         )
