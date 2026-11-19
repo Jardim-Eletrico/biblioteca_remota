@@ -1,11 +1,9 @@
-
-from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-from django.urls import path
+from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
@@ -109,4 +107,7 @@ urlpatterns = [
     path("notificacoes/<int:pk>/", NotificacaoLidaView.as_view(), name="marcar-notificacao-lida"),
     path("notificacoes/<int:pk>/excluir/",NotificacaoDeleteView.as_view(),name="excluir-notificacao"),
     path("notificacoes/nao-lidas/",NotificacaoNaoLidasView.as_view(),name="notificacoes-nao-lidas",),
+
+    # Carrinho
+    path("carrinho/", include("carrinho.urls")),
 ]
