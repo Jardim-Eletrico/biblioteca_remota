@@ -32,10 +32,6 @@ export interface LivroPayload {
     ano_original: number;
 }
 
-export interface LivroComEdicoes extends LivroResponse {
-    edicoes: EdicaoResponse[];
-}
-
 export interface LivrosPaginados {
     count: number;
     next: string | null;
@@ -44,7 +40,11 @@ export interface LivrosPaginados {
     ano_original: string;
 }
 
-export interface LivroComEdicoes {
-    livro: LivroResponse;
+export interface LivroComEdicoes extends LivroResponse {
     edicoes: EdicaoResponse[];
+}
+
+export interface LivroComEdicao {
+    livro: LivroResponse;
+    edicao: EdicaoResponse;
 }
