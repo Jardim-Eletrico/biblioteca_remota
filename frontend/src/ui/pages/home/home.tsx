@@ -144,19 +144,19 @@ export default function Home() {
                 <div className="flex justify-center items-center gap-10">
 
                     <button 
-                        className={`text-text-muted ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold" : null}`}
+                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Mais lidos")}
                     >
                         MAIS LIDOS
                     </button>
                     <button 
-                        className={`text-text-muted ${currentSection === "Em destaque"? "text-black! dark:text-white! font-bold" : null}`}
+                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Em destaque"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Em destaque")}
                     >
                         EM DESTAQUE
                     </button>
                     <button 
-                        className={`text-text-muted ${currentSection === "Novos"? "text-black! dark:text-white! font-bold" : null}`}
+                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Novos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Novos")}
                     >
                         NOVOS
@@ -168,7 +168,7 @@ export default function Home() {
                     <div className="flex w-max gap-7.5 h-fit">
                         {livrosTopSection.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} className="w-40 shrink-0" onClick={() => navigate(`/teste-detalhes-livro/${edicao.id}`)}>
+                                <div key={edicao.id} className="w-40 shrink-0" onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
                                     <LivroCard
                                         autor={livro.autor}
                                         titulo={livro.titulo}
