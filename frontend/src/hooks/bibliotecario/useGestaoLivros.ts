@@ -1,10 +1,20 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { LivroResponse } from "@/src/types/livro";
-import type { EdicaoResponse, EdicaoPayload } from "@/src/types/edicao";
+import type {
+    LivroResponse,
+    LivroPayload,
+} from "@/src/types/livro";
 
-import { listarLivros, atualizarLivroParcial } from "@/src/services/livrosService";
+import type {
+    EdicaoResponse,
+    EdicaoPayload,
+} from "@/src/types/edicao";
+
+import {
+    listarLivros,
+    atualizarLivroParcial,
+} from "@/src/services/livrosService";
 
 import {
     listarEdicoes,
@@ -42,7 +52,7 @@ export default function useGestaoLivros() {
                 listarEdicoes(),
             ]);
 
-            setLivros(livrosResponse);
+            setLivros(livrosResponse.results);
             setEdicoes(edicoesResponse);
         } catch (error) {
             setErro(
@@ -74,7 +84,7 @@ export default function useGestaoLivros() {
         return Array.from(
             new Set(
                 livros.flatMap((livro) =>
-                    livro.generos
+                    (livro.generos ?? "")
                         .split(",")
                         .map((genero) => genero.trim())
                         .filter(Boolean)
@@ -110,7 +120,7 @@ export default function useGestaoLivros() {
 
             const correspondeGenero =
                 filtroGenero === "todos" ||
-                livro.generos
+                (livro.generos ?? "")
                     .split(",")
                     .map((genero) => genero.trim())
                     .includes(filtroGenero);
@@ -133,7 +143,7 @@ export default function useGestaoLivros() {
     // Atualizar livro
     async function atualizarLivro(
         id: number,
-        dados: Partial<LivroResponse>
+        dados: Partial<LivroPayload>
     ) {
         try {
             setSalvando(true);
