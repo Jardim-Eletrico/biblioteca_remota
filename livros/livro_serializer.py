@@ -6,6 +6,7 @@ from .models import (
     Livro,
     Edicao,
     Exemplar,
+    CDD,
 )
 from emprestimos.models import Emprestimo
 
@@ -65,39 +66,44 @@ class LivroSerializer(serializers.ModelSerializer):
 
 
 class ExemplarListSerializer(serializers.ModelSerializer):
+    edicao = serializers.IntegerField(
+        source="edicao_id",
+        read_only=True
+    )
+
     titulo = serializers.CharField(
-        source = 'edicao.livro.titulo',
-        read_only = True
+        source="edicao.livro.titulo",
+        read_only=True
     )
 
     autor = serializers.CharField(
-        source = 'edicao.livro.autor',
-        read_only = True
+        source="edicao.livro.autor",
+        read_only=True
     )
 
-    ano_original = serializers.IntegerField(
-        source = 'edicao.livro.ano_original',
-        read_only = True
+    ano_original = serializers.CharField(
+        source="edicao.livro.ano_original",
+        read_only=True
     )
 
     editora = serializers.CharField(
-        source = 'edicao.editora',
-        read_only = True
+        source="edicao.editora",
+        read_only=True
     )
 
     ano_publicacao = serializers.IntegerField(
-        source = 'edicao.ano_publicacao',
-        read_only = True
+        source="edicao.ano_publicacao",
+        read_only=True
     )
 
     numero_edicao = serializers.CharField(
-        source = 'edicao.edicao',
-        read_only = True
+        source="edicao.edicao",
+        read_only=True
     )
 
     capa = serializers.ImageField(
-        source = 'edicao.capa',
-        read_only = True
+        source="edicao.capa",
+        read_only=True
     )
 
     emprestado = serializers.SerializerMethodField()
@@ -107,6 +113,7 @@ class ExemplarListSerializer(serializers.ModelSerializer):
         model = Exemplar
         fields = [
             "id",
+            "edicao",
             "tombo",
             "status",
             "titulo",
@@ -118,19 +125,23 @@ class ExemplarListSerializer(serializers.ModelSerializer):
             "capa",
             "emprestado",
             "leitor",
+            "data_baixa",
+            "motivo_baixa",
         ]
 
     def get_emprestado(self, obj):
         return Emprestimo.objects.filter(
             exemplar=obj,
-            data_devolucao__isnull = True
+            data_devolucao__isnull=True
         ).exists()
 
     def get_leitor(self, obj):
         emprestimo = Emprestimo.objects.filter(
-            exemplar = obj,
-            data_devolucao__isnull = True
-        ).select_related("pedido__leitor__usuario").first()
+            exemplar=obj,
+            data_devolucao__isnull=True
+        ).select_related(
+            "pedido__leitor__usuario"
+        ).first()
 
         if emprestimo:
             return emprestimo.pedido.leitor.usuario.nome
@@ -201,6 +212,10 @@ class AvalicaoSerializer(serializers.Serializer):
         max_value=5
     )
 
+class CDDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CDD
+        fields = ["id", "codigo", "descricao", "pai"]
 
 
 class LivroRecomendadoLivroSerializer(serializers.ModelSerializer):

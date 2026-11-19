@@ -1,9 +1,16 @@
 import type {
     LivroResponse,
     LivroPayload,
+    CDDResponse,
     LivroComEdicao,
     LivrosPaginados
 } from "@/src/types/livro";
+
+
+import type{
+    EdicaoResponse,
+    EdicaoPayload,
+} from "@/src/types/edicao";
 
 import { apiFetch } from "./api";
 
@@ -144,21 +151,74 @@ export async function cadastrarLivro(
 }
 
 
-// BUSCAR LIVROS RECOMENDADOS
+
+
+// LISTAR CDDs
+export async function listarCDDs(): Promise<CDDResponse[]> {
+    const response = await apiFetch("/cdds/");
+
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error("Não foi possível carregar os CDDs.");
+    }
+
+    return dados;
+}
+
+
+// CADASTRAR EDIÇÃO
+export async function cadastrarEdicao(
+    payload: EdicaoPayload
+): Promise<EdicaoResponse> {
+    const formData = new FormData();
+
+    formData.append("livro", String(payload.livro));
+    formData.append("ano_publicacao", String(payload.ano_publicacao));
+    formData.append("editora", payload.editora);
+    formData.append("numero_paginas", String(payload.numero_paginas));
+    formData.append("edicao", payload.edicao);
+    formData.append("isbn", payload.isbn ?? "");
+
+    if (payload.capa) {
+        formData.append("capa", payload.capa);
+    }
+
+    const response = await apiFetch("/edicoes/", {
+        method: "POST",
+        body: formData,
+    });
+
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            dados?.detail ||
+            dados?.erro ||
+            "Não foi possível cadastrar a edição."
+        );
+    }
+
+    return dados;
+}
+
+
 export async function buscarLivrosRecomendados(
     livroId: number
 ): Promise<LivroComEdicao[]> {
     const response = await apiFetch(
-        `/livros/${livroId}/recomendados`
+        `/livros/${livroId}/recomendados/`
     );
 
-    const data = await response.json().catch(() => null);
+    const texto = await response.text();
+
+    const data = texto ? JSON.parse(texto) : null;
 
     if (!response.ok) {
         throw new Error(
             data?.detail ||
             data?.erro ||
-            "Erro ao buscar livros recomendados."
+            `Erro HTTP ${response.status}: ${texto}`
         );
     }
 

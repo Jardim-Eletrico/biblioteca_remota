@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 
 from django.db.models import Avg, Count, F, Prefetch, Q
 
+from django.db import transaction
+
 from rest_framework import generics, status
 from rest_framework.views import APIView
 from rest_framework.generics import (
@@ -18,7 +20,7 @@ from rest_framework.filters import SearchFilter
 
 from drf_spectacular.utils import extend_schema
 
-from livros.models import Livro, Edicao, Exemplar
+from livros.models import Livro, Edicao, Exemplar, CDD
 from livros.livro_serializer import (
     LivroSerializer,
     EdicaoSerializer,
@@ -27,7 +29,8 @@ from livros.livro_serializer import (
     ExemplarLoteSerializer,
     ExemplarBaixaSerializer,
     AvalicaoSerializer,
-    LivroRecomendadoSerializer,
+    CDDSerializer,
+    LivroRecomendadoSerializer
 )
 
 from usuarios.models import Leitor
@@ -80,34 +83,81 @@ class ExemplarBaixaView(APIView):
     permission_classes = [IsAuthenticated, IsBibliotecario]
 
     @extend_schema(
-            request=ExemplarBaixaSerializer,
-            responses={200, None}
+        request=ExemplarBaixaSerializer,
+        responses={200: None},
     )
+    @transaction.atomic
     def post(self, request, pk):
-        exemplar = get_object_or_404(Exemplar, pk=pk)
+        exemplar = get_object_or_404(
+            Exemplar.objects.select_for_update(),
+            pk=pk,
+        )
 
         serializer = ExemplarBaixaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        if exemplar.status in ["emprestado", "reservado"]:
-            raise ValidationError(
-                "Não é possível fazer a baixa patrimonial de um exemplar emprestado, ou reservado."
-            )
-
         if exemplar.status == "baixado":
             raise ValidationError(
-                "Este exemplar já foi baixado"
+                "Este exemplar já foi baixado."
+            )
+
+        if exemplar.status == "reservado":
+            raise ValidationError(
+                "Não é possível baixar um exemplar reservado."
+            )
+
+        emprestimo = None
+
+        if exemplar.status == "emprestado":
+            emprestimo = (
+                Emprestimo.objects
+                .select_for_update()
+                .filter(
+                    exemplar=exemplar,
+                    data_devolucao__isnull=True,
+                )
+                .first()
+            )
+
+            if emprestimo is None:
+                raise ValidationError(
+                    "Não foi encontrado um empréstimo ativo para este exemplar."
+                )
+
+            emprestimo.data_devolucao = timezone.now()
+            emprestimo.situacao_encerramento = (
+                Emprestimo.SituacaoEncerramento.PERDIDO
+            )
+
+            emprestimo.save(
+                update_fields=[
+                    "data_devolucao",
+                    "situacao_encerramento",
+                ]
+            )
+
+        elif exemplar.status not in ["disponivel", "indisponivel"]:
+            raise ValidationError(
+                "A situação atual do exemplar não permite a baixa."
             )
 
         exemplar.status = "baixado"
         exemplar.data_baixa = timezone.now()
-        exemplar.motivo_baixa = serializer.validated_data["motivo_baixa"]
+        exemplar.motivo_baixa = serializer.validated_data[
+            "motivo_baixa"
+        ]
 
-        exemplar.save()
+        exemplar.save(
+            update_fields=[
+                "status",
+                "data_baixa",
+                "motivo_baixa",
+            ]
+        )
 
         return Response(
-            {"mensagem": "Exemplar baixado com sucesso"},
-            status=status.HTTP_200_OK
+            {"mensagem": "Exemplar baixado com sucesso."},
+            status=status.HTTP_200_OK,
         )
 
 class ExemplarDetailView(RetrieveDestroyAPIView):
@@ -231,6 +281,12 @@ class ExemplarListView(ListAPIView):
         raise ValidationError({
             "situacao": "Filtro inválido."
         })
+
+
+class ListarCDDsView(generics.ListAPIView):
+    queryset = CDD.objects.all().order_by("codigo")
+    serializer_class = CDDSerializer
+    permission_classes = [IsAuthenticated]
 
 class LivroPagination(LimitOffsetPagination):
     default_limit = 10

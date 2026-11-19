@@ -1,13 +1,25 @@
-import { useEffect, useState } from "react";
 
-import { useCarrinho } from "@/src/contexts/carrinhoContext";
+import { useEffect, useState } from "react";
 
 import AvaliacaoMedia from "./AvaliacaoMedia";
 import DescricaoLivro from "./DescricaoLivro";
 import LivrosRecomendados from "./LivrosRecomendados";
 
-import { buscarLivrosRecomendados } from "@/src/services/livrosService";
-import { adicionarDesejo, listarDesejos, removerDesejo } from "@/src/services/desejoService";
+import {
+    buscarLivrosRecomendados
+} from "@/src/services/livrosService";
+
+import {
+    adicionarDesejo,
+    listarDesejos,
+    removerDesejo
+} from "@/src/services/desejoService";
+
+import {
+    listarItensCarrinho,
+    adicionarItemCarrinho,
+    removerItemCarrinho
+} from "@/src/services/carrinhoService";
 
 import type {
     LivroResponse,
@@ -15,30 +27,20 @@ import type {
 } from "@/src/types/livro";
 
 import type { EdicaoResponse } from "@/src/types/edicao";
+import type { ItemCarrinho } from "@/src/types/carrinho";
 
 interface LivroDetalhesProps {
     livro: LivroResponse;
     edicao: EdicaoResponse;
     recomendados?: LivroComEdicao[];
-
-    // Integração com a lista de desejos
     onAlternarDesejo?: () => void;
-
-    // Navegação para outros livros
 }
 
 export default function LivroDetalhes({
     livro,
     edicao,
     recomendados,
-    onAlternarDesejo,
 }: LivroDetalhesProps) {
-
-    const {
-        itens,
-        adicionarItem,
-        removerItem,
-    } = useCarrinho();
 
     const [imageError, setImageError] = useState(false);
 
@@ -51,27 +53,70 @@ export default function LivroDetalhes({
     const [recomendacoesApi, setRecomendacoesApi] = useState<LivroComEdicao[]>([]);
 
     const [estaNaListaDesejos, setEstaNaListaDesejos] = useState(false);
+    const [atualizandoDesejo, setAtualizandoDesejo] = useState(false);
 
+    const [itens, setItens] = useState<ItemCarrinho[]>([]);
+    const [carregandoCarrinho, setCarregandoCarrinho] = useState(true);
+    const [atualizandoCarrinho, setAtualizandoCarrinho] = useState(false);
+    const [erroCarrinho, setErroCarrinho] = useState(false);
+
+    // RESETAR ERRO DA CAPA AO TROCAR DE EDIÇÃO
     useEffect(() => {
+        setImageError(false);
+    }, [edicao.id]);
+
+    // CARREGAR LISTA DE DESEJOS
+    useEffect(() => {
+        let ativo = true;
+
         async function verificarDesejo() {
             try {
                 const response = await listarDesejos();
+
+                if (!ativo) return;
 
                 setEstaNaListaDesejos(
                     response.some(desejo => desejo.edicao === edicao.id)
                 );
 
-                console.log("ID da edição:", edicao.id);
-                console.log("Desejos retornados:", response);
-            }
-            catch (error) {
-                console.error(error);
+            } catch (error) {
+                console.error("Erro ao verificar lista de desejos:", error);
             }
         }
 
         verificarDesejo();
-    }, [estaNaListaDesejos])
 
+        return () => {
+            ativo = false;
+        };
+    }, [edicao.id]);
+
+    // ALTERNAR LIVRO NA LISTA DE DESEJOS
+    async function alternarDesejo() {
+        if (atualizandoDesejo) return;
+
+        try {
+            setAtualizandoDesejo(true);
+
+            if (estaNaListaDesejos) {
+                await removerDesejo(edicao.id);
+                setEstaNaListaDesejos(false);
+            } else {
+                await adicionarDesejo({
+                    edicao: edicao.id
+                });
+
+                setEstaNaListaDesejos(true);
+            }
+
+        } catch (error) {
+            console.error("Erro ao atualizar lista de desejos:", error);
+        } finally {
+            setAtualizandoDesejo(false);
+        }
+    }
+
+    // CARREGAR RECOMENDAÇÕES
     useEffect(() => {
         if (recomendados !== undefined) {
             return;
@@ -80,22 +125,20 @@ export default function LivroDetalhes({
         let ativo = true;
 
         async function carregarRecomendacoes() {
-            try{
+            try {
                 const dados = await buscarLivrosRecomendados(livro.id);
 
-                if(ativo) {
+                if (ativo) {
                     setRecomendacoesApi(dados);
                 }
-            } catch(error) {
-                console.error(
-                    "Erro ao carregar as recomendações", error
-                );
+
+            } catch (error) {
+                console.error("Erro ao carregar as recomendações:", error);
 
                 if (ativo) {
                     setRecomendacoesApi([]);
                 }
             }
-            
         }
 
         carregarRecomendacoes();
@@ -106,9 +149,46 @@ export default function LivroDetalhes({
     }, [livro.id, recomendados]);
 
     const recomendacoesExibidas = recomendados ?? recomendacoesApi;
+
+    // CARREGAR ITENS DO CARRINHO
+    useEffect(() => {
+        let ativo = true;
+
+        async function carregarCarrinho() {
+            try {
+                setCarregandoCarrinho(true);
+                setErroCarrinho(false);
+
+                const dados = await listarItensCarrinho();
+
+                if (ativo) {
+                    setItens(dados);
+                }
+
+            } catch (error) {
+                console.error("Erro ao carregar o carrinho:", error);
+
+                if (ativo) {
+                    setErroCarrinho(true);
+                }
+
+            } finally {
+                if (ativo) {
+                    setCarregandoCarrinho(false);
+                }
+            }
+        }
+
+        carregarCarrinho();
+
+        return () => {
+            ativo = false;
+        };
+    }, []);
+
     // VERIFICAR SE O LIVRO JÁ ESTÁ NO CARRINHO
     const itemNoCarrinho = itens.find(
-        (item) => item.livroId === livro.id
+        item => item.livroId === livro.id
     );
 
     const livroJaAdicionado = !!itemNoCarrinho;
@@ -120,70 +200,78 @@ export default function LivroDetalhes({
     const temDisponibilidade =
         edicao.exemplares_disponiveis > 0;
 
-    // ADICIONAR AO CARRINHO
-    function adicionarAoCarrinho() {
-
-    // SE JÁ ESTÁ NO CARRINHO, REMOVER
-    if (itemNoCarrinho) {
-
-        removerItem(itemNoCarrinho.edicaoId);
-
-        setTipoMensagem("sucesso");
-
-        return;
-    }
-
-    if (!temDisponibilidade) {
-        setTipoMensagem("erro");
-        setMensagem(
-            "Esta edição não possui exemplares disponíveis."
-        );
-        return;
-    }
-
-    if (limiteAtingido) {
-        setTipoMensagem("erro");
-        setMensagem(
-            "Você só pode adicionar 2 livros ao carrinho."
-        );
-        return;
-    }
-
-    adicionarItem({
-        edicaoId: edicao.id,
-        livroId: livro.id,
-        titulo: livro.titulo,
-        editora: edicao.editora,
-        capa: edicao.capa,
-        exemplaresDisponiveis:
-            edicao.exemplares_disponiveis
-    });
-
-    setTipoMensagem("sucesso");
-}
-
-    onAlternarDesejo = async () => {
-        try {
-            console.log("ID enviado para remover:", edicao.id);
-            if (estaNaListaDesejos) {
-                await removerDesejo(edicao.id);
-                setEstaNaListaDesejos(false);
-
-                console.log("ID enviado para remover:", edicao.id);
-            } else {
-                await adicionarDesejo({
-                    edicao: edicao.id
-                });
-                setEstaNaListaDesejos(true);
-            }
-        } catch (error) {
-            console.error(error);
+    // ADICIONAR OU REMOVER DO CARRINHO
+    async function adicionarAoCarrinho() {
+        if (atualizandoCarrinho || carregandoCarrinho || erroCarrinho) {
+            return;
         }
-    };
+
+        setMensagem(null);
+        setTipoMensagem(null);
+
+        if (itemNoCarrinho) {
+            try {
+                setAtualizandoCarrinho(true);
+
+                await removerItemCarrinho(itemNoCarrinho.id);
+
+                setItens(itensAtuais =>
+                    itensAtuais.filter(
+                        item => item.id !== itemNoCarrinho.id
+                    )
+                );
+
+                setTipoMensagem("sucesso");
+                setMensagem("Livro removido do carrinho.");
+
+            } catch (error) {
+                console.error("Erro ao remover livro do carrinho:", error);
+
+                setTipoMensagem("erro");
+                setMensagem("Não foi possível remover o livro do carrinho.");
+
+            } finally {
+                setAtualizandoCarrinho(false);
+            }
+
+            return;
+        }
+
+        if (!temDisponibilidade) {
+            setTipoMensagem("erro");
+            setMensagem("Esta edição não possui exemplares disponíveis.");
+            return;
+        }
+
+        if (limiteAtingido) {
+            setTipoMensagem("erro");
+            setMensagem("Você só pode adicionar 2 livros ao carrinho.");
+            return;
+        }
+
+        try {
+            setAtualizandoCarrinho(true);
+
+            const novoItem = await adicionarItemCarrinho(edicao.id);
+
+            setItens(itensAtuais => [...itensAtuais, novoItem]);
+
+            setTipoMensagem("sucesso");
+            setMensagem("Livro adicionado ao carrinho.");
+
+        } catch (error) {
+            console.error("Erro ao adicionar livro ao carrinho:", error);
+
+            setTipoMensagem("erro");
+            setMensagem("Não foi possível adicionar o livro ao carrinho.");
+
+        } finally {
+            setAtualizandoCarrinho(false);
+        }
+    }
 
     return (
         <>
-            
             {/* CAPA */}
             <div className="
                 w-full
@@ -263,8 +351,8 @@ export default function LivroDetalhes({
                 {/* LISTA DE DESEJOS */}
                 <button
                     type="button"
-                    onClick={onAlternarDesejo}
-                    disabled={!onAlternarDesejo}
+                    onClick={alternarDesejo}
+                    disabled={atualizandoDesejo}
                     aria-label={
                         estaNaListaDesejos
                             ? "Remover da lista de desejos"
@@ -302,7 +390,6 @@ export default function LivroDetalhes({
 
             </div>
 
-
             {/* AVALIAÇÃO MÉDIA */}
             <div className="mt-1">
 
@@ -313,13 +400,15 @@ export default function LivroDetalhes({
 
             </div>
 
-
             {/* ADICIONAR AO CARRINHO */}
             <button
                 type="button"
                 onClick={adicionarAoCarrinho}
                 disabled={
-                    !livroJaAdicionado && (!temDisponibilidade || limiteAtingido)
+                    carregandoCarrinho ||
+                    atualizandoCarrinho ||
+                    erroCarrinho ||
+                    (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
                 }
                 className="
                     mt-6 w-full rounded-xl
@@ -333,16 +422,21 @@ export default function LivroDetalhes({
                     disabled:opacity-50
                 "
             >
-                {livroJaAdicionado
-                    ? "REMOVER DO CARRINHO"
-                    : limiteAtingido
-                        ? "LIMITE DE 2 LIVROS ATINGIDO"
-                        : !temDisponibilidade
-                            ? "INDISPONÍVEL"
-                            : "ADICIONAR AO CARRINHO"
+                {carregandoCarrinho
+                    ? "CARREGANDO CARRINHO..."
+                    : atualizandoCarrinho
+                        ? "ATUALIZANDO..."
+                        : erroCarrinho
+                            ? "ERRO AO CARREGAR CARRINHO"
+                            : livroJaAdicionado
+                                ? "REMOVER DO CARRINHO"
+                                : limiteAtingido
+                                    ? "LIMITE DE 2 LIVROS ATINGIDO"
+                                    : !temDisponibilidade
+                                        ? "INDISPONÍVEL"
+                                        : "ADICIONAR AO CARRINHO"
                 }
             </button>
-
 
             {/* MENSAGEM */}
             {mensagem && (
@@ -357,12 +451,10 @@ export default function LivroDetalhes({
                 </p>
             )}
 
-
             {/* DESCRIÇÃO */}
             <DescricaoLivro
                 descricao={livro.descricao}
             />
-
 
             {/* RECOMENDAÇÕES */}
             <LivrosRecomendados

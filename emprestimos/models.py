@@ -8,16 +8,21 @@ def calcular_devolucao_padrao():
 
 # Create your models here.
 class Emprestimo(models.Model):
+
+    class SituacaoEncerramento(models.TextChoices):
+        DEVOLVIDO = "devolvido", "Devolvido"
+        PERDIDO = "perdido", "Perdido"
+
     pedido = models.OneToOneField(
-        'pedidos.Pedido',
+        "pedidos.Pedido",
         on_delete=models.PROTECT,
-        related_name='emprestimo',
-        )
+        related_name="emprestimo",
+    )
 
     exemplar = models.ForeignKey(
-        'livros.Exemplar',
+        "livros.Exemplar",
         on_delete=models.PROTECT,
-        related_name='emprestimos',
+        related_name="emprestimos",
     )
 
     data_retirada = models.DateTimeField(
@@ -33,14 +38,32 @@ class Emprestimo(models.Model):
         blank=True,
     )
 
+    situacao_encerramento = models.CharField(
+        max_length=10,
+        choices=SituacaoEncerramento.choices,
+        null=True,
+        blank=True,
+    )
+
+    regularizado = models.BooleanField(default=False)
+
+    data_regularizacao = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+
+    motivo_regularizacao = models.TextField(
+        blank=True,
+    )
+
     class Meta:
-        ordering = ['-data_retirada']
+        ordering = ["-data_retirada"]
 
     def __str__(self):
         return (
-            f'Empréstimo #{self.pk} -'
-            f'{self.pedido.leitor} -'
-            f'{self.exemplar.tombo}'
+            f"Empréstimo #{self.pk} - "
+            f"{self.pedido.leitor} - "
+            f"{self.exemplar.tombo}"
         )
 
 

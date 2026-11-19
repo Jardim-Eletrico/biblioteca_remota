@@ -1,45 +1,17 @@
-
-from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
-from django.urls import path
+from django.urls import path, include
 from rest_framework_simplejwt.views import TokenRefreshView
 
 
 # Views de livros
-from livros.views import (
-    LivroListView,
-    LivroDetailView,
-    LivroListCreateView,
-    LivroCreateView,
-    EdicaoListCreateView,
-    EdicaoDetailView,
-    ExemplarBaixaView,
-    ExemplarDetailView,
-    ExemplarPublicoListView,
-    ExemplarPublicoDetailView,
-    ExemplarListView,
-    ExemplarLoteCreateView,
-    AvaliarLivro,
-    LivrosRecomendadosView
-)
+from livros.views import *
 
 # Views de usuários
-from usuarios.views import (
-    LoginView,
-    LogoutView,
-    MeuPerfilView,
-    UsuarioCreateView,
-    BibliotecarioCreateView,
-    ListarLeitores,
-    BuscarLeitor,
-    SolicitarRecuperacaoView,
-    ValidarCodigoRecuperacaoView,
-    RedefinirSenhaView,
-)
+from usuarios.views import *
 
 from desejos.views import *
 
@@ -51,12 +23,16 @@ from emprestimos.views import *
 from notificacoes.views import *
 
 urlpatterns = [
+
+    # CDDs
+    path("cdds/", ListarCDDsView.as_view(), name="listar-cdds"),
+
     # Livros
     path("livros/", LivroListView.as_view(), name="livros"),
     path("livros/cadastrar/", LivroCreateView.as_view(), name="cadastrar_livro"),
     path("livros/<int:pk>/", LivroDetailView.as_view(), name="detalhar_livro"),
     path("livros/<int:livro_id>/avaliar/", AvaliarLivro.as_view(), name="avaliar_livro"),
-    path("livros/<int:livro_id>/recomendados", LivrosRecomendadosView.as_view(), name="livros-recomendados"),
+    path("livros/<int:livro_id>/recomendados/", LivrosRecomendadosView.as_view(), name="livros-recomendados"),
 
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
@@ -112,6 +88,7 @@ urlpatterns = [
     path('pedidos/<int:pedido_id>/responder/', PedidoResponderView.as_view(), name='pedido-responder'),
     path('pedidos/<int:pedido_id>/efetivar_emprestimo/', EfetivarEmprestimo.as_view(), name='efetivar-emprestimo',),
     path('emprestimos/', EmprestimoListView.as_view(), name="listar-emprestimos"),
+    path('emprestimos/<int:emprestimo_id>/regularizar/', RegularizarEmprestimoView.as_view(), name='regularizar-emprestimo'),
     path("pedidos/meus/ativos/",MeusPedidosAtivosView.as_view(),name="meus-pedidos-ativos"),
     path("pedidos/<int:pedido_id>/cancelar/",PedidoCancelarView.as_view(),name="pedido-cancelar",),
     path("pedidos/ativos/",TodosPedidosAtivosView.as_view(),name="todos-pedidos-ativos",),
@@ -131,4 +108,7 @@ urlpatterns = [
     path("notificacoes/<int:pk>/", NotificacaoLidaView.as_view(), name="marcar-notificacao-lida"),
     path("notificacoes/<int:pk>/excluir/",NotificacaoDeleteView.as_view(),name="excluir-notificacao"),
     path("notificacoes/nao-lidas/",NotificacaoNaoLidasView.as_view(),name="notificacoes-nao-lidas",),
+
+    # Carrinho
+    path("carrinho/", include("carrinho.urls")),
 ]

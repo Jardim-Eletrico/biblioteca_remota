@@ -1,15 +1,18 @@
 export type EmprestimoSituacao =
   | "Devolvido"
+  | "Perdido"
+  | "Regularizado"
   | "Atrasado"
   | "Em andamento";
-
 
 export type FiltroEmprestimo =
   | "Todos"
   | "Em andamento"
   | "Atrasados"
-  | "Devolvidos";
-  
+  | "Devolvidos"
+  | "Perdidos"
+  | "Regularizados";
+
 export interface EmprestimoResponse {
   id: number;
   leitor: string;
@@ -19,6 +22,9 @@ export interface EmprestimoResponse {
   data_prevista_devolucao: string;
   data_devolucao: string | null;
   situacao: EmprestimoSituacao;
+  regularizado: boolean;
+  data_regularizacao: string | null;
+  motivo_regularizacao: string;
 }
 
 export interface EfetivarEmprestimoPayload {
@@ -50,3 +56,14 @@ export interface DevolverEmprestimoResponse {
   status_exemplar: string;
 }
 
+export interface RegularizarEmprestimoPayload {
+  motivo_regularizacao: string;
+}
+
+export interface RegularizarEmprestimoResponse {
+  mensagem: string;
+  emprestimo_id: number;
+  regularizado: boolean;
+  data_regularizacao: string;
+  motivo_regularizacao: string;
+}

@@ -1,28 +1,35 @@
+
 import type { EdicaoResponse } from "./edicao";
+
+export interface CDDResponse {
+    id: number;
+    codigo: string;
+    descricao: string;
+    pai: number | null;
+}
 
 export interface LivroResponse {
     id: number;
+    cdd: number | null;
     titulo: string;
-    subtitulo: string | null;
+    subtitulo: string;
     autor: string;
-    descricao: string | null;
+    descricao: string;
+    generos: string;
     ano_original: string;
 
     media_avaliacoes: number | null;
     quantidade_avaliacoes: number;
-    total_emprestimos: number;
 }
 
 export interface LivroPayload {
+    cdd?: number | null;
     titulo: string;
-    subtitulo?: string | null;
+    subtitulo?: string;
     autor: string;
+    generos?: string;
     descricao?: string | null;
     ano_original: number;
-}
-
-export interface LivroComEdicoes extends LivroResponse {
-    edicoes: EdicaoResponse[];
 }
 
 export interface LivrosPaginados {
@@ -31,6 +38,10 @@ export interface LivrosPaginados {
     previous: string | null;
     results: LivroComEdicoes[];
     ano_original: string;
+}
+
+export interface LivroComEdicoes extends LivroResponse {
+    edicoes: EdicaoResponse[];
 }
 
 export interface LivroComEdicao {
