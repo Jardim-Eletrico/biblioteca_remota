@@ -21,6 +21,8 @@ import {
     atualizarEdicaoParcial,
 } from "@/src/services/edicoesService";
 
+const LIVROS_POR_PAGINA = 10;
+
 export default function useGestaoLivros() {
     // Dados
     const [livros, setLivros] = useState<LivroResponse[]>([]);
@@ -41,19 +43,43 @@ export default function useGestaoLivros() {
     const [erro, setErro] = useState<string | null>(null);
     const [sucesso, setSucesso] = useState<string | null>(null);
 
-    // Carregar livros e edições
+    // Carregar todas as páginas de livros e edições
     const carregarDados = useCallback(async () => {
         try {
             setCarregando(true);
             setErro(null);
 
-            const [livrosResponse, edicoesResponse] = await Promise.all([
-                listarLivros(),
-                listarEdicoes(),
-            ]);
+            const [primeiraPaginaLivros, todasEdicoes] =
+                await Promise.all([
+                    listarLivros(),
+                    listarEdicoes(),
+                ]);
 
-            setLivros(livrosResponse.results);
-            setEdicoes(edicoesResponse);
+            const totalLivros = primeiraPaginaLivros.count;
+
+            const quantidadePaginas = Math.ceil(
+                totalLivros / LIVROS_POR_PAGINA
+            );
+
+            const requisicoesRestantes = Array.from(
+                { length: quantidadePaginas - 1 },
+                (_, indice) =>
+                    listarLivros((indice + 1) * LIVROS_POR_PAGINA)
+            );
+
+            const paginasRestantes = await Promise.all(
+                requisicoesRestantes
+            );
+
+            const todosLivros = [
+                ...primeiraPaginaLivros.results,
+                ...paginasRestantes.flatMap(
+                    (pagina) => pagina.results
+                ),
+            ];
+
+            setLivros(todosLivros);
+            setEdicoes(todasEdicoes);
         } catch (error) {
             setErro(
                 error instanceof Error
@@ -150,7 +176,10 @@ export default function useGestaoLivros() {
             setErro(null);
             setSucesso(null);
 
-            const livroAtualizado = await atualizarLivroParcial(id, dados);
+            const livroAtualizado = await atualizarLivroParcial(
+                id,
+                dados
+            );
 
             setLivros((anteriores) =>
                 anteriores.map((livro) =>
