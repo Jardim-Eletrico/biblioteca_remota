@@ -7,6 +7,7 @@ from api.views import (
     LivroCreateView,
     ExemplarLoteCreateView,
     EdicaoListCreateView,
+    LivrosRecomendadosView
 )
 
 urlpatterns = [
@@ -39,5 +40,11 @@ urlpatterns = [
         "edicoes/<int:edicao_id>/exemplares/",
         ExemplarLoteCreateView.as_view(),
         name="cadastrar_exemplares",
+    ),
+
+    path(
+        "<int:livro_id>/recomendados/",
+        LivrosRecomendadosView.as_view(),
+        name="livros-recomendados",
     ),
 ]
