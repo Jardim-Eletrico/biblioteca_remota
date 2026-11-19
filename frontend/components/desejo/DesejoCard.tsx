@@ -78,17 +78,17 @@ export default function DesejoCard({
 
             {/* Informações */}
             <div className="flex flex-col min-w-0 w-full gap-3 items-start">
-                <div className="flex flex-col gap-0.5">
+                <div className="flex flex-col gap-0.5 w-full">
 
                     <h3 className="
-                    truncate pr-5 text-sm font-semibold
+                    pr-5 text-sm font-semibold max-w-[90%] truncate
                 ">
                     {desejo.titulo}
                 </h3>
 
                 <p className="
                     truncate text-xs text-zinc-500
-                    dark:text-zinc-400
+                    dark:text-zinc-400 w-full max-w-[90%]
                 ">
                     {desejo.autor}
                 </p>
