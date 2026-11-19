@@ -23,6 +23,13 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    cdd = serializers.SerializerMethodField()
+
+    def get_cdd(self, obj):
+        if obj.edicao.livro.cdd:
+            return obj.edicao.livro.cdd.descricao
+        return None
+
 
     exemplaresDisponiveis = serializers.SerializerMethodField()
 
@@ -47,4 +54,5 @@ class ItemCarrinhoSerializer(serializers.ModelSerializer):
             "editora",
             "capa",
             "exemplaresDisponiveis",
+            "cdd",
         ]
