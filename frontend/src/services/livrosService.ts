@@ -201,7 +201,8 @@ export async function cadastrarEdicao(
 
     return dados;
 }
-// BUSCAR LIVROS RECOMENDADOS
+
+
 export async function buscarLivrosRecomendados(
     livroId: number
 ): Promise<LivroComEdicao[]> {
@@ -209,13 +210,15 @@ export async function buscarLivrosRecomendados(
         `/livros/${livroId}/recomendados/`
     );
 
-    const data = await response.json().catch(() => null);
+    const texto = await response.text();
+
+    const data = texto ? JSON.parse(texto) : null;
 
     if (!response.ok) {
         throw new Error(
             data?.detail ||
             data?.erro ||
-            "Erro ao buscar livros recomendados."
+            `Erro HTTP ${response.status}: ${texto}`
         );
     }
 
