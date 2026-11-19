@@ -22,7 +22,7 @@ function LivroRecomendadoCard({
 
     return (
         <Link
-            to={`/teste-detalhes-livro/${edicao.id}`}
+            to={`/detalhes-livro/${edicao.id}`}
             className="block w-36 shrink-0"
         >
             <article>
@@ -118,7 +118,7 @@ export default function LivrosRecomendados({
     }
 
     return (
-        <section className="mt-8">
+        <section>
 
             <h2 className="
                 mb-4 text-base font-bold
