@@ -1,8 +1,7 @@
-
 import {
     BrowserRouter,
     Routes,
-    Route
+    Route,
 } from "react-router-dom";
 
 import Landing from "./ui/pages/landing/landing";

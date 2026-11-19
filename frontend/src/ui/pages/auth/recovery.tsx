@@ -113,7 +113,7 @@ export default function Recovery( { step, setStep, mode, setMode }: RecoveryProp
 
             ) : step === "code" ? (
                 <>
-                 <p className="font-ubuntu text-white text-[1rem] font-medium text-center">Código de verificação enviado para <span className="text-blue-link">{"exemplo@gmail.com"}</span></p>
+                 <p className="font-ubuntu text-white text-[1rem] font-medium text-center">Código de verificação enviado para <span className="text-blue-link">{email}</span></p>
                     <div className="flex flex-col w-full h-fit gap-1.5">
                         <label className={labelStyle.label} htmlFor="code">
                             Código de verificação
@@ -140,7 +140,7 @@ export default function Recovery( { step, setStep, mode, setMode }: RecoveryProp
 
             ) : step === "redefinePassword" ? (
                 <>
-                 <p className="font-ubuntu text-white text-[1.5rem] font-semibold text-center">Novas credidenciais</p>
+                 <p className="font-ubuntu text-white text-[1.5rem] font-semibold text-center">Novas credenciais</p>
                     <div className="flex flex-col w-full h-fit gap-4">
 
                         <div className="flex flex-col w-full">

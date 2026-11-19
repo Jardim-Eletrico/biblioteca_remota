@@ -120,6 +120,12 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
             "leitor_id",
             "bibliotecario_id",
         ]
+        read_only_fields = [
+            "id",
+            "perfis",
+            "leitor_id",
+            "bibliotecario_id",
+        ]
 
     def get_perfis(self, obj):
         perfis = []

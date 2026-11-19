@@ -2,6 +2,7 @@ import labelStyle from "@/modules/public/auth/label.module.css";
 import inputStyle from "@/modules/public/auth/input.module.css";
 import submitStyle from "@/modules/public/auth/buttons.module.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { login }from "@/src/services/authService";
 
@@ -11,6 +12,8 @@ type LoginProps = { //É um tipo para pegar as propriedades de setMode passadas 
 };
 
 export default function Login( { mode, setMode }: LoginProps ) {
+
+    const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
 
@@ -29,6 +32,7 @@ async function handleLogin() {
         await login(email, password);
 
         console.log("Login realizado com sucesso!");
+        navigate("/home");
 
     } catch (error) {
         console.error("Erro ao fazer login:", error);

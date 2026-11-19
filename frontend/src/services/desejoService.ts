@@ -60,14 +60,17 @@ export async function adicionarDesejo(
 // REMOVER DESEJO
 // =====================================================
 
-export async function removerDesejo(id: number): Promise<void> {
+export async function removerDesejo(
+    id: number
+): Promise<void> {
 
     const response = await apiFetch(`/desejos/${id}/`, {
-        method: "DELETE"
+        method: "DELETE",
     });
 
+    const data = await response.json().catch(() => null);
+
     if (!response.ok) {
-        const data = await response.json().catch(() => null);
 
         throw new Error(
             data?.detail ||
@@ -75,4 +78,6 @@ export async function removerDesejo(id: number): Promise<void> {
             "Erro ao remover desejo"
         );
     }
+
+    return data;
 }

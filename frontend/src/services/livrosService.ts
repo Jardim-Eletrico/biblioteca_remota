@@ -1,8 +1,9 @@
-
 import type {
     LivroResponse,
     LivroPayload,
     CDDResponse,
+    LivroComEdicao,
+    LivrosPaginados
 } from "@/src/types/livro";
 
 
@@ -13,9 +14,23 @@ import type{
 
 import { apiFetch } from "./api";
 
+// =====================================================
 // LISTAR LIVROS
-export async function listarLivros(): Promise<LivroResponse[]> {
-    const response = await apiFetch("/livros/");
+// =====================================================
+
+export async function listarLivros(
+    offset: number = 0,
+    busca: string = "",
+    ordenacao: string = ""
+): Promise<LivrosPaginados> {
+    const params = new URLSearchParams({
+        limit: "10",
+        offset: String(offset),
+        search: busca,
+        ordenacao: ordenacao
+    });
+
+    const response = await apiFetch(`/livros/?${params.toString()}`);
 
     const data = await response.json().catch(() => null);
 
@@ -28,7 +43,10 @@ export async function listarLivros(): Promise<LivroResponse[]> {
     return data;
 }
 
+// =====================================================
 // BUSCAR LIVRO
+// =====================================================
+
 export async function buscarLivro(id: number): Promise<LivroResponse> {
     const response = await apiFetch(`/livros/${id}/`);
 
@@ -43,12 +61,14 @@ export async function buscarLivro(id: number): Promise<LivroResponse> {
     return data;
 }
 
+// =====================================================
 // ATUALIZAR LIVRO
+// =====================================================
+
 export async function atualizarLivro(
     id: number,
     payload: LivroPayload
 ): Promise<LivroResponse> {
-
     const response = await apiFetch(`/livros/${id}/`, {
         method: "PUT",
         body: JSON.stringify(payload)
@@ -65,12 +85,14 @@ export async function atualizarLivro(
     return data;
 }
 
+// =====================================================
 // ATUALIZAR LIVRO PARCIALMENTE
+// =====================================================
+
 export async function atualizarLivroParcial(
     id: number,
     payload: Partial<LivroPayload>
 ): Promise<LivroResponse> {
-
     const response = await apiFetch(`/livros/${id}/`, {
         method: "PATCH",
         body: JSON.stringify(payload)
@@ -87,7 +109,10 @@ export async function atualizarLivroParcial(
     return data;
 }
 
+// =====================================================
 // EXCLUIR LIVRO
+// =====================================================
+
 export async function excluirLivro(id: number): Promise<void> {
     const response = await apiFetch(`/livros/${id}/`, {
         method: "DELETE"
@@ -102,11 +127,13 @@ export async function excluirLivro(id: number): Promise<void> {
     }
 }
 
+// =====================================================
 // CADASTRAR LIVRO
+// =====================================================
+
 export async function cadastrarLivro(
     payload: LivroPayload
 ): Promise<LivroResponse> {
-
     const response = await apiFetch("/livros/cadastrar/", {
         method: "POST",
         body: JSON.stringify(payload)
@@ -173,4 +200,24 @@ export async function cadastrarEdicao(
     }
 
     return dados;
+}
+// BUSCAR LIVROS RECOMENDADOS
+export async function buscarLivrosRecomendados(
+    livroId: number
+): Promise<LivroComEdicao[]> {
+    const response = await apiFetch(
+        `/livros/${livroId}/recomendados/`
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.erro ||
+            "Erro ao buscar livros recomendados."
+        );
+    }
+
+    return data;
 }

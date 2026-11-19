@@ -35,6 +35,9 @@ class ListaDesejoDeleteView(DestroyAPIView):
     serializer_class = ListaDesejoSerializer
     permission_classes = [IsAuthenticated]
 
+    lookup_field = "edicao_id"
+    lookup_url_kwarg = "pk"
+
     def get_queryset(self):
         return ListaDesejo.objects.filter(
             usuario=self.request.user

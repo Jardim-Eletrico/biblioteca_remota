@@ -46,6 +46,25 @@ class EdicaoSerializer(serializers.ModelSerializer):
     def get_exemplares_disponiveis(self, obj):
         return obj.exemplares.filter(status='disponivel').count()
 
+
+class LivroSerializer(serializers.ModelSerializer):
+    edicoes = EdicaoSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Livro
+        fields = "__all__"
+
+    def validate_isbn(self, value):
+        return value or None
+
+    def validate_titulo(self, value):
+        if not value.strip():
+            raise serializers.ValidationError(
+                "O título é obrigatório."
+            )
+        return value.strip()
+
+
 class ExemplarListSerializer(serializers.ModelSerializer):
     edicao = serializers.IntegerField(
         source="edicao_id",
@@ -197,3 +216,20 @@ class CDDSerializer(serializers.ModelSerializer):
     class Meta:
         model = CDD
         fields = ["id", "codigo", "descricao", "pai"]
+
+
+class LivroRecomendadoLivroSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Livro
+        fields = [
+            "id",
+            "titulo",
+            "autor",
+        ]
+
+class LivroRecomendadoEdicaoSerializer(EdicaoSerializer):
+    pass
+
+class LivroRecomendadoSerializer(serializers.Serializer):
+    livro = LivroRecomendadoLivroSerializer(read_only=True)
+    edicao = LivroRecomendadoEdicaoSerializer(read_only=True)

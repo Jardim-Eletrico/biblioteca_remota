@@ -20,7 +20,6 @@ export default function TesteLivroDetalhes() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
-
     // BUSCAR DADOS DO LIVRO E DA EDIÇÃO
     useEffect(() => {
 
@@ -47,6 +46,19 @@ export default function TesteLivroDetalhes() {
                 const livroEncontrado = await buscarLivro(
                     edicaoEncontrada.livro
                 );
+
+
+                console.log("Edição encontrada:", edicaoEncontrada);
+                console.log("Livro encontrado:", livroEncontrado);
+
+                console.log("ID do livro na edição:", edicaoEncontrada.livro);
+                console.log("ID do livro retornado:", livroEncontrado.id);
+
+                console.log("Tipos:", {
+                    livroNaEdicao: typeof edicaoEncontrada.livro,
+                    idDoLivro: typeof livroEncontrado.id
+                });
+
 
                 // Verificar relacionamento
                 if (edicaoEncontrada.livro !== livroEncontrado.id) {
@@ -87,7 +99,6 @@ export default function TesteLivroDetalhes() {
 
     }, [edicaoId]);
 
-
     // CARREGANDO
     if (carregando) {
         return (
@@ -101,7 +112,6 @@ export default function TesteLivroDetalhes() {
             </div>
         );
     }
-
 
     // ERRO
     if (erro) {
@@ -134,19 +144,16 @@ export default function TesteLivroDetalhes() {
         );
     }
 
-
     // DADOS NÃO ENCONTRADOS
     if (!livro || !edicao) {
         return null;
     }
-
 
     // EXIBIR DETALHES
     return (
         <LivroDetalhes
             livro={livro}
             edicao={edicao}
-            recomendados={[]}
         />
     );
 }
