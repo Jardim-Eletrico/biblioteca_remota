@@ -14,7 +14,7 @@ export interface LivroResponse {
     titulo: string;
     subtitulo: string;
     autor: string;
-    descricao: string;
+    descricao: string | null;
     generos: string;
     ano_original: string;
 
