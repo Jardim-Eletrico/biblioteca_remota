@@ -1,5 +1,6 @@
 
 export interface ItemCarrinho {
+    id: number;
     edicaoId: number;
     livroId: number;
     titulo: string;
