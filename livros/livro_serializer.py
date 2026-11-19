@@ -1,5 +1,5 @@
-from rest_framework import serializers
 
+from rest_framework import serializers
 from django.db import transaction
 
 from .models import (
@@ -10,27 +10,6 @@ from .models import (
 )
 from emprestimos.models import Emprestimo
 
-class LivroSerializer(serializers.ModelSerializer):
-
-    media_avaliacoes = serializers.FloatField(
-        read_only = True,
-        allow_null = True
-    )
-
-    quantidade_avaliacoes = serializers.IntegerField(
-        read_only = True
-    )
-
-    class Meta:
-        model = Livro
-        fields = "__all__"
-
-    def validate_titulo(self, value):
-        if not value.strip():
-            raise serializers.ValidationError(
-                "O título é obrigatório."
-            )
-        return value.strip()
 
 class EdicaoSerializer(serializers.ModelSerializer):
     total_exemplares = serializers.SerializerMethodField()
@@ -44,18 +23,24 @@ class EdicaoSerializer(serializers.ModelSerializer):
         return obj.exemplares.count()
 
     def get_exemplares_disponiveis(self, obj):
-        return obj.exemplares.filter(status='disponivel').count()
+        return obj.exemplares.filter(status="disponivel").count()
 
 
 class LivroSerializer(serializers.ModelSerializer):
     edicoes = EdicaoSerializer(many=True, read_only=True)
 
+    media_avaliacoes = serializers.FloatField(
+        read_only=True,
+        allow_null=True
+    )
+
+    quantidade_avaliacoes = serializers.IntegerField(
+        read_only=True
+    )
+
     class Meta:
         model = Livro
         fields = "__all__"
-
-    def validate_isbn(self, value):
-        return value or None
 
     def validate_titulo(self, value):
         if not value.strip():
@@ -148,6 +133,7 @@ class ExemplarListSerializer(serializers.ModelSerializer):
 
         return None
 
+
 class ExemplarPublicoSerializer(serializers.ModelSerializer):
     titulo = serializers.CharField(
         source="edicao.livro.titulo",
@@ -186,7 +172,7 @@ class ExemplarLoteSerializer(serializers.Serializer):
     quantidade = serializers.IntegerField(
         min_value=1,
         max_value=100,
-    )   
+    )
 
     @transaction.atomic
     def create(self, validated_data):
@@ -200,17 +186,27 @@ class ExemplarLoteSerializer(serializers.Serializer):
 
         return Exemplar.objects.bulk_create(exemplares)
 
+
 class ExemplarBaixaSerializer(serializers.Serializer):
     motivo_baixa = serializers.CharField(
-        required = True,
-        allow_blank = False
+        required=True,
+        allow_blank=False
     )
+
 
 class AvalicaoSerializer(serializers.Serializer):
     nota = serializers.IntegerField(
-        min_value =1,
+        min_value=1,
         max_value=5
     )
+
+
+class AvalicaoSerializer(serializers.Serializer):
+    nota = serializers.IntegerField(
+        min_value=1,
+        max_value=5
+    )
+
 
 class CDDSerializer(serializers.ModelSerializer):
     class Meta:
@@ -227,9 +223,12 @@ class LivroRecomendadoLivroSerializer(serializers.ModelSerializer):
             "autor",
         ]
 
+
 class LivroRecomendadoEdicaoSerializer(EdicaoSerializer):
     pass
+
 
 class LivroRecomendadoSerializer(serializers.Serializer):
     livro = LivroRecomendadoLivroSerializer(read_only=True)
     edicao = LivroRecomendadoEdicaoSerializer(read_only=True)
+

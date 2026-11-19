@@ -14,7 +14,7 @@ export interface LivroResponse {
     titulo: string;
     subtitulo: string;
     autor: string;
-    descricao: string;
+    descricao: string | null;
     generos: string;
     ano_original: string;
 
@@ -27,17 +27,9 @@ export interface LivroPayload {
     titulo: string;
     subtitulo?: string;
     autor: string;
-    generos?: string;
     descricao?: string | null;
-    ano_original: number;
-}
-
-export interface LivrosPaginados {
-    count: number;
-    next: string | null;
-    previous: string | null;
-    results: LivroComEdicoes[];
-    ano_original: string;
+    generos?: string;
+    ano_original: number | string;
 }
 
 export interface LivroComEdicoes extends LivroResponse {
@@ -47,4 +39,19 @@ export interface LivroComEdicoes extends LivroResponse {
 export interface LivroComEdicao {
     livro: LivroResponse;
     edicao: EdicaoResponse;
+}
+
+export interface LivroRecomendadoResponse {
+    livro: Pick<LivroResponse, "id" | "titulo" | "autor">;
+    edicao: Pick<
+        EdicaoResponse,
+        "id" | "capa" | "exemplares_disponiveis"
+    >;
+}
+
+export interface LivrosPaginados {
+    count: number;
+    next: string | null;
+    previous: string | null;
+    results: LivroComEdicoes[];
 }

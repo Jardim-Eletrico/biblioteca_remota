@@ -1,4 +1,6 @@
 
+import { useEffect, useState } from "react";
+
 import type { LivroResponse } from "@/src/types/livro";
 import type { EdicaoResponse } from "@/src/types/edicao";
 
@@ -20,6 +22,8 @@ interface TabelaLivrosProps {
     onDetalhes: (livro: LivroResponse) => void;
 }
 
+const ITENS_POR_PAGINA = 10;
+
 export default function TabelaLivros({
     livros,
     pesquisa,
@@ -32,6 +36,30 @@ export default function TabelaLivros({
     generosDisponiveis,
     onDetalhes,
 }: TabelaLivrosProps) {
+    const [paginaAtual, setPaginaAtual] = useState(1);
+
+    // Reinicia a paginação quando os filtros mudarem.
+    useEffect(() => {
+        setPaginaAtual(1);
+    }, [pesquisa, filtroCDD, filtroGenero]);
+
+    const totalPaginas = Math.ceil(livros.length / ITENS_POR_PAGINA);
+
+    const indiceInicial = (paginaAtual - 1) * ITENS_POR_PAGINA;
+    const indiceFinal = indiceInicial + ITENS_POR_PAGINA;
+
+    const livrosDaPagina = livros.slice(indiceInicial, indiceFinal);
+
+    // Evita permanecer em uma página inexistente após alterações nos dados.
+    useEffect(() => {
+        if (totalPaginas > 0 && paginaAtual > totalPaginas) {
+            setPaginaAtual(totalPaginas);
+        }
+    }, [paginaAtual, totalPaginas]);
+
+    const primeiroResultado = livros.length === 0 ? 0 : indiceInicial + 1;
+    const ultimoResultado = Math.min(indiceFinal, livros.length);
+
     return (
         <section className="space-y-5">
             {/* Filtros */}
@@ -81,31 +109,24 @@ export default function TabelaLivros({
                             <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Livro
                             </th>
-
                             <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Autor
                             </th>
-
                             <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Gêneros
                             </th>
-
                             <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Ano original
                             </th>
-
                             <th className="px-5 py-4 text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 CDD
                             </th>
-
                             <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Edições
                             </th>
-
                             <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Exemplares
                             </th>
-
                             <th className="px-5 py-4 text-center text-xs font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-300">
                                 Ações
                             </th>
@@ -113,7 +134,7 @@ export default function TabelaLivros({
                     </thead>
 
                     <tbody>
-                        {livros.length === 0 ? (
+                        {livrosDaPagina.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={8}
@@ -123,7 +144,7 @@ export default function TabelaLivros({
                                 </td>
                             </tr>
                         ) : (
-                            livros.map(({ livro, edicoes }) => {
+                            livrosDaPagina.map(({ livro, edicoes }) => {
                                 const totalExemplares = edicoes.reduce(
                                     (total, edicao) =>
                                         total + edicao.total_exemplares,
@@ -204,10 +225,40 @@ export default function TabelaLivros({
                 </table>
             </div>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-                Exibindo {livros.length}{" "}
-                {livros.length === 1 ? "livro" : "livros"}.
-            </p>
+            {/* Informações e navegação */}
+            <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {livros.length === 0
+                        ? "Nenhum livro para exibir."
+                        : `Exibindo ${primeiroResultado}–${ultimoResultado} de ${livros.length} livros.`}
+                </p>
+
+                {totalPaginas > 1 && (
+                    <div className="flex items-center gap-3">
+                        <button
+                            type="button"
+                            onClick={() => setPaginaAtual((pagina) => pagina - 1)}
+                            disabled={paginaAtual === 1}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                            Anterior
+                        </button>
+
+                        <span className="text-sm text-gray-600 dark:text-gray-300">
+                            Página {paginaAtual} de {totalPaginas}
+                        </span>
+
+                        <button
+                            type="button"
+                            onClick={() => setPaginaAtual((pagina) => pagina + 1)}
+                            disabled={paginaAtual === totalPaginas}
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+                        >
+                            Próxima
+                        </button>
+                    </div>
+                )}
+            </div>
         </section>
     );
 }
