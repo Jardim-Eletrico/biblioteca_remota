@@ -46,3 +46,12 @@ export interface LivrosPaginados {
     previous: string | null;
     results: LivroComEdicoes[];
 }
+
+
+export interface LivroRecomendadoResponse {
+    livro: Pick<LivroResponse, "id" | "titulo" | "autor">;
+    edicao: Pick<
+        EdicaoResponse,
+        "id" | "capa" | "exemplares_disponiveis"
+    >;
+}

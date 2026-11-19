@@ -1,7 +1,8 @@
-import type { LivroComEdicao } from "@/src/types/livro";
+
+import type { LivroRecomendadoResponse } from "@/src/types/livro";
 
 interface LivrosRecomendadosProps {
-    livros: LivroComEdicao[];
+    livros: LivroRecomendadoResponse[];
     onAbrirLivro?: (livroId: number, edicaoId: number) => void;
 }
 
@@ -23,10 +24,9 @@ export default function LivrosRecomendados({
                 text-dark-blue
                 dark:text-light-blue-logo
             ">
-                Sugestões baseadas no seu conteúdo
+                Conteúdos semelhantes a este
             </h2>
 
-            {/* LISTA HORIZONTAL */}
             <div className="
                 flex gap-4
                 overflow-x-auto
@@ -72,7 +72,6 @@ export default function LivrosRecomendados({
                                     </div>
                                 )}
 
-                                {/* INDISPONIBILIDADE */}
                                 {!disponivel && (
                                     <div className="
                                         absolute inset-0

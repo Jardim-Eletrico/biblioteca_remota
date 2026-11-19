@@ -5,6 +5,7 @@ import type {
     LivroComEdicoes,
     LivrosPaginados,
     CDDResponse,
+    LivroRecomendadoResponse,
 } from "@/src/types/livro";
 
 import type {
@@ -154,7 +155,7 @@ export async function cadastrarLivro(
 
 export async function buscarLivrosRecomendados(
     livroId: number
-): Promise<LivroComEdicoes[]> {
+): Promise<LivroRecomendadoResponse[]> {
     const response = await apiFetch(
         `/livros/${livroId}/recomendados`
     );
