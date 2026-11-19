@@ -59,6 +59,7 @@ export default function Carrinho() {
                                 src={item.capa}
                                 alt={`Capa de ${item.titulo}`}
                                 width={120}
+                                height={120}
                             />
                         )}
                     </article>
