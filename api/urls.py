@@ -4,7 +4,6 @@ from rest_framework_simplejwt.views import TokenRefreshView
 
 # Views de livros
 from livros.views import *
-
 # Views de usuários
 from usuarios.views import *
 
@@ -30,7 +29,7 @@ urlpatterns = [
     path("livros/<int:pk>/", LivroDetailView.as_view(), name="detalhar_livro"),
     path("livros/<int:livro_id>/avaliar/", AvaliarLivro.as_view(), name="avaliar_livro"),
     path("livros/recomendados/", LivrosRecomendadosView.as_view(), name="livros-recomendados"),
-
+    path("livros/<int:livro_id>/permissao-avaliacao/", PermissaoAvaliacao.as_view(),name="permissao_avaliacao"),
     # Edições
     path("edicoes/", EdicaoListCreateView.as_view(), name="edicoes"),
     path("edicoes/<int:pk>/", EdicaoDetailView.as_view(), name="edicoes-detail"),

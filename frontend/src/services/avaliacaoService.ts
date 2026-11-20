@@ -1,4 +1,4 @@
-import type { AvaliacaoPayload, AvaliacaoResponse } from "../types/avaliacao";
+import type { AvaliacaoPayload, AvaliacaoResponse, PermissaoAvaliacaoResponse } from "../types/avaliacao";
 import { apiFetch } from "./api";
 
 function extrairMensagemErro(dados: unknown): string | null {
@@ -68,4 +68,27 @@ export async function avaliarLivro(livroId: number, payLoad: AvaliacaoPayload):P
     }
 
     return data as AvaliacaoResponse;
+}
+
+export async function consultarPermissaoAvaliacao(
+    livroId: number
+): Promise<PermissaoAvaliacaoResponse> {
+
+    const response = await apiFetch(
+        `/livros/${livroId}/permissao-avaliacao/`,
+        {
+            method: "GET",
+        }
+    );
+
+    const data = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            extrairMensagemErro(data) ??
+            "Não foi possível consultar a permissão de avaliação."
+        );
+    }
+
+    return data as PermissaoAvaliacaoResponse;
 }

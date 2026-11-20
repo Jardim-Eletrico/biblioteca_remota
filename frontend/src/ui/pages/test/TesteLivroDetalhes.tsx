@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
 import Loader from "@/components/app/loader_animation/loader";
-
 import LivroDetalhes from "@/components/livros/LivroDetalhes";
 
 import type { LivroResponse } from "@/src/types/livro";
@@ -27,6 +26,21 @@ export default function TesteLivroDetalhes() {
         edicaoId: number
     ) {
         navigate(`/detalhes-livro/${edicaoId}`);
+    }
+
+    // ATUALIZAR DADOS DO LIVRO APÓS UMA AVALIAÇÃO
+    async function atualizarDadosLivro() {
+        if (!livro) return;
+
+        try {
+            const livroAtualizado = await buscarLivro(livro.id);
+            setLivro(livroAtualizado);
+        } catch (error) {
+            console.error(
+                "Erro ao atualizar os dados do livro:",
+                error
+            );
+        }
     }
 
     // BUSCAR DADOS DO LIVRO E DA EDIÇÃO
@@ -84,7 +98,6 @@ export default function TesteLivroDetalhes() {
         };
     }, [edicaoId]);
 
-    // CARREGANDO
     if (carregando) {
         return (
             <div className="absolute inset-0 flex items-center justify-center scale-150">
@@ -93,7 +106,6 @@ export default function TesteLivroDetalhes() {
         );
     }
 
-    // ERRO
     if (erro) {
         return (
             <div className="
@@ -122,17 +134,16 @@ export default function TesteLivroDetalhes() {
         );
     }
 
-    // DADOS NÃO ENCONTRADOS
     if (!livro || !edicao) {
         return null;
     }
 
-    // EXIBIR DETALHES
     return (
         <LivroDetalhes
             livro={livro}
             edicao={edicao}
             onAbrirLivroRecomendado={abrirLivroRecomendado}
+            onAvaliacaoAtualizada={atualizarDadosLivro}
         />
     );
 }
