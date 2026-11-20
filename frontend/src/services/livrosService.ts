@@ -204,14 +204,19 @@ export async function cadastrarEdicao(
 
 
 export async function buscarLivrosRecomendados(
-    livroId: number
+    livroIds: number[]
 ): Promise<LivroComEdicao[]> {
+    const params = new URLSearchParams();
+
+    livroIds.forEach((id) => {
+        params.append("livros", String(id));
+    });
+
     const response = await apiFetch(
-        `/livros/${livroId}/recomendados/`
+        `/livros/recomendados/?${params.toString()}`
     );
 
     const texto = await response.text();
-
     const data = texto ? JSON.parse(texto) : null;
 
     if (!response.ok) {
