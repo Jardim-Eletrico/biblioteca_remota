@@ -19,7 +19,7 @@ export default function ItemCarrinhoCard({
             relative flex items-center gap-4
             rounded-2xl bg-white p-3 shadow-md
             text-black
-            dark:bg-zinc-800 dark:text-white w-full
+            dark:bg-zinc-800 dark:text-white w-full h-full
         ">
 
             {/* Remover item */}
@@ -74,7 +74,7 @@ export default function ItemCarrinhoCard({
             </div>
 
             {/* Informações */}
-            <div className="flex flex-col min-w-0 w-full gap-3 items-start">
+            <div className="flex flex-col min-w-0 w-full gap-3 items-start h-full">
                 <div className="flex flex-col gap-0.5 w-full">
 
                     <h3 className="
@@ -135,14 +135,14 @@ export default function ItemCarrinhoCard({
                     className="
                         w-full rounded-lg
                         border border-blue-600
-                        py-1 text-sm font-semibold
+                        py-2 text-sm font-semibold
                         text-blue-600
                         hover:bg-blue-600 hover:text-white
                         transition-colors
                         dark:border-blue-500
                         dark:text-blue-400
                         dark:hover:bg-blue-600
-                        dark:hover:text-white
+                        dark:hover:text-white self-end mt-auto
                     "
                     onClick={() => navigate(`/detalhes-livro/${item.edicaoId}`)}
                 >
