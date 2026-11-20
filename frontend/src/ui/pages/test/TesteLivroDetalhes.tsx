@@ -26,7 +26,7 @@ export default function TesteLivroDetalhes() {
         _livroId: number,
         edicaoId: number
     ) {
-        navigate(`/teste-detalhes-livro/${edicaoId}`);
+        navigate(`/detalhes-livro/${edicaoId}`);
     }
 
     // BUSCAR DADOS DO LIVRO E DA EDIÇÃO
