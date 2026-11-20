@@ -545,11 +545,27 @@ class LivrosRecomendadosView(APIView):
 
         return pontuacao
 
-    def get(self, request, livro_id):
-        livro_atual = get_object_or_404(
-            Livro.objects.select_related("cdd", "cdd__pai"),
-            pk=livro_id,
+    def get(self, request):
+        livro_ids = request.query_params.getlist("livros")
+
+        if not livro_ids:
+            return Response(
+                {"erro": "Informe pelo menos um livro."},
+                status=400
+            )
+
+        livros_atuais = list(
+            Livro.objects.filter(
+                pk__in=livro_ids
+            ).select_related("cdd", "cdd__pai")
         )
+
+        if len(livros_atuais) != len(set(livro_ids)):
+            return Response(
+                {"erro": "Um ou mais livros não foram encontrados."},
+                status=404
+            )
+
 
         edicoes_com_disponibilidade = (
             Edicao.objects.annotate(
@@ -567,7 +583,7 @@ class LivrosRecomendadosView(APIView):
 
         candidatos = (
             Livro.objects.filter(edicoes__isnull=False)
-            .exclude(pk=livro_atual.pk)
+            .exclude(pk__in=[livro.pk for livro in livros_atuais])
             .select_related("cdd", "cdd__pai")
             .prefetch_related(
                 Prefetch(
@@ -582,9 +598,9 @@ class LivrosRecomendadosView(APIView):
         recomendacoes = []
 
         for candidato in candidatos:
-            pontuacao = self.calcular_pontuacao(
-                livro_atual,
-                candidato,
+            pontuacao = sum(
+                self.calcular_pontuacao(livro_atual, candidato)
+                for livro_atual in livros_atuais
             )
 
             if pontuacao == 0:

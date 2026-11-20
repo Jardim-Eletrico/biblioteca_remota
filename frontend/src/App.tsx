@@ -42,12 +42,11 @@ export default function App() {
                 <Route element={<Applayout />}>
                     <Route path="/home" element={<Home />} />
 
-                    {/* Testes */}
-                    <Route path="/teste-desejos" element={<TesteDesejoCard />} />
-                    <Route path="/teste-notificacoes" element={<TesteNotificacaoCard />} />
+                    <Route path="/desejos" element={<TesteDesejoCard />} />
+                    <Route path="/notificacoes" element={<TesteNotificacaoCard />} />
                     <Route path="/teste-avaliacao" element={<TesteAvaliacaoModal />} />
-                    <Route path="/teste-detalhes-livro/:edicaoId" element={<TesteLivroDetalhes />} />
-                    <Route path="/teste-carrinho" element={<TesteCarrinho />} />
+                    <Route path="/detalhes-livro/:edicaoId" element={<TesteLivroDetalhes />} />
+                    <Route path="/carrinho" element={<TesteCarrinho />} />
 
                     {/* Gestão do bibliotecário */}
                     <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />

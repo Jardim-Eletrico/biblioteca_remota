@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 
+import Loader from "@/components/app/loader_animation/loader";
+
 import LivroDetalhes from "@/components/livros/LivroDetalhes";
 
 import type { LivroResponse } from "@/src/types/livro";
@@ -85,13 +87,8 @@ export default function TesteLivroDetalhes() {
     // CARREGANDO
     if (carregando) {
         return (
-            <div className="
-                flex min-h-96
-                items-center justify-center
-                text-text-muted
-                dark:text-text-light
-            ">
-                Carregando detalhes do livro...
+            <div className="absolute inset-0 flex items-center justify-center scale-150">
+                <Loader />
             </div>
         );
     }

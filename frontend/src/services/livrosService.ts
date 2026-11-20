@@ -226,3 +226,31 @@ export async function cadastrarEdicao(
 
     return dados;
 }
+
+
+export async function buscarLivrosRecomendados(
+    livroIds: number[]
+): Promise<LivroComEdicao[]> {
+    const params = new URLSearchParams();
+
+    livroIds.forEach((id) => {
+        params.append("livros", String(id));
+    });
+
+    const response = await apiFetch(
+        `/livros/recomendados/?${params.toString()}`
+    );
+
+    const texto = await response.text();
+    const data = texto ? JSON.parse(texto) : null;
+
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.erro ||
+            `Erro HTTP ${response.status}: ${texto}`
+        );
+    }
+
+    return data;
+}

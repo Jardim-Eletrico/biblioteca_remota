@@ -1,4 +1,3 @@
-
 export interface ItemCarrinho {
     id: number;
     edicaoId: number;
@@ -7,4 +6,5 @@ export interface ItemCarrinho {
     editora: string;
     capa: string | null;
     exemplaresDisponiveis: number;
+    cdd: string | null;
 }

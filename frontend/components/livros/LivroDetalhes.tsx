@@ -191,7 +191,7 @@ export default function LivroDetalhes({
 
         async function carregarRecomendacoes() {
             try {
-                const dados = await buscarLivrosRecomendados(livro.id);
+                const dados = await buscarLivrosRecomendados([livro.id]);
 
                 if (ativo) {
                     setRecomendacoesApi(dados);
@@ -361,6 +361,7 @@ export default function LivroDetalhes({
 
     return (
         <>
+            <div className="flex flex-col">
             {/* CAPA */}
             <div className="
                 w-full
@@ -436,15 +437,35 @@ export default function LivroDetalhes({
                     </p>
                 </div>
 
-                {ehLeitor && (
-                    <button
-                        type="button"
-                        onClick={alternarDesejo}
-                        disabled={atualizandoDesejo}
-                        aria-label={
-                            desejoAtivo
-                                ? "Remover da lista de desejos"
-                                : "Adicionar à lista de desejos"
+                {/* LISTA DE DESEJOS */}
+                <button
+                    type="button"
+                    onClick={alternarDesejo}
+                    disabled={atualizandoDesejo}
+                    aria-label={
+                        estaNaListaDesejos
+                            ? "Remover da lista de desejos"
+                            : "Adicionar à lista de desejos"
+                    }
+                    aria-pressed={estaNaListaDesejos}
+                    className="
+                        mt-1 shrink-0
+                        text-primary
+                        transition-transform
+                        hover:scale-110
+                        disabled:cursor-default
+                    "
+                >
+
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        width="40"
+                        height="40"
+                        fill={
+                            estaNaListaDesejos
+                                ? "currentColor"
+                                : "none"
                         }
                         aria-pressed={desejoAtivo}
                         className="
@@ -483,67 +504,57 @@ export default function LivroDetalhes({
                     quantidade={livro.quantidade_avaliacoes}
                 />
             </div>
+            </div>
 
             {/* ADICIONAR AO CARRINHO */}
-            {ehLeitor && (
-                <>
-                    <button
-                        type="button"
-                        onClick={adicionarAoCarrinho}
-                        disabled={
-                            carregandoCarrinho ||
-                            atualizandoCarrinho ||
-                            erroCarrinho ||
-                            (
-                                !livroJaAdicionado &&
-                                (
-                                    !temDisponibilidade ||
-                                    limiteAtingido
-                                )
-                            )
-                        }
-                        className="
-                            mt-6 w-full rounded-xl
-                            bg-primary
-                            px-5 py-3
-                            font-semibold
-                            text-light-blue-logo
-                            transition-opacity
-                            hover:opacity-90
-                            disabled:cursor-not-allowed
-                            disabled:opacity-50
-                        "
-                    >
-                        {carregandoCarrinho
-                            ? "CARREGANDO CARRINHO..."
-                            : atualizandoCarrinho
-                                ? "ATUALIZANDO..."
-                                : erroCarrinho
-                                    ? "ERRO AO CARREGAR CARRINHO"
-                                    : livroJaAdicionado
-                                        ? "REMOVER DO CARRINHO"
-                                        : limiteAtingido
-                                            ? "LIMITE DE 2 LIVROS ATINGIDO"
-                                            : !temDisponibilidade
-                                                ? "INDISPONÍVEL"
-                                                : "ADICIONAR AO CARRINHO"
-                        }
-                    </button>
+            <button
+                type="button"
+                onClick={adicionarAoCarrinho}
+                disabled={
+                    carregandoCarrinho ||
+                    atualizandoCarrinho ||
+                    erroCarrinho ||
+                    (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
+                }
+                className="
+                    w-full rounded-xl
+                    bg-primary
+                    px-5 py-3
+                    font-semibold
+                    text-light-blue-logo
+                    transition-opacity
+                    hover:opacity-90
+                    disabled:cursor-not-allowed
+                    disabled:opacity-50
+                "
+            >
+                {carregandoCarrinho
+                    ? "CARREGANDO CARRINHO..."
+                    : atualizandoCarrinho
+                        ? "ATUALIZANDO..."
+                        : erroCarrinho
+                            ? "ERRO AO CARREGAR CARRINHO"
+                            : livroJaAdicionado
+                                ? "REMOVER DO CARRINHO"
+                                : limiteAtingido
+                                    ? "LIMITE DE 2 LIVROS ATINGIDO"
+                                    : !temDisponibilidade
+                                        ? "INDISPONÍVEL"
+                                        : "ADICIONAR AO CARRINHO"
+                }
+            </button>
 
-                    {/* MENSAGEM */}
-                    {mensagem && (
-                        <p className={`
-                            mt-2 text-sm
-                            ${
-                                tipoMensagem === "sucesso"
-                                    ? "text-avaiable-green"
-                                    : "text-warning"
-                            }
-                        `}>
-                            {mensagem}
-                        </p>
-                    )}
-                </>
+            {/* MENSAGEM */}
+            {mensagem && (
+                <p className={`
+                    mt-2 text-sm
+                    ${tipoMensagem === "sucesso"
+                        ? "text-avaiable-green"
+                        : "text-warning"
+                    }
+                `}>
+                    {mensagem}
+                </p>
             )}
 
             {/* DESCRIÇÃO */}

@@ -43,7 +43,7 @@ urlpatterns = [
     ),
 
     path(
-        "<int:livro_id>/recomendados/",
+        "recomendados/",
         LivrosRecomendadosView.as_view(),
         name="livros-recomendados",
     ),

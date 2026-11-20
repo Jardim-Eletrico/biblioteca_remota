@@ -16,12 +16,13 @@ class CarrinhoView(APIView):
         )
 
         itens = carrinho.itens.select_related(
-            "edicao__livro"
+            "edicao__livro__cdd"
         ).all()
 
         serializer = ItemCarrinhoSerializer(
             itens,
-            many=True
+            many=True,
+            context={"request": request}
         )
 
         return Response(serializer.data)
