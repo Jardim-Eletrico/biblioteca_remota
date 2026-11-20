@@ -25,7 +25,6 @@ import type { PerfilResponse } from "@/src/types/perfil";
 import type {
     LivroResponse,
     LivroRecomendadoResponse,
-    LivroComEdicoes,
 } from "@/src/types/livro";
 
 import type { EdicaoResponse } from "@/src/types/edicao";
