@@ -17,6 +17,7 @@ export interface PedidoResponse {
   edicao: number;
   titulo: string;
   autor: string;
+  capa: string;
   status: PedidoStatus;
   data_pedido: string;
   data_resposta: string | null;

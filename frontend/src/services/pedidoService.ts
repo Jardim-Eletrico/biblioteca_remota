@@ -127,7 +127,7 @@ export async function cancelarPedido(
 
 // Lista os pedidos e empréstimos do leitor.
 export async function listarMeusPedidos(): Promise<PedidoResponse[]> {
-    const response = await apiFetch("/pedidos/meus/ativos");
+    const response = await apiFetch("/pedidos/meus/ativos/");
 
     const dados = await response.json().catch(() => null);
 

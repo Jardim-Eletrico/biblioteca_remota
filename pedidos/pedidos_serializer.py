@@ -23,6 +23,11 @@ class PedidoSerializer(serializers.ModelSerializer):
         read_only=True
     )
 
+    capa = serializers.ImageField(
+        source="edicao.capa",
+        read_only = True
+    )
+
     nome_leitor = serializers.CharField(
         source="leitor.usuario.nome",
         read_only=True
@@ -42,10 +47,12 @@ class PedidoSerializer(serializers.ModelSerializer):
             "edicao",
             "titulo",
             "autor",
+            "capa",
             "exemplar",
             "status",
             "data_pedido",
             "data_resposta",
+            "emprestimo",
         )
 
         read_only_fields = (
