@@ -32,7 +32,7 @@ function LivroRecomendadoCard({
                 overflow-hidden
                 rounded-xl
                 bg-light-gray
-                dark:bg-surface-mid
+                dark:bg-surface-mid 
             ">
 
                 {!imageError && edicao.capa ? (
