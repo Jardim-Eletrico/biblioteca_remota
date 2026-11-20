@@ -123,3 +123,22 @@ export async function cancelarPedido(
 
     return dados;
 }
+
+
+// Lista os pedidos e empréstimos do leitor.
+export async function listarMeusPedidos(): Promise<PedidoResponse[]> {
+    const response = await apiFetch("/pedidos/meus/ativos");
+
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            obterMensagemErro(
+                dados,
+                "Não foi possível listar seus pedidos e empréstimos."
+            )
+        );
+    }
+
+    return normalizarLista<PedidoResponse>(dados);
+}
