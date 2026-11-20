@@ -1,4 +1,4 @@
-
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import type { ItemCarrinho } from "@/src/types/carrinho";
 
@@ -12,6 +12,7 @@ export default function ItemCarrinhoCard({
     onRemover,
 }: ItemCarrinhoProps) {
     const [imageError, setImageError] = useState(false);
+    const navigate = useNavigate();
 
     return (
         <article className="
@@ -41,7 +42,7 @@ export default function ItemCarrinhoCard({
 
             {/* Capa */}
             <div className="
-                h-36 w-24 shrink-0 overflow-hidden
+                w-45 overflow-hidden
                 rounded-lg bg-zinc-100
                 dark:bg-zinc-700
             ">
@@ -143,8 +144,9 @@ export default function ItemCarrinhoCard({
                         dark:hover:bg-blue-600
                         dark:hover:text-white
                     "
+                    onClick={() => navigate(`/detalhes-livro/${item.edicaoId}`)}
                 >
-                    RESERVAR
+                    DETALHES
                 </button>
             </div>
         </article>
