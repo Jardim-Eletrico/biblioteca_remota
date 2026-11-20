@@ -3,7 +3,6 @@ import type {
     LivroResponse,
     LivroPayload,
     CDDResponse,
-    LivroComEdicoes,
     LivrosPaginados,
     LivroRecomendadoResponse
 } from "@/src/types/livro";
@@ -149,15 +148,22 @@ export async function cadastrarLivro(
     return data;
 }
 
+
 // =====================================================
 // BUSCAR LIVROS RECOMENDADOS
 // =====================================================
 
 export async function buscarLivrosRecomendados(
-    livroId: number
+    livroIds: number[]
 ): Promise<LivroRecomendadoResponse[]> {
+    const params = new URLSearchParams();
+
+    livroIds.forEach((id) => {
+        params.append("livros", String(id));
+    });
+
     const response = await apiFetch(
-        `/livros/${livroId}/recomendados/`
+        `/livros/recomendados/?${params.toString()}`
     );
 
     const texto = await response.text();
@@ -173,6 +179,7 @@ export async function buscarLivrosRecomendados(
 
     return data;
 }
+
 
 // =====================================================
 // LISTAR CDDs
@@ -228,29 +235,4 @@ export async function cadastrarEdicao(
 }
 
 
-export async function buscarLivrosRecomendados(
-    livroIds: number[]
-): Promise<LivroComEdicao[]> {
-    const params = new URLSearchParams();
 
-    livroIds.forEach((id) => {
-        params.append("livros", String(id));
-    });
-
-    const response = await apiFetch(
-        `/livros/recomendados/?${params.toString()}`
-    );
-
-    const texto = await response.text();
-    const data = texto ? JSON.parse(texto) : null;
-
-    if (!response.ok) {
-        throw new Error(
-            data?.detail ||
-            data?.erro ||
-            `Erro HTTP ${response.status}: ${texto}`
-        );
-    }
-
-    return data;
-}

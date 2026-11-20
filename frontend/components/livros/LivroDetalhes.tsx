@@ -25,6 +25,7 @@ import type { PerfilResponse } from "@/src/types/perfil";
 import type {
     LivroResponse,
     LivroRecomendadoResponse,
+    LivroComEdicoes,
 } from "@/src/types/livro";
 
 import type { EdicaoResponse } from "@/src/types/edicao";
@@ -413,6 +414,7 @@ export default function LivroDetalhes({
                 )}
             </div>
 
+            
             {/* TÍTULO E LISTA DE DESEJOS */}
             <div className="
                 mt-2 flex items-start
@@ -438,34 +440,15 @@ export default function LivroDetalhes({
                 </div>
 
                 {/* LISTA DE DESEJOS */}
-                <button
-                    type="button"
-                    onClick={alternarDesejo}
-                    disabled={atualizandoDesejo}
-                    aria-label={
-                        estaNaListaDesejos
-                            ? "Remover da lista de desejos"
-                            : "Adicionar à lista de desejos"
-                    }
-                    aria-pressed={estaNaListaDesejos}
-                    className="
-                        mt-1 shrink-0
-                        text-primary
-                        transition-transform
-                        hover:scale-110
-                        disabled:cursor-default
-                    "
-                >
-
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        width="40"
-                        height="40"
-                        fill={
-                            estaNaListaDesejos
-                                ? "currentColor"
-                                : "none"
+                {ehLeitor && (
+                    <button
+                        type="button"
+                        onClick={alternarDesejo}
+                        disabled={atualizandoDesejo}
+                        aria-label={
+                            desejoAtivo
+                                ? "Remover da lista de desejos"
+                                : "Adicionar à lista de desejos"
                         }
                         aria-pressed={desejoAtivo}
                         className="
@@ -479,13 +462,9 @@ export default function LivroDetalhes({
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 24 24"
-                            width="30"
-                            height="30"
-                            fill={
-                                desejoAtivo
-                                    ? "currentColor"
-                                    : "none"
-                            }
+                            width="40"
+                            height="40"
+                            fill={desejoAtivo ? "currentColor" : "none"}
                             stroke="currentColor"
                             strokeWidth="1.5"
                             strokeLinecap="round"
@@ -496,6 +475,7 @@ export default function LivroDetalhes({
                     </button>
                 )}
             </div>
+
 
             {/* AVALIAÇÃO MÉDIA */}
             <div className="mt-1">

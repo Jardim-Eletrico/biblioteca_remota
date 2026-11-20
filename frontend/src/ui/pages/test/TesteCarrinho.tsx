@@ -6,12 +6,12 @@ import ItemCarrinhoCard from "@/components/carrinho/carrinhoCard";
 import Loader from "@/components/app/loader_animation/loader";
 
 import LivrosRecomendados from "@/components/livros/LivrosRecomendados";
-import type { LivroComEdicao } from "@/src/types/livro";
+import type { LivroRecomendadoResponse } from "@/src/types/livro";
 
 import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 
 interface CarrinhoProps {
-    recomendados?: LivroComEdicao[];
+    recomendados?: LivroRecomendadoResponse[];
 }
 
 export default function Carrinho(
@@ -24,7 +24,7 @@ export default function Carrinho(
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
-    const [recomendacoesApi, setRecomendacoesApi] = useState<LivroComEdicao[]>([]);
+    const [recomendacoesApi, setRecomendacoesApi] = useState<LivroRecomendadoResponse[]>([]);
 
     useEffect(() => {
         async function carregarCarrinho() {
@@ -127,7 +127,7 @@ export default function Carrinho(
                 grid grid-cols-1 gap-5
                 md:grid-cols-3 w-full relative transition-transform duration-500 ease-in-out
             ">
-                <div className="hidden md:flex md:flex-col md:gap-5 md:col-span-2">
+                <div className="flex flex-col gap-5 md:col-span-2">
                 {itens.length === 0 ? (
                     <p>Seu carrinho está vazio.</p>
                 ) : (
@@ -239,7 +239,7 @@ export default function Carrinho(
                     </div>
                 </div>
                 
-                <div className="hidden md:block md:col-span-3">
+                <div className="md:block md:col-span-3">
                     <LivrosRecomendados
                         livros={recomendacoesExibidas}
                     />
