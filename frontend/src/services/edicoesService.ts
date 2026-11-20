@@ -49,19 +49,51 @@ function criarFormData(
 // LISTAR EDIÇÕES
 // =====================================================
 
+
+
 export async function listarEdicoes(): Promise<EdicaoResponse[]> {
-    const response = await apiFetch("/edicoes/");
+    const primeiraResposta = await apiFetch("/edicoes/");
+    const primeiraPagina = await primeiraResposta.json().catch(() => null);
 
-    const data = await response.json().catch(() => null);
-
-    if (!response.ok) {
+    if (!primeiraResposta.ok) {
         throw new Error(
-            data?.detail || data?.erro || "Erro ao buscar edições"
+            primeiraPagina?.detail ||
+            primeiraPagina?.erro ||
+            "Erro ao buscar edições"
         );
     }
 
-    return data;
+    // A API pode retornar uma lista simples ou uma resposta paginada.
+    if (Array.isArray(primeiraPagina)) {
+        return primeiraPagina;
+    }
+
+    if (!Array.isArray(primeiraPagina?.results)) {
+        throw new Error("Formato inesperado ao carregar edições.");
+    }
+
+    const edicoes: EdicaoResponse[] = [...primeiraPagina.results];
+    const total = primeiraPagina.count;
+
+    // Busca as próximas páginas, respeitando o limite de 10 da API.
+    for (let offset = edicoes.length; offset < total; offset += 10) {
+        const response = await apiFetch(`/edicoes/?limit=10&offset=${offset}`);
+        const data = await response.json().catch(() => null);
+
+        if (!response.ok || !Array.isArray(data?.results)) {
+            throw new Error(
+                data?.detail ||
+                data?.erro ||
+                "Erro ao carregar as demais edições."
+            );
+        }
+
+        edicoes.push(...data.results);
+    }
+
+    return edicoes;
 }
+
 
 // =====================================================
 // BUSCAR EDIÇÃO

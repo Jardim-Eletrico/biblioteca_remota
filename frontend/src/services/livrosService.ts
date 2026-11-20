@@ -1,13 +1,14 @@
+
 import type {
     LivroResponse,
     LivroPayload,
     CDDResponse,
-    LivroComEdicao,
-    LivrosPaginados
+    LivroComEdicoes,
+    LivrosPaginados,
+    LivroRecomendadoResponse
 } from "@/src/types/livro";
 
-
-import type{
+import type {
     EdicaoResponse,
     EdicaoPayload,
 } from "@/src/types/edicao";
@@ -31,7 +32,6 @@ export async function listarLivros(
     });
 
     const response = await apiFetch(`/livros/?${params.toString()}`);
-
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -49,7 +49,6 @@ export async function listarLivros(
 
 export async function buscarLivro(id: number): Promise<LivroResponse> {
     const response = await apiFetch(`/livros/${id}/`);
-
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -150,13 +149,37 @@ export async function cadastrarLivro(
     return data;
 }
 
+// =====================================================
+// BUSCAR LIVROS RECOMENDADOS
+// =====================================================
 
+export async function buscarLivrosRecomendados(
+    livroId: number
+): Promise<LivroRecomendadoResponse[]> {
+    const response = await apiFetch(
+        `/livros/${livroId}/recomendados/`
+    );
 
+    const texto = await response.text();
+    const data = texto ? JSON.parse(texto) : null;
 
+    if (!response.ok) {
+        throw new Error(
+            data?.detail ||
+            data?.erro ||
+            `Erro HTTP ${response.status}: ${texto}`
+        );
+    }
+
+    return data;
+}
+
+// =====================================================
 // LISTAR CDDs
+// =====================================================
+
 export async function listarCDDs(): Promise<CDDResponse[]> {
     const response = await apiFetch("/cdds/");
-
     const dados = await response.json().catch(() => null);
 
     if (!response.ok) {
@@ -166,8 +189,10 @@ export async function listarCDDs(): Promise<CDDResponse[]> {
     return dados;
 }
 
-
+// =====================================================
 // CADASTRAR EDIÇÃO
+// =====================================================
+
 export async function cadastrarEdicao(
     payload: EdicaoPayload
 ): Promise<EdicaoResponse> {

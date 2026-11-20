@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 
 import Loader from "@/components/app/loader_animation/loader";
 
@@ -13,8 +13,8 @@ import { buscarEdicao } from "@/src/services/edicoesService";
 import { buscarLivro } from "@/src/services/livrosService";
 
 export default function TesteLivroDetalhes() {
-
     const { edicaoId } = useParams();
+    const navigate = useNavigate();
 
     const [livro, setLivro] = useState<LivroResponse | null>(null);
     const [edicao, setEdicao] = useState<EdicaoResponse | null>(null);
@@ -22,47 +22,34 @@ export default function TesteLivroDetalhes() {
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
+    function abrirLivroRecomendado(
+        _livroId: number,
+        edicaoId: number
+    ) {
+        navigate(`/teste-detalhes-livro/${edicaoId}`);
+    }
+
     // BUSCAR DADOS DO LIVRO E DA EDIÇÃO
     useEffect(() => {
-
         let ativo = true;
 
         async function carregarDetalhes() {
-
             try {
-
                 setCarregando(true);
                 setErro(null);
 
-                // Validar ID recebido pela URL
                 const id = Number(edicaoId);
 
                 if (!Number.isInteger(id) || id <= 0) {
                     throw new Error("ID de edição inválido.");
                 }
 
-                // Buscar edição
                 const edicaoEncontrada = await buscarEdicao(id);
 
-                // Buscar livro relacionado à edição
                 const livroEncontrado = await buscarLivro(
                     edicaoEncontrada.livro
                 );
 
-
-                console.log("Edição encontrada:", edicaoEncontrada);
-                console.log("Livro encontrado:", livroEncontrado);
-
-                console.log("ID do livro na edição:", edicaoEncontrada.livro);
-                console.log("ID do livro retornado:", livroEncontrado.id);
-
-                console.log("Tipos:", {
-                    livroNaEdicao: typeof edicaoEncontrada.livro,
-                    idDoLivro: typeof livroEncontrado.id
-                });
-
-
-                // Verificar relacionamento
                 if (edicaoEncontrada.livro !== livroEncontrado.id) {
                     throw new Error(
                         "A edição não pertence ao livro encontrado."
@@ -75,7 +62,6 @@ export default function TesteLivroDetalhes() {
                 setLivro(livroEncontrado);
 
             } catch (error) {
-
                 if (!ativo) return;
 
                 setErro(
@@ -85,11 +71,9 @@ export default function TesteLivroDetalhes() {
                 );
 
             } finally {
-
                 if (ativo) {
                     setCarregando(false);
                 }
-
             }
         }
 
@@ -98,7 +82,6 @@ export default function TesteLivroDetalhes() {
         return () => {
             ativo = false;
         };
-
     }, [edicaoId]);
 
     // CARREGANDO
@@ -118,7 +101,6 @@ export default function TesteLivroDetalhes() {
                 items-center justify-center
                 gap-4 px-5
             ">
-
                 <p className="text-center text-warning">
                     {erro}
                 </p>
@@ -136,7 +118,6 @@ export default function TesteLivroDetalhes() {
                 >
                     VOLTAR PARA HOME
                 </Link>
-
             </div>
         );
     }
@@ -151,6 +132,7 @@ export default function TesteLivroDetalhes() {
         <LivroDetalhes
             livro={livro}
             edicao={edicao}
+            onAbrirLivroRecomendado={abrirLivroRecomendado}
         />
     );
 }

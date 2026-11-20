@@ -8,6 +8,7 @@ import type { ExemplarResponse } from "@/src/types/exemplar";
 import {
     listarExemplaresBibliotecario,
     baixarExemplar,
+    criarExemplaresLote,
 } from "@/src/services/exemplaresService";
 
 import TabelaExemplaresEdicao from "./TabelaExemplaresEdicao";
@@ -27,6 +28,12 @@ interface DetalhesLivroProps {
         dados: Partial<EdicaoPayload>
     ) => Promise<boolean>;
 
+    onCriarEdicao: (
+        dados: EdicaoPayload
+    ) => Promise<boolean>;
+
+    onAtualizarDados: () => Promise<void>;
+
     salvando: boolean;
 }
 
@@ -36,6 +43,8 @@ export default function DetalhesLivro({
     onFechar,
     onSalvarLivro,
     onSalvarEdicao,
+    onCriarEdicao,
+    onAtualizarDados,
     salvando,
 }: DetalhesLivroProps) {
     const [editandoLivro, setEditandoLivro] = useState(false);
@@ -46,10 +55,25 @@ export default function DetalhesLivro({
     const [salvandoBaixa, setSalvandoBaixa] = useState(false);
     const [erroExemplares, setErroExemplares] = useState<string | null>(null);
 
+    // Cadastro de edição
+    const [criandoEdicao, setCriandoEdicao] = useState(false);
+    const [salvandoEdicao, setSalvandoEdicao] = useState(false);
+
+    const [anoNovaEdicao, setAnoNovaEdicao] = useState("");
+    const [editoraNovaEdicao, setEditoraNovaEdicao] = useState("");
+    const [paginasNovaEdicao, setPaginasNovaEdicao] = useState("");
+    const [numeroNovaEdicao, setNumeroNovaEdicao] = useState("");
+    const [isbnNovaEdicao, setIsbnNovaEdicao] = useState("");
+    const [capaNovaEdicao, setCapaNovaEdicao] = useState<File | null>(null);
+
+    const [erroCadastro, setErroCadastro] = useState<string | null>(null);
+    const [sucessoCadastro, setSucessoCadastro] = useState<string | null>(null);
+
+    // Dados do livro
     const [titulo, setTitulo] = useState(livro.titulo);
     const [subtitulo, setSubtitulo] = useState(livro.subtitulo);
     const [autor, setAutor] = useState(livro.autor);
-    const [descricao, setDescricao] = useState(livro.descricao);
+    const [descricao, setDescricao] = useState(livro.descricao ?? "");
     const [generos, setGeneros] = useState(livro.generos);
     const [anoOriginal, setAnoOriginal] = useState(livro.ano_original);
     const [cdd, setCdd] = useState(
@@ -61,16 +85,17 @@ export default function DetalhesLivro({
         setTitulo(livro.titulo);
         setSubtitulo(livro.subtitulo);
         setAutor(livro.autor);
-        setDescricao(livro.descricao);
+        setDescricao(livro.descricao ?? "");
         setGeneros(livro.generos);
         setAnoOriginal(livro.ano_original);
         setCdd(livro.cdd === null ? "" : String(livro.cdd));
 
         setEditandoLivro(false);
         setEdicaoEmEdicao(null);
+        setCriandoEdicao(false);
     }, [livro]);
 
-    // Carrega todos os exemplares cadastrados para o bibliotecário.
+    // Carrega os exemplares cadastrados para o bibliotecário.
     const carregarExemplares = useCallback(async () => {
         try {
             setCarregandoExemplares(true);
@@ -105,6 +130,7 @@ export default function DetalhesLivro({
             });
 
             await carregarExemplares();
+            await onAtualizarDados();
 
             return true;
         } catch (error) {
@@ -139,9 +165,83 @@ export default function DetalhesLivro({
         }
     }
 
+    // Cadastra uma nova edição para o livro selecionado.
+    async function cadastrarNovaEdicao(
+        e: React.FormEvent<HTMLFormElement>
+    ) {
+        e.preventDefault();
+
+        try {
+            setSalvandoEdicao(true);
+            setErroCadastro(null);
+            setSucessoCadastro(null);
+
+            const dados: EdicaoPayload = {
+                livro: livro.id,
+                ano_publicacao: Number(anoNovaEdicao),
+                editora: editoraNovaEdicao.trim(),
+                numero_paginas: Number(paginasNovaEdicao),
+                edicao: numeroNovaEdicao.trim(),
+                isbn: isbnNovaEdicao.trim() || null,
+                ...(capaNovaEdicao ? { capa: capaNovaEdicao } : {}),
+            };
+
+            const sucesso = await onCriarEdicao(dados);
+
+            if (sucesso) {
+                setSucessoCadastro("Edição cadastrada com sucesso.");
+
+                setAnoNovaEdicao("");
+                setEditoraNovaEdicao("");
+                setPaginasNovaEdicao("");
+                setNumeroNovaEdicao("");
+                setIsbnNovaEdicao("");
+                setCapaNovaEdicao(null);
+
+                setCriandoEdicao(false);
+            }
+        } catch (error) {
+            setErroCadastro(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível cadastrar a edição."
+            );
+        } finally {
+            setSalvandoEdicao(false);
+        }
+    }
+
+    // Cadastra exemplares em lote para uma edição.
+    async function adicionarExemplares(
+        edicaoId: number,
+        quantidade: number
+    ): Promise<boolean> {
+        try {
+            setErroExemplares(null);
+
+            await criarExemplaresLote(edicaoId, {
+                quantidade,
+            });
+
+            await carregarExemplares();
+            await onAtualizarDados();
+
+            return true;
+        } catch (error) {
+            setErroExemplares(
+                error instanceof Error
+                    ? error.message
+                    : "Não foi possível adicionar os exemplares."
+            );
+
+            return false;
+        }
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/50 p-4">
             <section className="my-8 w-full max-w-4xl rounded-2xl bg-white p-6 shadow-xl dark:bg-gray-900">
+
                 {/* Cabeçalho */}
                 <div className="mb-6 flex items-center justify-between gap-3">
                     <div>
@@ -321,9 +421,35 @@ export default function DetalhesLivro({
 
                 {/* Edições */}
                 <div>
-                    <h3 className="mb-4 font-semibold text-gray-900 dark:text-white">
-                        Edições ({edicoes.length})
-                    </h3>
+                    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                            Edições ({edicoes.length})
+                        </h3>
+
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setCriandoEdicao((atual) => !atual);
+                                setErroCadastro(null);
+                                setSucessoCadastro(null);
+                            }}
+                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                        >
+                            {criandoEdicao ? "Cancelar" : "+ Adicionar edição"}
+                        </button>
+                    </div>
+
+                    {erroCadastro && (
+                        <p className="mb-3 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-400">
+                            {erroCadastro}
+                        </p>
+                    )}
+
+                    {sucessoCadastro && (
+                        <p className="mb-3 rounded-lg bg-green-50 p-3 text-sm text-green-700 dark:bg-green-950/30 dark:text-green-400">
+                            {sucessoCadastro}
+                        </p>
+                    )}
 
                     {erroExemplares && (
                         <p className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-950/30 dark:text-red-400">
@@ -331,6 +457,86 @@ export default function DetalhesLivro({
                         </p>
                     )}
 
+                    {/* Formulário de nova edição */}
+                    {criandoEdicao && (
+                        <form
+                            onSubmit={cadastrarNovaEdicao}
+                            className="mb-5 space-y-4 rounded-xl border border-blue-200 p-5 dark:border-blue-900"
+                        >
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                                Nova edição de {livro.titulo}
+                            </h4>
+
+                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <Campo
+                                    label="Ano de publicação"
+                                    type="number"
+                                    value={anoNovaEdicao}
+                                    onChange={setAnoNovaEdicao}
+                                    required
+                                />
+
+                                <Campo
+                                    label="Editora"
+                                    value={editoraNovaEdicao}
+                                    onChange={setEditoraNovaEdicao}
+                                    required
+                                />
+
+                                <Campo
+                                    label="Número de páginas"
+                                    type="number"
+                                    value={paginasNovaEdicao}
+                                    onChange={setPaginasNovaEdicao}
+                                    required
+                                />
+
+                                <Campo
+                                    label="Número da edição"
+                                    value={numeroNovaEdicao}
+                                    onChange={setNumeroNovaEdicao}
+                                    required
+                                />
+
+                                <Campo
+                                    label="ISBN"
+                                    value={isbnNovaEdicao}
+                                    onChange={setIsbnNovaEdicao}
+                                />
+                            </div>
+
+                            <div>
+                                <label className="mb-1 block text-sm text-gray-700 dark:text-gray-300">
+                                    Capa
+                                </label>
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) =>
+                                        setCapaNovaEdicao(
+                                            e.target.files?.[0] ?? null
+                                        )
+                                    }
+                                    className="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-2 dark:text-gray-300 dark:file:bg-gray-700"
+                                />
+                            </div>
+
+                            <div className="flex justify-end">
+                                <button
+                                    type="submit"
+                                    disabled={salvandoEdicao || salvando}
+                                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                                >
+                                    {salvandoEdicao
+                                        ? "Cadastrando..."
+                                        : "Cadastrar edição"}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* Lista de edições */}
                     {edicoes.length === 0 ? (
                         <p className="rounded-lg bg-gray-50 p-4 text-sm text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                             Este livro ainda não possui edições cadastradas.
@@ -349,6 +555,7 @@ export default function DetalhesLivro({
                                     carregandoExemplares={carregandoExemplares}
                                     salvandoBaixa={salvandoBaixa}
                                     onBaixar={realizarBaixa}
+                                    onCriarExemplares={adicionarExemplares}
                                     onEditar={() => setEdicaoEmEdicao(edicao.id)}
                                     onCancelar={() => setEdicaoEmEdicao(null)}
                                     onSalvar={async (dados) => {
@@ -395,6 +602,7 @@ interface CardEdicaoGestaoProps {
     edicao: EdicaoResponse;
     editando: boolean;
     salvando: boolean;
+
     onEditar: () => void;
     onCancelar: () => void;
     onSalvar: (dados: Partial<EdicaoPayload>) => Promise<void>;
@@ -402,7 +610,13 @@ interface CardEdicaoGestaoProps {
     exemplares: ExemplarResponse[];
     carregandoExemplares: boolean;
     salvandoBaixa: boolean;
+
     onBaixar: (id: number, motivo: string) => Promise<boolean>;
+
+    onCriarExemplares: (
+        edicaoId: number,
+        quantidade: number
+    ) => Promise<boolean>;
 }
 
 function CardEdicaoGestao({
@@ -416,13 +630,26 @@ function CardEdicaoGestao({
     carregandoExemplares,
     salvandoBaixa,
     onBaixar,
+    onCriarExemplares,
 }: CardEdicaoGestaoProps) {
-    const [anoPublicacao, setAnoPublicacao] = useState(String(edicao.ano_publicacao));
+    const [anoPublicacao, setAnoPublicacao] = useState(
+        String(edicao.ano_publicacao)
+    );
+
     const [editora, setEditora] = useState(edicao.editora);
-    const [numeroPaginas, setNumeroPaginas] = useState(String(edicao.numero_paginas));
+    const [numeroPaginas, setNumeroPaginas] = useState(
+        String(edicao.numero_paginas)
+    );
+
     const [numeroEdicao, setNumeroEdicao] = useState(edicao.edicao);
     const [isbn, setIsbn] = useState(edicao.isbn ?? "");
     const [capa, setCapa] = useState<File | null>(null);
+
+    // Cadastro de exemplares
+    const [quantidadeExemplares, setQuantidadeExemplares] = useState("1");
+    const [salvandoExemplares, setSalvandoExemplares] = useState(false);
+    const [erroCadastroExemplares, setErroCadastroExemplares] =
+        useState<string | null>(null);
 
     useEffect(() => {
         setAnoPublicacao(String(edicao.ano_publicacao));
@@ -444,6 +671,42 @@ function CardEdicaoGestao({
             isbn: isbn.trim() || null,
             ...(capa ? { capa } : {}),
         });
+    }
+
+    // Adiciona exemplares à edição.
+    async function adicionarExemplares(
+        e: React.FormEvent<HTMLFormElement>
+    ) {
+        e.preventDefault();
+
+        const quantidade = Number(quantidadeExemplares);
+
+        if (!Number.isInteger(quantidade) || quantidade < 1) {
+            setErroCadastroExemplares(
+                "Informe uma quantidade inteira maior que zero."
+            );
+            return;
+        }
+
+        try {
+            setSalvandoExemplares(true);
+            setErroCadastroExemplares(null);
+
+            const sucesso = await onCriarExemplares(
+                edicao.id,
+                quantidade
+            );
+
+            if (sucesso) {
+                setQuantidadeExemplares("1");
+            } else {
+                setErroCadastroExemplares(
+                    "Não foi possível adicionar os exemplares."
+                );
+            }
+        } finally {
+            setSalvandoExemplares(false);
+        }
     }
 
     return (
@@ -524,7 +787,9 @@ function CardEdicaoGestao({
                         <input
                             type="file"
                             accept="image/*"
-                            onChange={(e) => setCapa(e.target.files?.[0] ?? null)}
+                            onChange={(e) =>
+                                setCapa(e.target.files?.[0] ?? null)
+                            }
                             className="block w-full text-sm text-gray-600 file:mr-3 file:rounded-lg file:border-0 file:bg-gray-100 file:px-3 file:py-2 dark:text-gray-300 dark:file:bg-gray-700"
                         />
                     </div>
@@ -577,6 +842,46 @@ function CardEdicaoGestao({
                 <h5 className="mb-3 font-semibold text-gray-900 dark:text-white">
                     Gestão de exemplares ({exemplares.length})
                 </h5>
+
+                {/* Formulário para adicionar exemplares */}
+                <form
+                    onSubmit={adicionarExemplares}
+                    className="mb-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800"
+                >
+                    <label className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Quantidade de novos exemplares
+                    </label>
+
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                        <input
+                            type="number"
+                            min="1"
+                            step="1"
+                            required
+                            value={quantidadeExemplares}
+                            onChange={(e) =>
+                                setQuantidadeExemplares(e.target.value)
+                            }
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-700 dark:bg-gray-900 dark:text-white sm:max-w-32"
+                        />
+
+                        <button
+                            type="submit"
+                            disabled={salvandoExemplares}
+                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+                        >
+                            {salvandoExemplares
+                                ? "Adicionando..."
+                                : "Adicionar exemplares"}
+                        </button>
+                    </div>
+
+                    {erroCadastroExemplares && (
+                        <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                            {erroCadastroExemplares}
+                        </p>
+                    )}
+                </form>
 
                 <TabelaExemplaresEdicao
                     exemplares={exemplares}

@@ -1,10 +1,23 @@
+
+from datetime import timedelta
+
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
-
-from django.db.models import Avg, Count, F, Prefetch, Q
-
 from django.db import transaction
+from django.db.models import (
+    Avg,
+    Count,
+    F,
+    Max,
+    OuterRef,
+    Prefetch,
+    Q,
+    Subquery,
+    IntegerField,
+    Value,
+)
+from django.db.models.functions import Coalesce
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -17,6 +30,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
+from rest_framework.pagination import LimitOffsetPagination
 
 from drf_spectacular.utils import extend_schema
 
@@ -30,17 +44,18 @@ from livros.livro_serializer import (
     ExemplarBaixaSerializer,
     AvalicaoSerializer,
     CDDSerializer,
-    LivroRecomendadoSerializer
+    LivroRecomendadoSerializer,
 )
+from livros.services import avaliar_livro
 
 from usuarios.models import Leitor
+
 from api.permissions import (
     IsBibliotecario,
     IsBibliotecario_or_Readonly,
 )
 
 from emprestimos.models import Emprestimo
-from pedidos.models import Pedido
 from emprestimos.emprestimo_serializer import (
     EmprestimoSerializer,
     EfetivarEmprestimoSerializer,
@@ -50,26 +65,9 @@ from emprestimos.services import (
     devolver_emprestimo,
 )
 
-from rest_framework.pagination import LimitOffsetPagination
+from pedidos.models import Pedido
 
-from livros.services import avaliar_livro
 
-from django.db.models import Max
-
-from datetime import timedelta
-
-from django.db.models import (
-    Count,
-    Max,
-    OuterRef,
-    Subquery,
-    IntegerField,
-    Value,
-)
-from django.db.models.functions import Coalesce
-from django.utils import timezone
-
-from emprestimos.models import Emprestimo
 def livros_com_avaliacoes():
     return Livro.objects.annotate(
         media_avaliacoes=Avg("avaliacoes__nota"),
@@ -282,15 +280,15 @@ class ExemplarListView(ListAPIView):
             "situacao": "Filtro inválido."
         })
 
+class LivroPagination(LimitOffsetPagination):
+    default_limit = 10
+    max_limit = 10
+
 
 class ListarCDDsView(generics.ListAPIView):
     queryset = CDD.objects.all().order_by("codigo")
     serializer_class = CDDSerializer
     permission_classes = [IsAuthenticated]
-
-class LivroPagination(LimitOffsetPagination):
-    default_limit = 10
-    max_limit = 10
     
 class LivroListView(generics.ListAPIView):
     serializer_class = LivroSerializer

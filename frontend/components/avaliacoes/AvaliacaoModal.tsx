@@ -1,4 +1,4 @@
-import { use, useState } from "react";
+import { useState } from "react";
 
 import AvaliacaoEstrelas from "./AvaliacaoEstrelas";
 import { avaliarLivro } from "@/src/services/avaliacaoService";

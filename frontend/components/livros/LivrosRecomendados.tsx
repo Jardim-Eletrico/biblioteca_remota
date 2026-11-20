@@ -1,21 +1,24 @@
-import type { LivroComEdicao } from "@/src/types/livro";
+
+import type { LivroRecomendadoResponse } from "@/src/types/livro";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
 interface LivrosRecomendadosProps {
-    livros: LivroComEdicao[];
+    livros: LivroRecomendadoResponse[];
+    onAbrirLivro?: (livroId: number, edicaoId: number) => void;
 }
 
 interface LivroRecomendadoCardProps {
-    livro: LivroComEdicao["livro"];
-    edicao: LivroComEdicao["edicao"];
+    livro: LivroRecomendadoResponse["livro"];
+    edicao: LivroRecomendadoResponse["edicao"];
+    onAbrirLivro?: (livroId: number, edicaoId: number) => void;
 }
 
 function LivroRecomendadoCard({
     livro,
-    edicao
+    edicao,
+    onAbrirLivro
 }: LivroRecomendadoCardProps) {
-
     const [imageError, setImageError] = useState(false);
 
     const disponivel = edicao.exemplares_disponiveis > 0;
@@ -71,48 +74,61 @@ function LivroRecomendadoCard({
                             bg-black/80
                             pb-5 rounded-xl
                         ">
-                            <p className="
-                                font-baloo-tamma
-                                text-2xl text-white
-                                text-center font-bold
-                            ">
-                                Indisponível
-                            </p>
-                        </div>
-                    )}
+                            Indisponível
+                        </span>
+                    </div>
+                )}
+            </div>
 
-                </div>
+            {/* TÍTULO */}
+            <p className="
+                mt-1 text-sm font-medium
+                font-ubuntu
+                text-dark-blue
+                dark:text-light-blue-logo
+                line-clamp-2
+            ">
+                {livro.titulo}
+            </p>
 
-                {/* TÍTULO */}
-                <p className="
-                    mt-1 text-sm font-medium
-                    font-ubuntu
-                    text-dark-blue
-                    dark:text-light-blue-logo
-                    line-clamp-2
-                ">
-                    {livro.titulo}
-                </p>
+            {/* AUTOR */}
+            <p className="
+                text-xs
+                text-text-muted
+                dark:text-text-light
+                line-clamp-1
+            ">
+                {livro.autor}
+            </p>
+        </article>
+    );
 
-                {/* AUTOR */}
-                <p className="
-                    text-xs
-                    text-text-muted
-                    dark:text-text-light
-                    line-clamp-1
-                ">
-                    {livro.autor}
-                </p>
+    if (onAbrirLivro) {
+        return (
+            <button
+                type="button"
+                onClick={() => onAbrirLivro(livro.id, edicao.id)}
+                className="text-left"
+            >
+                {conteudo}
+            </button>
+        );
+    }
 
-            </article>
+    return (
+        <Link
+            to={`/teste-detalhes-livro/${edicao.id}`}
+            className="block"
+        >
+            {conteudo}
         </Link>
     );
 }
 
 export default function LivrosRecomendados({
-    livros
+    livros,
+    onAbrirLivro
 }: LivrosRecomendadosProps) {
-
     if (livros.length === 0) {
         return null;
     }
@@ -126,27 +142,24 @@ export default function LivrosRecomendados({
                 text-dark-blue
                 dark:text-light-blue-logo
             ">
-                Sugestões baseadas no seu conteúdo
+                Conteúdos semelhantes a este
             </h2>
 
-            {/* LISTA HORIZONTAL */}
             <div className="
                 flex gap-4
                 overflow-x-auto
                 pb-3
                 scrollbar-thin
             ">
-
                 {livros.map(({ livro, edicao }) => (
                     <LivroRecomendadoCard
                         key={edicao.id}
                         livro={livro}
                         edicao={edicao}
+                        onAbrirLivro={onAbrirLivro}
                     />
                 ))}
-
             </div>
-
         </section>
     );
 }

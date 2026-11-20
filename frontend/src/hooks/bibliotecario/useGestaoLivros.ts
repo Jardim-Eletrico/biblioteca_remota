@@ -1,15 +1,28 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { LivroResponse } from "@/src/types/livro";
-import type { EdicaoResponse, EdicaoPayload } from "@/src/types/edicao";
+import type {
+    LivroResponse,
+    LivroPayload,
+} from "@/src/types/livro";
 
-import { listarLivros, atualizarLivroParcial } from "@/src/services/livrosService";
+import type {
+    EdicaoResponse,
+    EdicaoPayload,
+} from "@/src/types/edicao";
+
+import {
+    listarLivros,
+    atualizarLivroParcial,
+} from "@/src/services/livrosService";
 
 import {
     listarEdicoes,
     atualizarEdicaoParcial,
+    cadastrarEdicao,
 } from "@/src/services/edicoesService";
+
+const LIVROS_POR_PAGINA = 10;
 
 export default function useGestaoLivros() {
     // Dados
@@ -31,19 +44,43 @@ export default function useGestaoLivros() {
     const [erro, setErro] = useState<string | null>(null);
     const [sucesso, setSucesso] = useState<string | null>(null);
 
-    // Carregar livros e edições
+    // Carregar todas as páginas de livros e edições
     const carregarDados = useCallback(async () => {
         try {
             setCarregando(true);
             setErro(null);
 
-            const [livrosResponse, edicoesResponse] = await Promise.all([
-                listarLivros(),
-                listarEdicoes(),
-            ]);
+            const [primeiraPaginaLivros, todasEdicoes] =
+                await Promise.all([
+                    listarLivros(),
+                    listarEdicoes(),
+                ]);
 
-            setLivros(livrosResponse);
-            setEdicoes(edicoesResponse);
+            const totalLivros = primeiraPaginaLivros.count;
+
+            const quantidadePaginas = Math.ceil(
+                totalLivros / LIVROS_POR_PAGINA
+            );
+
+            const requisicoesRestantes = Array.from(
+                { length: quantidadePaginas - 1 },
+                (_, indice) =>
+                    listarLivros((indice + 1) * LIVROS_POR_PAGINA)
+            );
+
+            const paginasRestantes = await Promise.all(
+                requisicoesRestantes
+            );
+
+            const todosLivros = [
+                ...primeiraPaginaLivros.results,
+                ...paginasRestantes.flatMap(
+                    (pagina) => pagina.results
+                ),
+            ];
+
+            setLivros(todosLivros);
+            setEdicoes(todasEdicoes);
         } catch (error) {
             setErro(
                 error instanceof Error
@@ -74,7 +111,7 @@ export default function useGestaoLivros() {
         return Array.from(
             new Set(
                 livros.flatMap((livro) =>
-                    livro.generos
+                    (livro.generos ?? "")
                         .split(",")
                         .map((genero) => genero.trim())
                         .filter(Boolean)
@@ -110,7 +147,7 @@ export default function useGestaoLivros() {
 
             const correspondeGenero =
                 filtroGenero === "todos" ||
-                livro.generos
+                (livro.generos ?? "")
                     .split(",")
                     .map((genero) => genero.trim())
                     .includes(filtroGenero);
@@ -133,14 +170,17 @@ export default function useGestaoLivros() {
     // Atualizar livro
     async function atualizarLivro(
         id: number,
-        dados: Partial<LivroResponse>
+        dados: Partial<LivroPayload>
     ) {
         try {
             setSalvando(true);
             setErro(null);
             setSucesso(null);
 
-            const livroAtualizado = await atualizarLivroParcial(id, dados);
+            const livroAtualizado = await atualizarLivroParcial(
+                id,
+                dados
+            );
 
             setLivros((anteriores) =>
                 anteriores.map((livro) =>
@@ -205,6 +245,36 @@ export default function useGestaoLivros() {
         }
     }
 
+    // Cadastrar nova edição
+async function criarEdicao(dados: EdicaoPayload) {
+    try {
+        setSalvando(true);
+        setErro(null);
+        setSucesso(null);
+
+        const novaEdicao = await cadastrarEdicao(dados);
+
+        setEdicoes((anteriores) => [
+            ...anteriores,
+            novaEdicao,
+        ]);
+
+        setSucesso("Edição cadastrada com sucesso.");
+
+        return true;
+    } catch (error) {
+        setErro(
+            error instanceof Error
+                ? error.message
+                : "Erro ao cadastrar edição."
+        );
+
+        return false;
+    } finally {
+        setSalvando(false);
+    }
+}
+
     return {
         livros,
         edicoes,
@@ -236,5 +306,6 @@ export default function useGestaoLivros() {
         carregarDados,
         atualizarLivro,
         atualizarEdicao,
+        criarEdicao,
     };
 }

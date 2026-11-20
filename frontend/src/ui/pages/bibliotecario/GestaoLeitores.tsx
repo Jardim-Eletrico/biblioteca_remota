@@ -126,17 +126,6 @@ export default function GestaoLeitores() {
                             Consulte os leitores cadastrados e acompanhe seus empréstimos.
                         </p>
                     </div>
-
-                    <button
-                        type="button"
-                        onClick={() =>
-                            atualizarLeitores(buscaAplicada || undefined)
-                        }
-                        disabled={carregando}
-                        className="rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-dark-state-blue disabled:cursor-not-allowed disabled:opacity-60"
-                    >
-                        {carregando ? "Atualizando..." : "Atualizar"}
-                    </button>
                 </header>
 
                 {/* Pesquisa */}
