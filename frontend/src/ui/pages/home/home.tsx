@@ -232,7 +232,7 @@ export default function Home() {
                     ) : (
                         livros.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} onClick={() => navigate(`/teste-detalhes-livro/${edicao.id}`)}>
+                                <div key={edicao.id} onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
                                     <LivroCard
                                         key={edicao.id}
                                         autor={livro.autor}
