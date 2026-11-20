@@ -126,7 +126,7 @@ export default function LivroDetalhes({
 
         async function carregarRecomendacoes() {
             try {
-                const dados = await buscarLivrosRecomendados(livro.id);
+                const dados = await buscarLivrosRecomendados([livro.id]);
 
                 if (ativo) {
                     setRecomendacoesApi(dados);
