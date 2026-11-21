@@ -3,7 +3,7 @@ import { useState } from "react";
 
 import AvaliacaoModal from "@/components/avaliacoes/AvaliacaoModal";
 
-export default function TesteAvaliacaoModal() {
+export default function PageAvaliacaoModal() {
 
     const [modalAberto, setModalAberto] = useState(false);
 

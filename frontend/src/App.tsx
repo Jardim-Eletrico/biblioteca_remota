@@ -11,12 +11,15 @@ import Auth from "./ui/pages/auth/auth";
 import Applayout from "../layouts/applayout";
 import Home from "./ui/pages/home/home";
 
+// Proteção de rotas
+import RotaBibliotecario from "@/components/app/RotaBibliotecario";
+
 // Testes
-import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
-import TesteNotificacaoCard from "./ui/pages/test/TesteNotificacaoCard";
-import TesteAvaliacaoModal from "./ui/pages/test/TesteAvaliacaoModal";
-import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
-import TesteCarrinho from "./ui/pages/test/TesteCarrinho";
+import TesteDesejoCard from "./ui/pages/desejo/PageDesejoCard";
+import TesteNotificacaoCard from "./ui/pages/notificacao/PageNotificacaoCard";
+import TesteAvaliacaoModal from "./ui/pages/avaliacao/TesteAvaliacaoModal";
+import TesteLivroDetalhes from "./ui/pages/livros/PageLivroDetalhes";
+import TesteCarrinho from "./ui/pages/carrinho/Carrinho";
 
 // Gestão do bibliotecário
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";
@@ -52,12 +55,14 @@ export default function App() {
                     <Route path="/reserva" element={<TesteConfirmarReserva />} />
                     <Route path="/meus-emprestimos" element={<MeusEmprestimos />} />
 
-                    {/* Gestão do bibliotecário */}
-                    <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
-                    <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />} />
-                    <Route path="/gestao-leitores" element={<GestaoLeitores />} />
-                    <Route path="/cadastro-livro" element={<CadastroLivro />} />
-                    <Route path="/gestao-livros" element={<GestaoLivros />} />
+                    {/* Rotas exclusivas do bibliotecário */}
+                    <Route element={<RotaBibliotecario />}>
+                        <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
+                        <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />} />
+                        <Route path="/gestao-leitores" element={<GestaoLeitores />} />
+                        <Route path="/cadastro-livro" element={<CadastroLivro />} />
+                        <Route path="/gestao-livros" element={<GestaoLivros />} />
+                    </Route>
 
                     {/* Perfil */}
                     <Route path="/perfil" element={<Perfil />} />

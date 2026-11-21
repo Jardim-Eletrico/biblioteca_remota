@@ -11,7 +11,7 @@ import type { EdicaoResponse } from "@/src/types/edicao";
 import { buscarEdicao } from "@/src/services/edicoesService";
 import { buscarLivro } from "@/src/services/livrosService";
 
-export default function TesteLivroDetalhes() {
+export default function PageLivroDetalhes() {
     const { edicaoId } = useParams();
     const navigate = useNavigate();
 

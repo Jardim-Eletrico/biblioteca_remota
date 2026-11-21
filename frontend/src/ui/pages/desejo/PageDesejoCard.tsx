@@ -10,7 +10,7 @@ import {
 import type { ListaDesejoResponse } from "@/src/types/desejo";
 import Loader from "@/components/app/loader_animation/loader";
 
-export default function TesteDesejoCard() {
+export default function PageDesejoCard() {
     const [desejos, setDesejos] = useState<ListaDesejoResponse[]>([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
