@@ -42,13 +42,16 @@ function normalizarLista<T>(
 // CRIAR PEDIDO
 export async function criarPedido(
     payload: PedidoPayload
-): Promise<PedidoResponse> {
+): Promise<PedidoResponse[]> {
     const response = await apiFetch("/pedidos/", {
         method: "POST",
         body: JSON.stringify(payload),
     });
 
     const dados = await response.json().catch(() => null);
+
+    console.log("Status:", response.status);
+    console.log("Resposta do Django:", dados);
 
     if (!response.ok) {
         const mensagem =
@@ -122,4 +125,18 @@ export async function cancelarPedido(
     }
 
     return dados;
+}
+
+// LISTAR MEUS PEDIDOS ATIVOS
+export async function listarMeusPedidosAtivos(): Promise<PedidoResponse[]> {
+    const response = await apiFetch("/pedidos/meus/ativos/");
+    const dados = await response.json().catch(() => null);
+
+    if (!response.ok) {
+        throw new Error(
+            obterMensagemErro(dados, "Não foi possível listar seus pedidos.")
+        );
+    }
+
+    return normalizarLista<PedidoResponse>(dados);
 }
