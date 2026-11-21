@@ -15,11 +15,11 @@ import Home from "./ui/pages/home/home";
 import RotaBibliotecario from "@/components/app/RotaBibliotecario";
 
 // Testes
-import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
-import TesteNotificacaoCard from "./ui/pages/test/TesteNotificacaoCard";
-import TesteAvaliacaoModal from "./ui/pages/test/TesteAvaliacaoModal";
-import TesteLivroDetalhes from "./ui/pages/test/TesteLivroDetalhes";
-import TesteCarrinho from "./ui/pages/test/TesteCarrinho";
+import TesteDesejoCard from "./ui/pages/desejo/PageDesejoCard";
+import TesteNotificacaoCard from "./ui/pages/notificacao/PageNotificacaoCard";
+import TesteAvaliacaoModal from "./ui/pages/avaliacao/TesteAvaliacaoModal";
+import TesteLivroDetalhes from "./ui/pages/livros/PageLivroDetalhes";
+import TesteCarrinho from "./ui/pages/carrinho/Carrinho";
 
 // Gestão do bibliotecário
 import GestaoEmprestimos from "@/src/ui/pages/bibliotecario/GestaoEmprestimos";

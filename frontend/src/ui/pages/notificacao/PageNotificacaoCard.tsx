@@ -12,7 +12,7 @@ import type {
     NotificacaoResponse
 } from "@/src/types/notificacoes";
 
-export default function TesteNotificacaoCard() {
+export default function PageNotificacaoCard() {
 
     const [notificacoes, setNotificacoes] = useState<NotificacaoResponse[]>([]);
     const [carregando, setCarregando] = useState(true);
