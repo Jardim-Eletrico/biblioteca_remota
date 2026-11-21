@@ -3,6 +3,7 @@ import type { ItemCarrinho } from "@/src/types/carrinho";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { removerItemCarrinho } from "@/src/services/carrinhoService";
+import React from "react";
 
 type PrazoEmprestimo = 1 | 2 | null;
 
@@ -69,7 +70,7 @@ export default function ConfirmarReserva() {
 
                 {itensCarrinho.map((item, index) => (
 
-                    <>
+                    <React.Fragment key={item.id}>
                         <div className="flex flex-col items-center gap-5">
 
                             <div className="
@@ -156,7 +157,7 @@ export default function ConfirmarReserva() {
                             <div className="w-[90%] h-px bg-gray-300 dark:bg-gray-600" />
                         )}
 
-                    </>
+                    </React.Fragment>
 
                 ))}
 
