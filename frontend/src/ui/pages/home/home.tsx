@@ -192,7 +192,7 @@ export default function Home() {
                 <input 
                 type="text"
                 placeholder="Harry Potter, Iracema, Senhor dos Anéis..."
-                className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu"
+                className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu placeholder:truncate"
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
                 />
