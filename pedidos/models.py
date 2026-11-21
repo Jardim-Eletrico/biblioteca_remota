@@ -10,6 +10,16 @@ class Pedido(models.Model):
         ("cancelado", "Cancelado"),
     ]
 
+    PRAZO_CHOICES = [
+    (1, "1 semana"),
+    (2, "2 semanas"),
+]
+
+    prazo_semanas = models.PositiveSmallIntegerField(
+        choices=PRAZO_CHOICES,
+        default=2,
+    )
+
     leitor = models.ForeignKey(
         "usuarios.Leitor",
         on_delete=models.CASCADE,
