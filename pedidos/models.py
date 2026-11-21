@@ -1,5 +1,16 @@
-
 from django.db import models
+
+
+class Reserva(models.Model):
+    leitor = models.ForeignKey(
+        "usuarios.Leitor",
+        on_delete=models.CASCADE,
+        related_name="reservas"
+    )
+    data_criacao = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Reserva #{self.pk} - {self.leitor}"
 
 
 class Pedido(models.Model):
@@ -18,6 +29,12 @@ class Pedido(models.Model):
     prazo_semanas = models.PositiveSmallIntegerField(
         choices=PRAZO_CHOICES,
         default=2,
+    )
+
+    reserva = models.ForeignKey(
+        Reserva,
+        on_delete=models.CASCADE,
+        related_name="pedidos"
     )
 
     leitor = models.ForeignKey(

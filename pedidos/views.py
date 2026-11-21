@@ -10,12 +10,15 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from pedidos.models import Pedido
+from pedidos.models import Pedido, Reserva
 from .pedidos_serializer import (
     PedidoCreateSerializer,
     PedidoSerializer,
     PedidoResponderSerializer,
 )
+
+from emprestimos.confirmacao_service import gerar_e_enviar_codigo
+
 
 from .services import (criar_pedido, cancelar_pedido)
 from api.permissions import IsBibliotecario
@@ -41,14 +44,26 @@ class PedidoCreateView(generics.CreateAPIView):
         prazo = serializer.validated_data["prazo"]
 
         with transaction.atomic():
+            reserva = Reserva.objects.create(
+                leitor=leitor
+            )
+
             pedidos = [
                 criar_pedido(
                     leitor=leitor,
+                    reserva=reserva,
                     edicao_id=edicao.id,
                     prazo_semanas=prazo
                 )
                 for edicao in edicoes
             ]
+
+            # Gerar apenas um código para toda a reserva,
+            # caso pelo menos um pedido tenha sido aprovado.
+            if any(pedido.status == "aprovado" for pedido in pedidos):
+                transaction.on_commit(
+                    lambda: gerar_e_enviar_codigo(reserva)
+                )
 
         resposta = PedidoSerializer(pedidos, many=True)
 

@@ -75,7 +75,7 @@ urlpatterns = [
     # Acessos do bibliotecário
     path("leitores/", ListarLeitores.as_view(), name="listar-leitores"),
     path("leitores/buscar/", BuscarLeitor.as_view(), name="buscar-leitor"),
-    path("emprestimos/<int:emprestimo_id>/devolver", DevolverEmprestimo.as_view(), name="devolver-emprestimo"),
+    path("emprestimos/<int:emprestimo_id>/devolver/", DevolverEmprestimo.as_view(), name="devolver-emprestimo"),
 
     # Desejos
     path("desejos/", ListaDesejoListCreateView.as_view(), name="lista-desejos"),

@@ -9,10 +9,11 @@ from livros.models import Exemplar, Edicao
 
 from emprestimos.confirmacao_service import gerar_e_enviar_codigo
 from notificacoes.services import notificar_aprovacao_pedido, notificar_cancelamento_pedido
+from emprestimos.models import CodigoConfirmacao
 
 
 @transaction.atomic
-def criar_pedido(leitor, edicao_id, prazo_semanas=2):
+def criar_pedido(leitor, reserva, edicao_id, prazo_semanas=2):
 
     edicao = Edicao.objects.select_for_update().get(
         pk=edicao_id
@@ -64,6 +65,7 @@ def criar_pedido(leitor, edicao_id, prazo_semanas=2):
 
     pedido = Pedido.objects.create(
         leitor=leitor,
+        reserva=reserva,
         edicao=edicao,
         prazo_semanas=prazo_semanas,
     )
@@ -86,12 +88,25 @@ def criar_pedido(leitor, edicao_id, prazo_semanas=2):
             lambda: notificar_aprovacao_pedido(pedido)
         )
 
-        transaction.on_commit(
-            lambda: gerar_e_enviar_codigo(pedido)
-        )
-
     return pedido
 
+
+def encerrar_codigo_se_reserva_finalizada(reserva):
+    pedidos_ativos = reserva.pedidos.filter(
+        status__in=["pendente", "aprovado"],
+        emprestimo__isnull=True,
+    )
+
+    if pedidos_ativos.exists():
+        return
+
+    codigo_obj = CodigoConfirmacao.objects.select_for_update().filter(
+        reserva=reserva
+    ).first()
+
+    if codigo_obj and not codigo_obj.utilizado:
+        codigo_obj.utilizado = True
+        codigo_obj.save(update_fields=["utilizado"])
 
 
 @transaction.atomic
@@ -100,6 +115,8 @@ def cancelar_pedido(pedido_id):
     pedido = Pedido.objects.select_for_update().get(
         pk=pedido_id
     )
+
+    reserva = pedido.reserva
 
     if pedido.status in ["cancelado", "recusado"]:
         raise ValidationError(
@@ -163,7 +180,7 @@ def cancelar_pedido(pedido_id):
 
             notificar_aprovacao_pedido(proximo_pedido)
             transaction.on_commit(
-                lambda: gerar_e_enviar_codigo(proximo_pedido)
+                lambda: gerar_e_enviar_codigo(proximo_pedido.reserva)
             )
 
             exemplar.status = "reservado"
@@ -173,6 +190,8 @@ def cancelar_pedido(pedido_id):
         
         exemplar.save(update_fields=["status"])
 
+        encerrar_codigo_se_reserva_finalizada(reserva)
+
         return pedido
 
     # Pedido pendente: basta cancelar.
@@ -180,5 +199,8 @@ def cancelar_pedido(pedido_id):
     pedido.save(update_fields=["status"])
 
     notificar_cancelamento_pedido(pedido)
+
+
+    encerrar_codigo_se_reserva_finalizada(reserva)
 
     return pedido

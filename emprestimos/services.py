@@ -4,7 +4,7 @@ from django.db import transaction
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
-from pedidos.models import Pedido
+from pedidos.models import Pedido, Reserva
 from livros.models import Exemplar, Edicao
 from .models import Emprestimo, CodigoConfirmacao
 
@@ -22,6 +22,10 @@ def efetivar_emprestimo(
     with transaction.atomic():
         pedido = Pedido.objects.select_for_update().get(
             pk=pedido_id
+        )
+
+        reserva = Reserva.objects.select_for_update().get(
+            pk=pedido.reserva_id
         )
 
         exemplar = Exemplar.objects.select_for_update().get(
@@ -59,11 +63,11 @@ def efetivar_emprestimo(
             )
 
         codigo_obj = CodigoConfirmacao.objects.select_for_update().filter(
-            pedido=pedido
+            reserva=reserva
         ).first()
 
         if codigo_obj is None:
-            erro_codigo = "Este pedido não possui código de confirmação."
+            erro_codigo = "Esta reserva não possui código de confirmação."
 
         elif codigo_obj.utilizado:
             erro_codigo = "Este código já foi utilizado."
@@ -107,14 +111,21 @@ def efetivar_emprestimo(
             exemplar.status = "emprestado"
             exemplar.save(update_fields=["status"])
 
-            codigo_obj.utilizado = True
-            codigo_obj.save(update_fields=["utilizado"])
+            # Verificar se ainda existem pedidos ativos
+            # sem empréstimo nesta reserva.
+            pedidos_pendentes = reserva.pedidos.filter(
+                status__in=["pendente", "aprovado"],
+                emprestimo__isnull=True,
+            ).exists()
+
+            if not pedidos_pendentes:
+                codigo_obj.utilizado = True
+                codigo_obj.save(update_fields=["utilizado"])
 
             notificar_emprestimo_efetivado(emprestimo)
 
     # A tentativa incorreta precisa ser confirmada no banco
-    # antes de lançar a exceção. Por isso, o erro é lançado
-    # depois que a transação termina.
+    # antes de lançar a exceção.
     if erro_codigo:
         raise ValidationError(erro_codigo)
 
@@ -180,7 +191,7 @@ def devolver_emprestimo(emprestimo_id):
         notificar_aprovacao_pedido(pedido)
 
         transaction.on_commit(
-            lambda: gerar_e_enviar_codigo(pedido)
+            lambda: gerar_e_enviar_codigo(pedido.reserva)
         )
 
         return emprestimo
