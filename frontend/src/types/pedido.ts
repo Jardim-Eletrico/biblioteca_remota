@@ -6,7 +6,8 @@ export type PedidoStatus =
     | "cancelado";
 
 export interface PedidoPayload {
-    edicao: number;
+    edicoes: number[];
+    prazo: 1 | 2;
 }
 
 export interface PedidoResponse {
