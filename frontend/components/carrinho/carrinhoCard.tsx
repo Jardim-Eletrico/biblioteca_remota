@@ -4,7 +4,7 @@ import type { ItemCarrinho } from "@/src/types/carrinho";
 
 interface ItemCarrinhoProps {
     item: ItemCarrinho;
-    onRemover: (itemId: number) => Promise<void>;
+    onRemover: (itemId: number) => Promise<void> | null;
 }
 
 export default function ItemCarrinhoCard({
