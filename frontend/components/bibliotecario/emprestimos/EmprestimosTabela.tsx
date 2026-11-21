@@ -86,7 +86,7 @@ export default function EmprestimoTabela({
                 dark:border-gray-800 dark:bg-gray-900
             ">
                 <table className="
-                    w-full min-w-[900px]
+                    w-full min-w-225
                     text-left text-sm
                     text-gray-800
                     dark:text-gray-200
