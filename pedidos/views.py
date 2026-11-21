@@ -3,6 +3,7 @@ from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.db.models import Q
+from django.db import transaction
 
 from rest_framework import generics, status
 from rest_framework.views import APIView
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 
 from pedidos.models import Pedido
 from .pedidos_serializer import (
+    PedidoCreateSerializer,
     PedidoSerializer,
     PedidoResponderSerializer,
 )
@@ -19,7 +21,7 @@ from .services import (criar_pedido, cancelar_pedido)
 from api.permissions import IsBibliotecario
 
 class PedidoCreateView(generics.CreateAPIView):
-    serializer_class = PedidoSerializer
+    serializer_class = PedidoCreateSerializer
     permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
@@ -35,19 +37,24 @@ class PedidoCreateView(generics.CreateAPIView):
                 "Sua conta não possui um perfil de leitor."
             )
 
-        pedido = criar_pedido(
-            leitor=leitor,
-            edicao_id=serializer.validated_data["edicao"].id
-        )
+        edicoes = serializer.validated_data["edicoes"]
+        prazo = serializer.validated_data["prazo"]
 
-        resposta = self.get_serializer(pedido)
+        with transaction.atomic():
+            pedidos = [
+                criar_pedido(
+                    leitor=leitor,
+                    edicao_id=edicao.id,
+                    prazo_semanas=prazo
+                )
+                for edicao in edicoes
+            ]
 
-        headers = self.get_success_headers(resposta.data)
+        resposta = PedidoSerializer(pedidos, many=True)
 
         return Response(
             resposta.data,
-            status=status.HTTP_201_CREATED,
-            headers=headers
+            status=status.HTTP_201_CREATED
         )
 
 class PedidoResponderView(APIView):
