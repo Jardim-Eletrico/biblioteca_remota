@@ -130,7 +130,7 @@ export default function AvaliacaoModal({
                                 ) : (
                                     <span className="
                                     text-sm text-text-muted
-                                    dark: text-text-light
+                                    dark:text-text-light
                                     ">
                                         Capa indisponível
                                     </span>

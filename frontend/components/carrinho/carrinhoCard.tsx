@@ -78,14 +78,14 @@ export default function ItemCarrinhoCard({
                 <div className="flex flex-col gap-0.5 w-full">
 
                     <h3 className="
-                        pr-5 text-sm font-semibold w-full max-w-[90%] truncate
+                        pr-5 text-sm font-semibold w-full max-w-[90%] truncate md:text-2xl
                     ">
                         {item.titulo}
                     </h3>
 
                     <p className="
                         truncate text-xs text-zinc-500
-                        dark:text-zinc-400 w-full max-w-[90%]
+                        dark:text-zinc-400 w-full max-w-[90%] md:text-[18px]
                     ">
                         {item.editora}
                     </p>
@@ -99,7 +99,7 @@ export default function ItemCarrinhoCard({
                         truncate rounded-md
                         bg-blue-100 px-2 py-1
                         text-xs font-medium text-blue-700
-                        dark:bg-blue-900/40 dark:text-blue-300
+                        dark:bg-blue-900/40 dark:text-blue-300 md:text-[16px]
                     ">
                         {item.cdd}
                     </span>
@@ -112,7 +112,7 @@ export default function ItemCarrinhoCard({
                         rounded-md bg-green-100
                         px-2 py-1 text-xs font-medium
                         text-green-700
-                        dark:bg-green-900/40 dark:text-green-300
+                        dark:bg-green-900/40 dark:text-green-300 md:text-[16px]
                     ">
                         <span className="h-2 w-2 rounded-full bg-green-600" />
                         {item.exemplaresDisponiveis} exemplares disponíveis
@@ -142,7 +142,7 @@ export default function ItemCarrinhoCard({
                         dark:border-blue-500
                         dark:text-blue-400
                         dark:hover:bg-blue-600
-                        dark:hover:text-white self-end mt-auto
+                        dark:hover:text-white self-end mt-auto md:text-[20px]
                     "
                     onClick={() => navigate(`/detalhes-livro/${item.edicaoId}`)}
                 >

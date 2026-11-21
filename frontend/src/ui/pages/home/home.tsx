@@ -144,7 +144,7 @@ export default function Home() {
                 <div className="flex justify-center items-center gap-10">
 
                     <button 
-                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
+                        className={`text-[16px] text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Mais lidos")}
                     >
                         MAIS LIDOS
@@ -164,11 +164,12 @@ export default function Home() {
                     
                 </div>
 
+
                 <div className={`flex md:pb-8 w-full overflow-x-auto ${ScrollbarStyles.scrollbar_custom}`}>
-                    <div className="flex w-max gap-7.5 h-fit">
+                    <div className="flex w-max gap-7.5">
                         {livrosTopSection.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} className="w-40 shrink-0" onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
+                                <div key={edicao.id} className="w-40 shrink-0 sm:w-48 md:w-55 lg:w-60" onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
                                     <LivroCard
                                         autor={livro.autor}
                                         titulo={livro.titulo}
@@ -180,37 +181,42 @@ export default function Home() {
                         ))}
                     </div>
                 </div>
-
             </div>
 
-            <form 
-            onSubmit={handleSubmit}
-            method="GET"
-            className="relative w-full sm:w-[80%] self-center"
-            >
 
-                <input 
-                type="text"
-                placeholder="Harry Potter, Iracema, Senhor dos Anéis..."
-                className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu placeholder:truncate"
-                value={inputQuery}
-                onChange={(e) => setInputQuery(e.target.value)}
-                />
-                
-                <button 
-                type="submit"
-                className="absolute top-1/2 right-3 transform -translate-y-1/2"
+            <div className="flex flex-col items-center w-full gap-3">
+
+                <h2 className="font-space-grotesk text-2xl sm:text-3xl dark:text-white font-extrabold">Descubra novas histórias</h2>
+
+                <form 
+                onSubmit={handleSubmit}
+                method="GET"
+                className="relative w-full sm:w-[80%] self-center"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
-                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                    </svg>
 
-                </button>
+                    <input 
+                    type="text"
+                    placeholder="Harry Potter, Iracema, Senhor dos Anéis..."
+                    className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu placeholder:truncate"
+                    value={inputQuery}
+                    onChange={(e) => setInputQuery(e.target.value)}
+                    />
+                    
+                    <button 
+                    type="submit"
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
+                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                        </svg>
 
-            </form>
+                    </button>
+
+                </form>
+            </div>
 
             <InfiniteScroll
-                className="grid relative grid-cols-2 w-full gap-7.5 sm:grid-cols-3 md:grid-cols-6 object-contain"
+                className="grid relative grid-cols-2 w-full gap-7.5 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 object-contain"
                 dataLength={livros.length}
                 next={carregarMaisLivros}
                 hasMore={temMaisLivros}
@@ -225,7 +231,7 @@ export default function Home() {
 
                     {livros.length === 0 ? (
                         <div className="flex flex-col items-center justify-center w-full col-span-full">
-                            <p className="font-ubuntu text-text-muted">
+                            <p className="font-ubuntu text-text-muted text-2xl">
                                 Nenhum livro encontrado.
                             </p>
                         </div>
