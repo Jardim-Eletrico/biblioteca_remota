@@ -46,7 +46,7 @@ from livros.livro_serializer import (
     CDDSerializer,
     LivroRecomendadoSerializer,
 )
-from livros.services import avaliar_livro
+from livros.services import avaliar_livro, consultar_permissao_avaliacao
 
 from usuarios.models import Leitor
 
@@ -500,7 +500,36 @@ class AvaliarLivro(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+class PermissaoAvaliacao(APIView):
 
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, livro_id):
+
+        leitor = Leitor.objects.filter(
+            usuario=request.user
+        ).first()
+
+        if leitor is None:
+            return Response(
+                {"erro": "Apenas leitores podem consultar avaliações."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        livro = get_object_or_404(
+            Livro,
+            pk=livro_id
+        )
+
+        permissao = consultar_permissao_avaliacao(
+            leitor=leitor,
+            livro=livro
+        )
+
+        return Response(
+            permissao,
+            status=status.HTTP_200_OK
+        )
 
 class LivrosRecomendadosView(APIView):
     permission_classes = [IsAuthenticated]

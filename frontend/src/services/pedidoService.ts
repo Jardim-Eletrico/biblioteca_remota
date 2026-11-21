@@ -134,7 +134,10 @@ export async function listarMeusPedidosAtivos(): Promise<PedidoResponse[]> {
 
     if (!response.ok) {
         throw new Error(
-            obterMensagemErro(dados, "Não foi possível listar seus pedidos.")
+            obterMensagemErro(
+                dados,
+                "Não foi possível listar seus pedidos e empréstimos."
+            )
         );
     }
 

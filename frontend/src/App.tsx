@@ -28,6 +28,7 @@ import GestaoLivros from "./ui/pages/bibliotecario/GestaoLivros";
 // Perfil
 import Perfil from "./ui/pages/perfil/perfil";
 import TesteConfirmarReserva from "./ui/pages/test/TesteConfirmarReserva";
+import MeusEmprestimos from "./ui/pages/leitor/emprestimos_pedidos/MeusEmprestimos";
 
 export default function App() {
     return (
@@ -49,6 +50,7 @@ export default function App() {
                     <Route path="/detalhes-livro/:edicaoId" element={<TesteLivroDetalhes />} />
                     <Route path="/carrinho" element={<TesteCarrinho />} />
                     <Route path="/reserva" element={<TesteConfirmarReserva />} />
+                    <Route path="/meus-emprestimos" element={<MeusEmprestimos />} />
 
                     {/* Gestão do bibliotecário */}
                     <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />

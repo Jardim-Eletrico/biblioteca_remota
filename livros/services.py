@@ -93,3 +93,71 @@ def avaliar_livro(leitor, livro, nota):
     )
 
     return avaliacao
+
+
+def consultar_permissao_avaliacao(leitor, livro):
+
+    emprestimos = Emprestimo.objects.filter(
+        pedido__leitor=leitor,
+        exemplar__edicao__livro=livro
+    )
+
+    # Verificar se existe um empréstimo realmente devolvido
+    emprestimo_devolvido = emprestimos.filter(
+        data_devolucao__isnull=False,
+        situacao_encerramento=Emprestimo.SituacaoEncerramento.DEVOLVIDO
+    ).exists()
+
+    # Verificar se existe um empréstimo ainda ativo
+    emprestimo_ativo = emprestimos.filter(
+        data_devolucao__isnull=True,
+        situacao_encerramento__isnull=True
+    ).exists()
+
+    # Buscar avaliação existente
+    avaliacao = Avaliacao.objects.filter(
+        leitor=leitor,
+        livro=livro
+    ).first()
+
+    pode_editar = False
+
+    if avaliacao:
+        intervalo = timezone.now() - avaliacao.data_avaliacao
+
+        pode_editar = intervalo >= timedelta(days=7)
+
+    pode_avaliar = (
+        emprestimo_devolvido
+        and not emprestimo_ativo
+        and (avaliacao is None or pode_editar)
+    )
+
+    if not emprestimo_devolvido:
+        mensagem = "Você precisa devolver o livro antes de avaliá-lo."
+
+    elif emprestimo_ativo:
+        mensagem = (
+            "Você não pode avaliar este livro enquanto "
+            "possuir um empréstimo ativo dele."
+        )
+
+    elif avaliacao and not pode_editar:
+        mensagem = (
+            "Você precisa aguardar pelo menos 7 dias "
+            "desde sua última avaliação."
+        )
+
+    else:
+        mensagem = "Você pode avaliar este livro."
+
+    return {
+        "pode_avaliar": pode_avaliar,
+        "ja_avaliou": avaliacao is not None,
+        "pode_editar": pode_editar and pode_avaliar,
+        "nota_atual": avaliacao.nota if avaliacao else None,
+        "data_avaliacao": (
+            avaliacao.data_avaliacao if avaliacao else None
+        ),
+        "mensagem": mensagem,
+    }

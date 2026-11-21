@@ -121,22 +121,13 @@ class MeusPedidosAtivosView(generics.ListAPIView):
 
         return Pedido.objects.filter(
             leitor=leitor
-        ).filter(
-            Q(status="pendente") |
-            Q(
-                status="aprovado",
-                emprestimo__isnull=True
-            ) |
-            Q(
-                status="aprovado",
-                emprestimo__data_devolucao__isnull=True
-            )
         ).select_related(
             "edicao",
             "edicao__livro",
-            "exemplar"
+            "exemplar",
+            "emprestimo",
         ).order_by("-data_pedido")
-
+    
 
 class PedidoCancelarView(APIView):
     permission_classes = [IsAuthenticated]

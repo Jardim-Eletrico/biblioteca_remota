@@ -1,6 +1,8 @@
 
 import { useEffect, useState } from "react";
 
+import AvaliacaoModal from "../avaliacoes/AvaliacaoModal";
+
 import AvaliacaoMedia from "./AvaliacaoMedia";
 import DescricaoLivro from "./DescricaoLivro";
 import LivrosRecomendados from "./LivrosRecomendados";
@@ -13,6 +15,8 @@ import {
     listarDesejos,
     removerDesejo,
 } from "@/src/services/desejoService";
+
+import { consultarPermissaoAvaliacao } from "@/src/services/avaliacaoService";
 
 import {
     listarItensCarrinho,
@@ -29,6 +33,7 @@ import type {
 
 import type { EdicaoResponse } from "@/src/types/edicao";
 import type { ItemCarrinho } from "@/src/types/carrinho";
+import type { PermissaoAvaliacaoResponse } from "@/src/types/avaliacao";
 
 interface LivroDetalhesProps {
     livro: LivroResponse;
@@ -42,6 +47,8 @@ interface LivroDetalhesProps {
         livroId: number,
         edicaoId: number
     ) => void;
+
+    onAvaliacaoAtualizada?: () => void;
 }
 
 export default function LivroDetalhes({
@@ -51,6 +58,7 @@ export default function LivroDetalhes({
     estaNaListaDesejos: estaNaListaDesejosProp,
     onAlternarDesejo,
     onAbrirLivroRecomendado,
+    onAvaliacaoAtualizada,
 }: LivroDetalhesProps) {
     const [imageError, setImageError] = useState(false);
 
@@ -73,6 +81,15 @@ export default function LivroDetalhes({
     const [carregandoCarrinho, setCarregandoCarrinho] = useState(true);
     const [atualizandoCarrinho, setAtualizandoCarrinho] = useState(false);
     const [erroCarrinho, setErroCarrinho] = useState(false);
+
+    const [permissaoAvaliacao, setPermissaoAvaliacao] =
+        useState<PermissaoAvaliacaoResponse | null>(null);
+
+    const [carregandoPermissaoAvaliacao, setCarregandoPermissaoAvaliacao] =
+        useState(false);
+
+    const [modalAvaliacaoAberto, setModalAvaliacaoAberto] =
+        useState(false);
 
     const ehLeitor = perfil?.leitor_id != null;
 
@@ -100,6 +117,62 @@ export default function LivroDetalhes({
             ativo = false;
         };
     }, []);
+
+    // CONSULTAR PERMISSÃO PARA AVALIAR O LIVRO
+    useEffect(() => {
+        if (!ehLeitor) {
+            setPermissaoAvaliacao(null);
+            setCarregandoPermissaoAvaliacao(false);
+            return;
+        }
+
+        let ativo = true;
+
+        async function carregarPermissaoAvaliacao() {
+            try {
+                setCarregandoPermissaoAvaliacao(true);
+
+                const dados = await consultarPermissaoAvaliacao(livro.id);
+
+                if (ativo) {
+                    setPermissaoAvaliacao(dados);
+                }
+            } catch (error) {
+                console.error(
+                    "Erro ao consultar permissão de avaliação:",
+                    error
+                );
+
+                if (ativo) {
+                    setPermissaoAvaliacao(null);
+                }
+            } finally {
+                if (ativo) {
+                    setCarregandoPermissaoAvaliacao(false);
+                }
+            }
+        }
+
+        carregarPermissaoAvaliacao();
+
+        return () => {
+            ativo = false;
+        };
+    }, [livro.id, ehLeitor]);
+
+    // ATUALIZAR PERMISSÃO APÓS AVALIAR
+    async function atualizarPermissaoAvaliacao() {
+        try {
+            const dados = await consultarPermissaoAvaliacao(livro.id);
+
+            setPermissaoAvaliacao(dados);
+        } catch (error) {
+            console.error(
+                "Erro ao atualizar a permissão de avaliação:",
+                error
+            );
+        }
+    }
 
     // RESETAR ERRO DA CAPA AO TROCAR DE EDIÇÃO
     useEffect(() => {
@@ -362,127 +435,145 @@ export default function LivroDetalhes({
     return (
         <>
             <div className="flex flex-col">
-            {/* CAPA */}
-            <div className="
-                w-full
-                overflow-hidden rounded-xl
-                border border-gray-stroke
-                bg-light-gray
-                dark:border-surface-mid
-                dark:bg-surface-mid
-            ">
-                {!imageError && edicao.capa ? (
-                    <img
-                        src={edicao.capa}
-                        onError={() => setImageError(true)}
-                        alt={`Capa de ${livro.titulo}`}
-                        className="
-                            block w-full
-                            aspect-2/3
-                            object-cover
-                        "
-                    />
-                ) : (
-                    <div className="
-                        flex w-full
-                        aspect-2/3
-                        max-h-125
-                        items-center justify-center
-                        border border-black
-                        dark:border-white
-                        rounded-xl
-                        relative
-                        text-text-muted
-                        dark:text-text-light
-                    ">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="50"
-                            height="50"
-                            fill="currentColor"
+                {/* CAPA */}
+                <div className="
+                    w-full
+                    overflow-hidden rounded-xl
+                    border border-gray-stroke
+                    bg-light-gray
+                    dark:border-surface-mid
+                    dark:bg-surface-mid
+                ">
+                    {!imageError && edicao.capa ? (
+                        <img
+                            src={edicao.capa}
+                            onError={() => setImageError(true)}
+                            alt={`Capa de ${livro.titulo}`}
                             className="
-                                bi bi-book
-                                text-black dark:text-white
-                                sm:size-20
+                                block w-full
+                                aspect-2/3
+                                object-cover
                             "
-                            viewBox="0 0 16 16"
-                        >
-                            <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
-                        </svg>
-                    </div>
-                )}
-            </div>
-
-            
-            {/* TÍTULO E LISTA DE DESEJOS */}
-            <div className="
-                mt-2 flex items-start
-                justify-between gap-3
-            ">
-                <div className="min-w-0 flex-1">
-                    <h1 className="
-                        text-xl font-bold
-                        font-space-grotesk
-                        text-book-title
-                        dark:text-text-light
-                    ">
-                        {livro.titulo}
-                    </h1>
-
-                    <p className="
-                        text-sm font-ubuntu
-                        text-text-muted
-                        dark:text-text-light
-                    ">
-                        {livro.autor}
-                    </p>
+                        />
+                    ) : (
+                        <div className="
+                            relative flex w-full
+                            aspect-2/3 max-h-125
+                            items-center justify-center
+                            rounded-xl border border-black
+                            text-text-muted
+                            dark:border-white
+                            dark:text-text-light
+                        ">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="50"
+                                height="50"
+                                fill="currentColor"
+                                className="
+                                    bi bi-book
+                                    text-black dark:text-white
+                                    sm:size-20
+                                "
+                                viewBox="0 0 16 16"
+                            >
+                                <path d="M1 2.828c.885-.37 2.154-.769 3.388-.893 1.33-.134 2.458.063 3.112.752v9.746c-.935-.53-2.12-.603-3.213-.493-1.18.12-2.37.461-3.287.811zm7.5-.141c.654-.689 1.782-.886 3.112-.752 1.234.124 2.503.523 3.388.893v9.923c-.918-.35-2.107-.692-3.287-.81-1.094-.111-2.278-.039-3.213.492zM8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783" />
+                            </svg>
+                        </div>
+                    )}
                 </div>
 
-                {/* LISTA DE DESEJOS */}
-                {ehLeitor && (
-                    <button
-                        type="button"
-                        onClick={alternarDesejo}
-                        disabled={atualizandoDesejo}
-                        aria-label={
-                            desejoAtivo
-                                ? "Remover da lista de desejos"
-                                : "Adicionar à lista de desejos"
-                        }
-                        aria-pressed={desejoAtivo}
-                        className="
-                            mt-1 shrink-0
-                            text-primary
-                            transition-transform
-                            hover:scale-110
-                            disabled:cursor-default
-                        "
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 24 24"
-                            width="40"
-                            height="40"
-                            fill={desejoAtivo ? "currentColor" : "none"}
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
+                {/* TÍTULO E LISTA DE DESEJOS */}
+                <div className="
+                    mt-2 flex items-start
+                    justify-between gap-3
+                ">
+                    <div className="min-w-0 flex-1">
+                        <h1 className="
+                            text-xl font-bold
+                            font-space-grotesk
+                            text-book-title
+                            dark:text-text-light
+                        ">
+                            {livro.titulo}
+                        </h1>
+
+                        <p className="
+                            text-sm font-ubuntu
+                            text-text-muted
+                            dark:text-text-light
+                        ">
+                            {livro.autor}
+                        </p>
+                    </div>
+
+                    {/* LISTA DE DESEJOS */}
+                    {ehLeitor && (
+                        <button
+                            type="button"
+                            onClick={alternarDesejo}
+                            disabled={atualizandoDesejo}
+                            aria-label={
+                                desejoAtivo
+                                    ? "Remover da lista de desejos"
+                                    : "Adicionar à lista de desejos"
+                            }
+                            aria-pressed={desejoAtivo}
+                            className="
+                                mt-1 shrink-0
+                                text-primary
+                                transition-transform
+                                hover:scale-110
+                                disabled:cursor-default
+                            "
                         >
-                            <path d="M6 3.75h12a1 1 0 0 1 1 1v16l-7-4-7 4v-16a1 1 0 0 1 1-1Z" />
-                        </svg>
-                    </button>
-                )}
-            </div>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                width="40"
+                                height="40"
+                                fill={desejoAtivo ? "currentColor" : "none"}
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <path d="M6 3.75h12a1 1 0 0 1 1 1v16l-7-4-7 4v-16a1 1 0 0 1 1-1Z" />
+                            </svg>
+                        </button>
+                    )}
+                </div>
 
+                {/* AVALIAÇÃO MÉDIA */}
+                <div className="mt-1">
+                    <AvaliacaoMedia
+                        media={livro.media_avaliacoes}
+                        quantidade={livro.quantidade_avaliacoes}
+                    />
+                </div>
 
-            {/* AVALIAÇÃO MÉDIA */}
-            <div className="mt-1">
-                <AvaliacaoMedia
-                    media={livro.media_avaliacoes}
-                    quantidade={livro.quantidade_avaliacoes}
-                />
-            </div>
+                {/* AVALIAR OU EDITAR AVALIAÇÃO */}
+                {ehLeitor &&
+                    !carregandoPermissaoAvaliacao &&
+                    permissaoAvaliacao?.pode_avaliar && (
+                        <button
+                            type="button"
+                            onClick={() => setModalAvaliacaoAberto(true)}
+                            className="
+                                mt-3 w-full rounded-xl
+                                border border-primary
+                                px-4 py-2
+                                font-semibold text-primary
+                                transition-colors
+                                hover:bg-primary hover:text-white
+                            "
+                        >
+                            {permissaoAvaliacao.ja_avaliou
+                                ? "EDITAR AVALIAÇÃO"
+                                : "AVALIAR LIVRO"
+                            }
+                        </button>
+                    )}
             </div>
 
             {/* ADICIONAR AO CARRINHO */}
@@ -546,6 +637,22 @@ export default function LivroDetalhes({
                 livros={recomendacoesExibidas}
                 onAbrirLivro={onAbrirLivroRecomendado}
             />
+
+            {/* MODAL DE AVALIAÇÃO */}
+            {modalAvaliacaoAberto && permissaoAvaliacao && (
+                <AvaliacaoModal
+                    livroId={livro.id}
+                    titulo={livro.titulo}
+                    capa={edicao.capa}
+                    notaInicial={permissaoAvaliacao.nota_atual}
+                    jaAvaliou={permissaoAvaliacao.ja_avaliou}
+                    onFechar={() => setModalAvaliacaoAberto(false)}
+                    onAvaliacaoEnviada={async () => {
+                        await atualizarPermissaoAvaliacao();
+                        await onAvaliacaoAtualizada?.();
+                    }}
+                />
+            )}
         </>
     );
 }
