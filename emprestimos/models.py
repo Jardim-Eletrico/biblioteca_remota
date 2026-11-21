@@ -16,7 +16,7 @@ class Emprestimo(models.Model):
     pedido = models.OneToOneField(
         "pedidos.Pedido",
         on_delete=models.PROTECT,
-        related_name="emprestimo",
+        related_name="emprestimo"
     )
 
     exemplar = models.ForeignKey(
@@ -69,8 +69,8 @@ class Emprestimo(models.Model):
 
 #CODIGO DE CONFIRMACAO
 class CodigoConfirmacao(models.Model):
-    pedido = models.OneToOneField(
-        "pedidos.Pedido",
+    reserva = models.OneToOneField(
+        "pedidos.Reserva",
         on_delete=models.CASCADE,
         related_name="codigo_confirmacao"
     )

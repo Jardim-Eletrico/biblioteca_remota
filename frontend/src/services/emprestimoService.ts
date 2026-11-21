@@ -91,7 +91,7 @@ export async function devolverEmprestimo(
   emprestimoId: number
 ): Promise<DevolverEmprestimoResponse> {
   const response = await apiFetch(
-    `/emprestimos/${emprestimoId}/devolver`,
+    `/emprestimos/${emprestimoId}/devolver/`,
     {
       method: "POST",
     }

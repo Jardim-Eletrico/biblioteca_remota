@@ -87,7 +87,7 @@ class ReenviarCodigoConfirmacao(APIView):
     permission_classes = [IsAuthenticated, IsBibliotecario]
 
     @extend_schema(
-        summary="Reenviar código de confirmação do empréstimo",
+        summary="Reenviar código de confirmação da reserva",
         description=(
             "Gera e envia um novo código quando o anterior "
             "expirou ou atingiu o limite de tentativas."
@@ -104,25 +104,26 @@ class ReenviarCodigoConfirmacao(APIView):
             pk=pedido_id,
         )
 
-        if pedido.status != "aprovado":
-            return Response(
-                {"erro": "O pedido precisa estar aprovado."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        reserva = pedido.reserva
 
-        if hasattr(pedido, "emprestimo"):
+        pedidos_aprovados = reserva.pedidos.filter(
+            status="aprovado",
+            emprestimo__isnull=True,
+        )
+
+        if not pedidos_aprovados.exists():
             return Response(
-                {"erro": "Este pedido já possui um empréstimo."},
+                {"erro": "Esta reserva não possui pedidos aguardando retirada."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         codigo_obj = CodigoConfirmacao.objects.filter(
-            pedido=pedido
+            reserva=reserva
         ).first()
 
         if codigo_obj is None:
             return Response(
-                {"erro": "Este pedido ainda não possui código de confirmação."},
+                {"erro": "Esta reserva ainda não possui código de confirmação."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -146,12 +147,14 @@ class ReenviarCodigoConfirmacao(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        gerar_e_enviar_codigo(pedido)
+        gerar_e_enviar_codigo(reserva)
 
         return Response(
             {"mensagem": "Um novo código foi enviado ao e-mail do leitor."},
             status=status.HTTP_200_OK,
         )
+
+    
 
 class DevolverEmprestimo(APIView):
     permission_classes = [IsAuthenticated, IsBibliotecario]
