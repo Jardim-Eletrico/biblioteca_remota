@@ -11,6 +11,9 @@ import Auth from "./ui/pages/auth/auth";
 import Applayout from "../layouts/applayout";
 import Home from "./ui/pages/home/home";
 
+// Proteção de rotas
+import RotaBibliotecario from "@/components/app/RotaBibliotecario";
+
 // Testes
 import TesteDesejoCard from "./ui/pages/test/TesteDesejoCard";
 import TesteNotificacaoCard from "./ui/pages/test/TesteNotificacaoCard";
@@ -50,12 +53,14 @@ export default function App() {
                     <Route path="/carrinho" element={<TesteCarrinho />} />
                     <Route path="/meus-emprestimos" element={<MeusEmprestimos />} />
 
-                    {/* Gestão do bibliotecário */}
-                    <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
-                    <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />} />
-                    <Route path="/gestao-leitores" element={<GestaoLeitores />} />
-                    <Route path="/cadastro-livro" element={<CadastroLivro />} />
-                    <Route path="/gestao-livros" element={<GestaoLivros />} />
+                    {/* Rotas exclusivas do bibliotecário */}
+                    <Route element={<RotaBibliotecario />}>
+                        <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
+                        <Route path="/cadastro-bibliotecario" element={<CadastroBibliotecario />} />
+                        <Route path="/gestao-leitores" element={<GestaoLeitores />} />
+                        <Route path="/cadastro-livro" element={<CadastroLivro />} />
+                        <Route path="/gestao-livros" element={<GestaoLivros />} />
+                    </Route>
 
                     {/* Perfil */}
                     <Route path="/perfil" element={<Perfil />} />

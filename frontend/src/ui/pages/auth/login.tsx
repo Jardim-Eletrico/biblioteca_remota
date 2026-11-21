@@ -21,6 +21,8 @@ export default function Login( { mode, setMode }: LoginProps ) {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const [errorMessage, setErrorMessage] = useState("");
+
     useEffect(() => {
         setEmail("");
         setPassword("");
@@ -35,7 +37,7 @@ async function handleLogin() {
         navigate("/home");
 
     } catch (error) {
-        console.error("Erro ao fazer login:", error);
+        setErrorMessage("E-mail ou senha inválidos");
     }
 }
 
@@ -75,6 +77,8 @@ async function handleLogin() {
                         required
                     />
 
+                    
+
                     <button 
                     type="button"
                     className="absolute top-1/2 right-1.5 -translate-y-1/2"
@@ -91,7 +95,12 @@ async function handleLogin() {
                         <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
                         </svg>)}
                     </button>
+
+                   
                 </div>
+                 {errorMessage && (
+                        <p className="text-warning">{errorMessage}</p>
+                    )}
 
                 <button 
                 className="font-ubuntu font-normal text-[0.85rem]
