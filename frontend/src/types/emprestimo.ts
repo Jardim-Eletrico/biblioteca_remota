@@ -67,3 +67,14 @@ export interface RegularizarEmprestimoResponse {
   data_regularizacao: string;
   motivo_regularizacao: string;
 }
+
+
+export interface EmprestimoResumoResponse {
+  id: number;
+  tombo: string;
+  data_retirada: string;
+  data_prevista_devolucao: string;
+  data_devolucao: string | null;
+  situacao_encerramento: "devolvido" | "perdido" | null;
+  regularizado: boolean;
+}

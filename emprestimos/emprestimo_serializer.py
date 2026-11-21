@@ -80,3 +80,22 @@ class RegularizarEmprestimoSerializer(serializers.Serializer):
         allow_blank=False,
         trim_whitespace=True,
     )
+
+
+class EmprestimoResumoSerializer(serializers.ModelSerializer):
+    tombo = serializers.CharField(
+        source="exemplar.tombo",
+        read_only=True
+    )
+
+    class Meta:
+        model = Emprestimo
+        fields = (
+            "id",
+            "tombo",
+            "data_retirada",
+            "data_prevista_devolucao",
+            "data_devolucao",
+            "situacao_encerramento",
+            "regularizado",
+        )

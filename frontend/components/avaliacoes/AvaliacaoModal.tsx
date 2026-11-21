@@ -7,6 +7,8 @@ interface AvaliacaoModalProps {
     livroId: number;
     titulo: string;
     capa: string | null;
+    notaInicial?: number | null;
+    jaAvaliou?: boolean;
     onFechar: () => void;
     onAvaliacaoEnviada?: () => void;
 }
@@ -15,12 +17,14 @@ export default function AvaliacaoModal({
     livroId,
     titulo,
     capa,
+    notaInicial,
+    jaAvaliou = false,
     onFechar,
-    onAvaliacaoEnviada
+    onAvaliacaoEnviada,
 
 }:AvaliacaoModalProps) {
 
-    const [nota, setNota] = useState(0);
+    const [nota, setNota] = useState(notaInicial ?? 0);
     const [enviando, setEnviando] = useState(false);
     const [erro, setErro] = useState<string | null>(null);
     const [sucesso, setSucesso] = useState(false);
@@ -97,7 +101,7 @@ export default function AvaliacaoModal({
                                     text-center text-black
                                     dark:text-white
                                     ">
-                                        Deixe sua avaliação
+                                        {jaAvaliou ? "Edite a sua avaliação" : "Deixe a sua avaliação"}
                             </h2>
 
                             <p className="
@@ -180,7 +184,7 @@ export default function AvaliacaoModal({
                                         ">
                                             {enviando
                                             ? "ENVIANDO..."
-                                        : "ENVIAR AVALIAÇÃO"
+                                        : jaAvaliou ? "ATUALIZAR AVALIAÇÃO" : "ENVIAR AVALIAÇÃO"
                                         }
                                 </button>
                             ): (
