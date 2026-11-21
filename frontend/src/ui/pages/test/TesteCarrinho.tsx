@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import type { ItemCarrinho } from "@/src/types/carrinho";
 import { listarItensCarrinho, removerItemCarrinho } from "@/src/services/carrinhoService";
@@ -20,11 +21,17 @@ export default function Carrinho(
     }: CarrinhoProps)
  {
 
+    const navigate = useNavigate();
+
     const [itens, setItens] = useState<ItemCarrinho[]>([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
 
     const [recomendacoesApi, setRecomendacoesApi] = useState<LivroRecomendadoResponse[]>([]);
+
+    function reservarLivros(itensCarrinho: ItemCarrinho[]) {
+        navigate("/reserva", { state: { itensCarrinho } });
+    }
 
     useEffect(() => {
         async function carregarCarrinho() {
@@ -129,7 +136,7 @@ export default function Carrinho(
             ">
                 <div className="flex flex-col gap-5 md:col-span-2">
                 {itens.length === 0 ? (
-                    <p>Seu carrinho está vazio.</p>
+                    <p className="text-gray-500 dark:text-gray-400">Seu carrinho está vazio.</p>
                 ) : (
                     
                     itens.map((item) => (
@@ -233,6 +240,7 @@ export default function Carrinho(
                                 hover:brightness-110
                                 active:scale-[0.98]
                             "
+                            onClick={() => reservarLivros(itens)}
                         >
                             RESERVAR LIVROS
                         </button>

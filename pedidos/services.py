@@ -12,7 +12,7 @@ from notificacoes.services import notificar_aprovacao_pedido, notificar_cancelam
 
 
 @transaction.atomic
-def criar_pedido(leitor, edicao_id):
+def criar_pedido(leitor, edicao_id, prazo_semanas=2):
 
     edicao = Edicao.objects.select_for_update().get(
         pk=edicao_id
@@ -37,7 +37,7 @@ def criar_pedido(leitor, edicao_id):
         raise ValidationError(
             "Você já possui um pedido ativo para esta edição."
         )
-    
+
     quantidade_pedidos_ativos = Pedido.objects.filter(
         leitor=leitor,
     ).filter(
@@ -65,6 +65,7 @@ def criar_pedido(leitor, edicao_id):
     pedido = Pedido.objects.create(
         leitor=leitor,
         edicao=edicao,
+        prazo_semanas=prazo_semanas,
     )
 
     if exemplar:
@@ -81,7 +82,10 @@ def criar_pedido(leitor, edicao_id):
         exemplar.status = "reservado"
         exemplar.save(update_fields=["status"])
 
-        notificar_aprovacao_pedido(pedido)
+        transaction.on_commit(
+            lambda: notificar_aprovacao_pedido(pedido)
+        )
+
         transaction.on_commit(
             lambda: gerar_e_enviar_codigo(pedido)
         )

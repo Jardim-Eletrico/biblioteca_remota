@@ -1,4 +1,4 @@
-
+from datetime import timedelta
 from django.contrib.auth.hashers import check_password
 from django.db import transaction
 from django.utils import timezone
@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from pedidos.models import Pedido
 from livros.models import Exemplar, Edicao
-from .models import Emprestimo, CodigoConfirmacao, calcular_devolucao_padrao
+from .models import Emprestimo, CodigoConfirmacao
 
 from .confirmacao_service import gerar_e_enviar_codigo
 from notificacoes.services import (notificar_usuarios_lista_desejos, notificar_aprovacao_pedido, notificar_emprestimo_efetivado)
@@ -15,7 +15,6 @@ def efetivar_emprestimo(
     pedido_id,
     exemplar_id,
     codigo_confirmacao,
-    data_prevista_devolucao=None,
 ):
     erro_codigo = None
     emprestimo = None
@@ -93,13 +92,10 @@ def efetivar_emprestimo(
         if erro_codigo is None:
             data_retirada = timezone.now()
 
-            if data_prevista_devolucao is None:
-                data_prevista_devolucao = calcular_devolucao_padrao()
-
-            if data_prevista_devolucao < data_retirada.date():
-                raise ValidationError(
-                    "A data de devolução não pode ser menor que a data de retirada."
-                )
+            data_prevista_devolucao = (
+                timezone.localdate(data_retirada) +
+                timedelta(weeks=pedido.prazo_semanas)
+            )
 
             emprestimo = Emprestimo.objects.create(
                 pedido=pedido,
@@ -147,7 +143,7 @@ def devolver_emprestimo(emprestimo_id):
 
     exemplar = Exemplar.objects.select_for_update().get(
         pk=emprestimo.exemplar_id
-    )
+    ) 
 
     emprestimo.data_devolucao = timezone.now()
     emprestimo.situacao_encerramento = (

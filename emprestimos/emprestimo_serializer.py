@@ -20,10 +20,6 @@ class EfetivarEmprestimoSerializer(serializers.Serializer):
         }
     )
 
-    data_prevista_devolucao = serializers.DateField(
-        required=False,
-    )
-
 
 class EmprestimoSerializer(serializers.ModelSerializer):
     leitor = serializers.CharField(

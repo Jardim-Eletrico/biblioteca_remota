@@ -62,9 +62,6 @@ class EfetivarEmprestimo(APIView):
             pedido_id=pedido.pk,
             exemplar_id=dados['exemplar'].pk,
             codigo_confirmacao=dados["codigo_confirmacao"],
-            data_prevista_devolucao=dados.get(
-                'data_prevista_devolucao'
-            ),
         )
 
         return Response(

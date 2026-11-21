@@ -7,7 +7,8 @@ export type PedidoStatus =
   | "cancelado";
 
 export interface PedidoPayload {
-  edicao: number;
+    edicoes: number[];
+    prazo: 1 | 2;
 }
 
 export interface PedidoResponse {
@@ -23,6 +24,7 @@ export interface PedidoResponse {
   data_resposta: string | null;
   exemplar: number | null;
   emprestimo: EmprestimoResumoResponse | null;
+  prazo_semanas: 1 | 2;
 }
 
 export interface PedidoResponderPayload {
