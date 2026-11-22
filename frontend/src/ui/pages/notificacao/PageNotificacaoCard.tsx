@@ -1,6 +1,8 @@
 import Loader from "@/components/app/loader_animation/loader";
 import { useEffect, useState } from "react";
 
+import { ExcluirTodasNotificacoes } from "@/components/notificacoes/excluirTodasNotificacoes";
+
 import NotificacaoCard from "@/components/notificacoes/NotificacaoCard";
 
 import {
@@ -70,6 +72,24 @@ export default function PageNotificacaoCard() {
         }
     }
 
+    //Excluir todas as notificações
+    async function excluirTodasNotificacoes() {
+
+        try {
+            await Promise.all(
+                notificacoes.map(async (notificacao) => {
+                    await excluirNotificacaoService(notificacao.id);
+                }))
+
+            setNotificacoes([]);
+        }
+
+        catch (error) {
+            console.error(error)
+        }
+    }
+
+
     return (
 
             <div className="w-full max-w-5xl px-5">
@@ -97,6 +117,8 @@ export default function PageNotificacaoCard() {
                         <div className="
                             flex flex-col gap-4
                         ">
+                            <ExcluirTodasNotificacoes onExcluir={excluirTodasNotificacoes}/>
+
                             {notificacoes.map((notificacao) => (
                                 <NotificacaoCard
                                     key={notificacao.id}

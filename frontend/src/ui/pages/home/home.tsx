@@ -144,19 +144,19 @@ export default function Home() {
                 <div className="flex justify-center items-center gap-10">
 
                     <button 
-                        className={`text-[16px] text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
+                        className={`text-[16px] text-text-muted transition-all ease-in-out duration-150 md:text-2xl ${currentSection === "Mais lidos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Mais lidos")}
                     >
                         MAIS LIDOS
                     </button>
                     <button 
-                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Em destaque"? "text-black! dark:text-white! font-bold scale-130" : null}`}
+                        className={`text-text-muted transition-all ease-in-out duration-150 md:text-2xl ${currentSection === "Em destaque"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Em destaque")}
                     >
                         EM DESTAQUE
                     </button>
                     <button 
-                        className={`text-text-muted transition-all ease-in-out duration-150 ${currentSection === "Novos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
+                        className={`text-text-muted transition-all ease-in-out duration-150 md:text-2xl ${currentSection === "Novos"? "text-black! dark:text-white! font-bold scale-130" : null}`}
                         onClick={() => setCurrentSection("Novos")}
                     >
                         NOVOS
@@ -184,27 +184,27 @@ export default function Home() {
             </div>
 
 
-            <div className="flex flex-col items-center w-full gap-3">
+            <div className="flex flex-col items-center w-full gap-3 mt-5 md:mt-15">
 
-                <h2 className="font-space-grotesk text-2xl sm:text-3xl dark:text-white font-extrabold">Descubra novas histórias</h2>
+                <h2 className="font-space-grotesk text-2xl sm:text-4xl dark:text-white font-extrabold">Descubra novas histórias</h2>
 
                 <form 
                 onSubmit={handleSubmit}
                 method="GET"
-                className="relative w-full sm:w-[80%] self-center"
+                className="relative w-full sm:w-[80%] self-center md:text-2xl"
                 >
 
                     <input 
                     type="text"
                     placeholder="Harry Potter, Iracema, Senhor dos Anéis..."
-                    className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu placeholder:truncate"
+                    className="flex items-center w-full h-12 pl-3 pr-15 rounded-4xl bg-white border-2 border-gray-stroke outline-0 font-ubuntu placeholder:truncate md:h-16"
                     value={inputQuery}
                     onChange={(e) => setInputQuery(e.target.value)}
                     />
                     
                     <button 
                     type="submit"
-                    className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                    className="absolute top-1/2 right-5 transform -translate-y-1/2"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>

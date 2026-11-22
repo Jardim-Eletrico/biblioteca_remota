@@ -11,6 +11,7 @@ import type { LivroRecomendadoResponse } from "@/src/types/livro";
 
 import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 
+
 interface CarrinhoProps {
     recomendados?: LivroRecomendadoResponse[];
 }
@@ -29,9 +30,8 @@ export default function Carrinho(
 
     const [recomendacoesApi, setRecomendacoesApi] = useState<LivroRecomendadoResponse[]>([]);
 
-    function reservarLivros(itensCarrinho: ItemCarrinho[]) {
-        navigate("/reserva", { state: { itensCarrinho } });
-    }
+    const [edicoesIndisponiveis, setEdicoesIndisponiveis] = useState<number[]>([]);
+
 
     useEffect(() => {
         async function carregarCarrinho() {
@@ -51,6 +51,21 @@ export default function Carrinho(
 
         carregarCarrinho();
     }, []);
+
+    function reservarLivros(itens: ItemCarrinho[]) {
+
+        const indisponiveis = itens
+            .filter(edicao => edicao.exemplaresDisponiveis <= 0)
+            .map(edicao => edicao.edicaoId);
+
+        setEdicoesIndisponiveis(indisponiveis);
+
+        if (indisponiveis.length > 0) {
+            return;
+        }
+
+        navigate("/reserva", { state: { itens } });
+    }
 
 
     // CARREGAR RECOMENDAÇÕES
@@ -237,7 +252,7 @@ export default function Carrinho(
 
                             <button
                                 type="button"
-                                className="
+                                className={`
                                     w-full rounded-xl
                                     bg-primary py-3
                                     text-sm font-bold text-white
@@ -245,7 +260,8 @@ export default function Carrinho(
                                     hover:brightness-110
                                     active:scale-[0.98]
                                     md:text-[20px]
-                                "
+                                    ${edicoesIndisponiveis.length >=1 && "hover:bg-red-700 active:bg-red-700 focus:bg-red-700"}
+                                `}
                                 onClick={() => reservarLivros(itens)}
                             >
                                 RESERVAR LIVROS

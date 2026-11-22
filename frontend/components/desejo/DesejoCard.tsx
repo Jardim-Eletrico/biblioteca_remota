@@ -44,7 +44,7 @@ export default function DesejoCard({
             
             {/* Capa */}
             <div className="
-                h-36 w-24 shrink-0 overflow-hidden
+                h-36 aspect-2/3 md:h-64 shrink-0 overflow-hidden
                 rounded-lg bg-zinc-100
                 dark:bg-zinc-700
             ">
@@ -77,18 +77,18 @@ export default function DesejoCard({
 
 
             {/* Informações */}
-            <div className="flex flex-col min-w-0 w-full gap-3 items-start">
+            <div className="flex flex-col min-w-0 w-full gap-3 items-start h-full">
                 <div className="flex flex-col gap-0.5 w-full">
 
                     <h3 className="
-                    pr-5 text-sm font-semibold max-w-[90%] truncate
+                    pr-5 text-sm font-semibold max-w-[90%] truncate md:text-2xl
                 ">
                     {desejo.titulo}
                 </h3>
 
                 <p className="
                     truncate text-xs text-zinc-500
-                    dark:text-zinc-400 w-full max-w-[90%]
+                    dark:text-zinc-400 w-full max-w-[90%] md:text-[18px]
                 ">
                     {desejo.autor}
                 </p>
@@ -102,7 +102,7 @@ export default function DesejoCard({
                         truncate rounded-md
                         bg-blue-100 px-2 py-1
                         text-xs font-medium text-blue-700
-                        dark:bg-blue-900/40 dark:text-blue-300
+                        dark:bg-blue-900/40 dark:text-blue-300 md:text-[16px]
                     ">
                         {desejo.cdd}
                     </span>
@@ -115,7 +115,7 @@ export default function DesejoCard({
                             rounded-md bg-green-100
                             px-2 py-1 text-xs font-medium
                             text-green-700
-                            dark:bg-green-900/40 dark:text-green-300
+                            dark:bg-green-900/40 dark:text-green-300 md:text-[16px]
                         ">
                             <span className="h-2 w-2 rounded-full bg-green-600" />
                             Disponível
@@ -126,7 +126,7 @@ export default function DesejoCard({
                             rounded-md bg-amber-100
                             px-2 py-1 text-xs font-medium
                             text-amber-700
-                            dark:bg-amber-900/40 dark:text-amber-300
+                            dark:bg-amber-900/40 dark:text-amber-300 md:text-[16px]
                         ">
                             <span className="h-2 w-2 rounded-full bg-amber-600" />
                             Indisponível
@@ -137,18 +137,25 @@ export default function DesejoCard({
                 <button
                     type="button"
                     onClick={() => onReservar(desejo.edicao)}
-                    className="
+                    className={`
                         w-full rounded-lg
-                        border border-blue-600
-                        py-1 text-sm font-semibold
-                        text-blue-600
-                        hover:bg-blue-600 hover:text-white
-                        transition-colors
-                        dark:border-blue-500
-                        dark:text-blue-400
-                        dark:hover:bg-blue-600
-                        dark:hover:text-white
-                    "
+                        border py-1 text-sm font-semibold
+                        transition-colors mt-auto md:text-[20px]
+                        ${desejo.tem_exemplares_disponiveis
+                            ? `
+                                border-blue-600 text-blue-600
+                                hover:bg-blue-600 hover:text-white
+                                dark:border-blue-500 dark:text-blue-400
+                                dark:hover:bg-blue-600 dark:hover:text-white
+                            `
+                            : `
+                                border-red-600 text-red-600
+                                hover:bg-red-600 hover:text-white
+                                dark:border-red-500 dark:text-red-400
+                                dark:hover:bg-red-600 dark:hover:text-white
+                            `
+                        }
+                    `}
                 >
                     RESERVAR
                 </button>

@@ -7,6 +7,7 @@ import { logout } from "@/src/services/authService";
 
 import { buscarPerfil } from "@/src/services/perfilService";
 import type { PerfilResponse } from "@/src/types/perfil";
+import { listarNotificacoes } from "@/src/services/notificacaoService";
 
 export default function Appnavbar() {
     const navigate = useNavigate();
@@ -19,6 +20,26 @@ export default function Appnavbar() {
 
     const [perfil, setPerfil] = useState<PerfilResponse | null>(null);
     const [perfilCarregado, setPerfilCarregado] = useState(false);
+
+    const [temNotificacoes, setTemNotificacoes] = useState(false);
+
+    useEffect(() => {
+        async function verificarNotificacoes() {
+            try {
+                const notificacoes = await listarNotificacoes();
+
+                setTemNotificacoes(notificacoes.length > 0);
+            } catch (error) {
+                console.error("Erro ao verificar notificações:", error);
+            }
+        }
+
+        verificarNotificacoes();
+
+        const intervalo = setInterval(verificarNotificacoes, 15000);
+
+        return () => clearInterval(intervalo);
+    }, []);
 
     useEffect(() => {
         async function carregarPerfil() {
@@ -263,7 +284,7 @@ export default function Appnavbar() {
                 >
                     {!isBibliotecario && (
                         <>
-                            <Link to="/emprestimos">
+                            <Link to="/meus-emprestimos">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bag dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
                                     <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
                                 </svg>
@@ -275,11 +296,21 @@ export default function Appnavbar() {
                                 </svg>
                             </Link>
 
-                            <Link to="/notificacoes">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bell dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
-                                <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
-                                </svg>
-                            </Link>
+                            <div className="relative">
+                                <Link to="/notificacoes">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bell dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
+                                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2M8 1.918l-.797.161A4 4 0 0 0 4 6c0 .628-.134 2.197-.459 3.742-.16.767-.376 1.566-.663 2.258h10.244c-.287-.692-.502-1.49-.663-2.258C12.134 8.197 12 6.628 12 6a4 4 0 0 0-3.203-3.92zM14.22 12c.223.447.481.801.78 1H1c.299-.199.557-.553.78-1C2.68 10.2 3 6.88 3 6c0-2.42 1.72-4.44 4.005-4.901a1 1 0 1 1 1.99 0A5 5 0 0 1 13 6c0 .88.32 4.2 1.22 6"/>
+                                    </svg>
+                                </Link>
+                                {temNotificacoes && (
+                                    <span className="
+                                        absolute top-0 right-0
+                                        w-2.5 h-2.5 rounded-full
+                                        bg-red-500 border-2
+                                        dark:border-gray-900
+                                    " />
+                                )}
+                            </div>
                         </>
                     )}
 

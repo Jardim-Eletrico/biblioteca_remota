@@ -19,6 +19,7 @@
     "jwt-decode": "^4.0.0",
     "jwt-decoder": "^0.0.0",
     "ldrs": "^1.1.9",
+    "lucide-react": "^1.77.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-infinite-scroll-component": "^7.2.1",

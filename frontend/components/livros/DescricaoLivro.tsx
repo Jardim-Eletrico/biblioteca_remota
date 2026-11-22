@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useEffect, useRef, useState } from "react";
 
 interface DescricaoLivroProps {
     descricao: string | null;
@@ -9,51 +10,80 @@ export default function DescricaoLivro({
 }: DescricaoLivroProps) {
 
     const [expandida, setExpandida] = useState(false);
+    const [podeExpandir, setPodeExpandir] = useState(false);
 
-    if (!descricao) {
-        return null;
-    }
+    const textoRef = useRef<HTMLParagraphElement>(null);
 
-    const podeExpandir = descricao.length > 180;
+    useEffect(() => {
+        const elemento = textoRef.current;
+
+        if (!elemento) return;
+
+        function verificarAltura() {
+            if (!elemento) return;
+
+            const estilo = window.getComputedStyle(elemento);
+            const lineHeight = parseFloat(estilo.lineHeight);
+
+            const quantidadeLinhas = Math.round(
+                elemento.scrollHeight / lineHeight
+            );
+
+            setPodeExpandir(quantidadeLinhas > 4);
+        }
+
+        verificarAltura();
+
+        window.addEventListener("resize", verificarAltura);
+
+        return () => {
+            window.removeEventListener("resize", verificarAltura);
+        };
+    }, [descricao]);
+
+    useEffect(() => {
+        setExpandida(false);
+    }, [descricao]);
+
+    if (!descricao) return null;
 
     return (
         <section className="mt-5">
 
-            {/* TEXTO */}
             <div className="relative">
 
                 <p
+                    ref={textoRef}
                     className={`
                         text-sm leading-relaxed
                         font-roboto
                         text-text-muted
                         dark:text-text-light
-                        ${!expandida && podeExpandir ? "line-clamp-4" : ""}
+                        md:text-[26px]
+                        ${!expandida ? "line-clamp-4" : ""}
                     `}
                 >
                     {descricao}
                 </p>
 
-                {/* EFEITO DE ESMAECIMENTO */}
                 {!expandida && podeExpandir && (
                     <div className="
                         pointer-events-none
                         absolute bottom-0 left-0
-                        h-10 w-full
+                        h-20 w-full
                         bg-linear-to-t
                         from-gray-background
                         to-transparent
                         dark:from-surface-dark
-                    "/>
+                    " />
                 )}
 
             </div>
 
-            {/* EXPANDIR / RECOLHER */}
             {podeExpandir && (
                 <button
                     type="button"
-                    onClick={() => setExpandida(!expandida)}
+                    onClick={() => setExpandida(prev => !prev)}
                     aria-expanded={expandida}
                     className="
                         mt-2 flex items-center gap-1
@@ -62,10 +92,7 @@ export default function DescricaoLivro({
                         hover:opacity-80
                     "
                 >
-                    {expandida
-                        ? "Ver menos"
-                        : "Ver descrição completa"
-                    }
+                    {expandida ? "Ver menos" : "Ver descrição completa"}
 
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

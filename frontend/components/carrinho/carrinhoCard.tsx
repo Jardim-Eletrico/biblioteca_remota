@@ -5,6 +5,7 @@ import type { ItemCarrinho } from "@/src/types/carrinho";
 interface ItemCarrinhoProps {
     item: ItemCarrinho;
     onRemover: (itemId: number) => Promise<void> | null;
+    
 }
 
 export default function ItemCarrinhoCard({
@@ -75,6 +76,7 @@ export default function ItemCarrinhoCard({
 
             {/* Informações */}
             <div className="flex flex-col min-w-0 w-full gap-3 items-start h-full">
+                
                 <div className="flex flex-col gap-0.5 w-full">
 
                     <h3 className="
@@ -123,11 +125,17 @@ export default function ItemCarrinhoCard({
                         rounded-md bg-amber-100
                         px-2 py-1 text-xs font-medium
                         text-amber-700
-                        dark:bg-amber-900/40 dark:text-amber-300
+                        dark:bg-amber-900/40 dark:text-amber-300 md:text-[16px]
                     ">
                         <span className="h-2 w-2 rounded-full bg-amber-600" />
                         Indisponível
                     </span>
+                )}
+
+                {item.exemplaresDisponiveis <= 0 && (
+                    <div className="flex items-center justify-center bg-red-100 text-red-500 border-dashed border-red-500 border-2 p-2 md:p-3 rounded-lg relative">
+                        <p className="text-[12px] md:text-[16px]">Este item está indisponível. Remova-o do carrinho antes de continuar</p>
+                    </div>
                 )}
 
                 <button
@@ -144,7 +152,7 @@ export default function ItemCarrinhoCard({
                         dark:hover:bg-blue-600
                         dark:hover:text-white self-end mt-auto md:text-[20px]
                     "
-                    onClick={() => navigate(`/detalhes-livro/${item.edicaoId}`)}
+                    onClick={() => {navigate(`/detalhes-livro/${item.edicaoId}`); }}
                 >
                     DETALHES
                 </button>
