@@ -1,25 +1,42 @@
-import type { ReactNode } from "react";
-import HeroCard from "@/modules/public/landing/card.module.css";
-
-type CardProps = {
-    icon: ReactNode,
-    title: string,
-    description: string,
-    bg: boolean
+interface CardProps {
+    icon: React.ReactNode;
+    title: string;
+    description: string;
 }
 
-export default function Card({ icon, title, description, bg }: CardProps) {
-    return(
+export default function Card({ icon, title, description }: CardProps) {
+    return (
+        <div className={`
+            flex flex-col items-center gap-1.25
+            p-3
+            rounded-lg
+            w-1/3 md:w-80
+            min-w-0
+            flex-none
+            min-h-50 md:min-h-70
+        `}>
+            {icon}
 
-        <>
-        
-            <div className={`${HeroCard.hero_cards} ${bg ? "bg-white" : "bg-transparent"} rounded-lg`}>
-                {icon}
-                <div className={`${HeroCard.card_title}`}>{title}</div>
-                <div className={`${HeroCard.card_description}`}>{description}</div>
+            <div className={`
+                font-source-serif-pro
+                leading-[1.2]
+                text-center
+                font-semibold
+
+                text-base md:text-4xl
+            `}>
+                {title}
             </div>
-        
-        </>
 
-    )
+            <div className={`
+                font-roboto
+                leading-[1.4]
+                text-center
+                font-light
+                text-sm md:text-[21px]
+            `}>
+                {description}
+            </div>
+        </div>
+    );
 }

@@ -7,7 +7,7 @@ type TitleProps = {
 export default function HeroTitle({ text }: TitleProps) {
     return(
         <>
-            <h1 className={`${heroTitleStyles.hero_title}`}>{text}</h1>
+            <h1 className={`${heroTitleStyles.hero_title} text-4xl md:text-5xl lg:text-6xl`}>{text}</h1>
         </>
     )
 }
