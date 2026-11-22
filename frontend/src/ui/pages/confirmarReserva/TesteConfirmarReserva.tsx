@@ -84,16 +84,16 @@ export default function ConfirmarReserva() {
             </div>
             
             <div className="flex flex-col flex-1 items-center w-full gap-10 md:gap-15">
-                <div className="flex flex-col md:flex-row justify-items-center items-center w-full flex-1 md:flex-0 gap-5 md:gap-0 md:w-[60%]">
+                <div className="flex flex-col md:flex-row items-center justify-center w-full flex-1 md:flex-0 gap-5 md:gap-15 md:w-full">
                     {itensCarrinho.length > 0? (
                         <>
                             {itensCarrinho.map((item, index) => (
 
                                 <React.Fragment key={item.id}>
-                                    <div className="flex flex-col w-full items-center gap-5">
+                                    <div className="flex flex-col w-fit items-center gap-5">
 
                                         <div className="
-                                            w-[80%] overflow-hidden
+                                            w-fit overflow-hidden
                                             flex flex-col gap-1.5 bg-white p-3 rounded-xl dark:bg-gray-800 shadow-md
                                         ">
 
@@ -103,7 +103,7 @@ export default function ConfirmarReserva() {
                                                         src={item.capa}
                                                         onError={() => setImageError(true)}
                                                         alt={`Capa de ${item.titulo}`}
-                                                        className="h-full w-full object-cover rounded-lg"
+                                                        className="aspect-2/3 shrink-0 md:h-160 object-cover rounded-lg"
                                                     />
                                                     <div className="absolute inset-0 flex flex-col p-3 gap-1.5 justify-end">
                                                         {item.cdd && (
@@ -113,7 +113,7 @@ export default function ConfirmarReserva() {
                                                                 bg-blue-100/80 px-2 py-1
                                                                 text-xs font-medium text-blue-700
                                                                 dark:bg-blue-900/70 dark:text-blue-100 w-fit backdrop-blur-xl
-                                                                text-[12px] md:text-[14px]
+                                                                text-[12px] md:text-[18px]
                                                             ">
                                                                 {item.cdd}
                                                             </span>
@@ -126,7 +126,7 @@ export default function ConfirmarReserva() {
                                                                 px-2 py-1 text-xs font-medium
                                                                 text-green-700
                                                                 dark:bg-green-900/70 dark:text-green-100 w-fit backdrop-blur-xl
-                                                                text-[12px] md:text-[14px]
+                                                                text-[12px] md:text-[18px]
                                                             ">
                                                                 <span className="h-2 w-2 rounded-full bg-green-600" />
                                                                 Disponível
@@ -137,7 +137,7 @@ export default function ConfirmarReserva() {
                                                                 rounded-md bg-amber-100
                                                                 px-2 py-1 text-xs font-medium
                                                                 text-amber-700
-                                                                dark:bg-amber-900/40 dark:text-amber-300
+                                                                dark:bg-amber-900/40 dark:text-amber-300 md:text-[18px]
                                                             ">
                                                                 <span className="h-2 w-2 rounded-full bg-amber-600" />
                                                                 Indisponível
@@ -165,21 +165,19 @@ export default function ConfirmarReserva() {
                                             )}
 
                                             <div className="flex flex-col w-full gap-0.5">
-                                                <p className="w-full font-roboto font-medium text-[14px] md:text-[18px] dark:text-white">{item.titulo}</p>
-                                                <p className="w-full font-roboto font-light text-text-muted text-[12px] md:text-[16px] dark:text-gray-500">{item.editora}</p>
+                                                <p className="w-full font-roboto font-medium text-[14px] md:text-[20px] dark:text-white">{item.titulo}</p>
+                                                <p className="w-full font-roboto font-light text-text-muted text-[12px] md:text-[18px] dark:text-gray-500">{item.editora}</p>
                                             </div>
                                             
 
                                         </div>
-                                        
-
-                                        
+       
                                     </div>
 
                                     {index < itensCarrinho.length - 1 && (
                                         <div className="
-                                            w-[90%] h-px bg-gray-300 dark:bg-gray-600
-                                            md:w-px md:h-auto md:self-stretch md:shrink-0
+                                            w-[90%] h-0.5 bg-gray-300 dark:bg-gray-600
+                                            md:w-0.5 md:h-auto md:self-stretch md:shrink-0
                                         " />
                                     )}
 
@@ -191,7 +189,7 @@ export default function ConfirmarReserva() {
                         </>
                     ) : desejo ? (
                         <div className="
-                            w-[80%] overflow-hidden
+                            w-fit overflow-hidden
                             flex flex-col gap-1.5 bg-white p-3 rounded-xl dark:bg-gray-800 shadow-md
                         ">
                             {desejo.capa ? (
@@ -200,7 +198,7 @@ export default function ConfirmarReserva() {
                                         src={desejo.capa}
                                         onError={() => setImageError(true)}
                                         alt={`Capa de ${desejo.titulo}`}
-                                        className="h-full w-full object-cover rounded-lg"
+                                        className="aspect-2/3 shrink-0 md:h-160 object-cover rounded-lg"
                                     />
 
                                     <div className="absolute inset-0 flex flex-col p-3 gap-1.5 justify-end">
@@ -211,7 +209,7 @@ export default function ConfirmarReserva() {
                                                 bg-blue-100/80 px-2 py-1
                                                 text-xs font-medium text-blue-700
                                                 dark:bg-blue-900/70 dark:text-blue-100 w-fit backdrop-blur-xl
-                                                text-[12px] md:text-[14px]
+                                                text-[12px] md:text-[18px]
                                             ">
                                                 {desejo.cdd}
                                             </span>
@@ -224,7 +222,7 @@ export default function ConfirmarReserva() {
                                                 px-2 py-1 text-xs font-medium
                                                 text-green-700
                                                 dark:bg-green-900/70 dark:text-green-100 w-fit backdrop-blur-xl
-                                                text-[12px] md:text-[14px]
+                                                text-[12px] md:text-[18px]
                                             ">
                                                 <span className="h-2 w-2 rounded-full bg-green-600" />
                                                 Disponível
@@ -235,7 +233,7 @@ export default function ConfirmarReserva() {
                                                 rounded-md bg-amber-100
                                                 px-2 py-1 text-xs font-medium
                                                 text-amber-700
-                                                dark:bg-amber-900/40 dark:text-amber-300 w-fit
+                                                dark:bg-amber-900/40 dark:text-amber-300 md:text-[18px]
                                             ">
                                                 <span className="h-2 w-2 rounded-full bg-amber-600" />
                                                 Indisponível
@@ -263,10 +261,10 @@ export default function ConfirmarReserva() {
                             )}
 
                             <div className="flex flex-col w-full gap-0.5">
-                                <p className="w-full font-roboto font-medium text-[14px] md:text-[18px] dark:text-white">
+                                <p className="w-full font-roboto font-medium text-[14px] md:text-[20px] dark:text-white">
                                     {desejo.titulo}
                                 </p>
-                                <p className="w-full font-roboto font-light text-text-muted text-[12px] md:text-[16px] dark:text-gray-500">
+                                <p className="w-full font-roboto font-light text-text-muted text-[12px] md:text-[18px] dark:text-gray-500">
                                     {desejo.autor}
                                 </p>
                             </div>
@@ -275,16 +273,15 @@ export default function ConfirmarReserva() {
                     
                 </div>
 
-
                 <div className="flex flex-col col-span-2 w-[80%] gap-3 bg-white dark:bg-gray-800 p-3 rounded-t-lg mt-auto md:mt-0 md:w-[60%] md:p-5 md:rounded-lg shadow-md">
-                    <p className="font-roboto font-medium text-[14px] dark:text-white">Duração do empréstimo</p>
+                    <p className="font-roboto font-medium text-[14px] md:text-[20px] dark:text-white">Duração do empréstimo</p>
 
                     <div className="flex flex-row gap-2 items-strech">
 
                         <button 
                             className={`
                                 flex items-center justify-center w-full h-fit
-                                rounded-lg font-roboto text-[14px] md:text-[18px]
+                                rounded-lg font-roboto text-[14px] md:text-[20px]
                                 border p-2 dark:text-white
                                 transition-all duration-300 ease-in-out
                                 ${prazoEmprestimo === 1
@@ -303,7 +300,7 @@ export default function ConfirmarReserva() {
                         <button 
                             className={`
                                 flex items-center justify-center w-full h-fit
-                                rounded-lg font-roboto text-[14px] md:text-[18px]
+                                rounded-lg font-roboto text-[14px] md:text-[20px]
                                 border p-2 dark:text-white
                                 transition-all duration-300 ease-in-out
                                 ${prazoEmprestimo === 2
@@ -321,7 +318,7 @@ export default function ConfirmarReserva() {
                     </div>
 
                     <button 
-                        className="flex items-center justify-center w-full h-fit p-2 bg-primary rounded-lg font-roboto text-[14px] text-white md:text-[18px]"
+                        className="flex items-center justify-center w-full h-fit p-2 bg-primary rounded-lg font-roboto text-[14px] text-white md:text-[20px]"
                         onClick={() => handleConfirmarReserva(prazoEmprestimo)}
                     >
                         Confirmar
