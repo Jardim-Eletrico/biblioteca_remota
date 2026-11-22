@@ -127,15 +127,15 @@ export default function Landing() {
 
                 </div>
 
-                <div className="flex flex-col w-full h-fit min-h-43.5 p-2.5 gap-2.5 bg-forest-green rounded-2xl bg-[url('/landing/leaves.png')] bg-no-repeat bg-center bg-cover md:w-[50%] md:min-h-70">
-                    <div className="flex flex-col w-fit h-fit max-w-[80%] md:max-w-[60%] gap-1.5 p-2.5">
-                        <h2 className="font-source-serif-pro text-2xl md:text-4xl text-white">Leitura acessível para todos os usuários</h2>
-                        <p className="font-roboto font-light text-[13px] md:text-[20px] text-text-light">Mais histórias, mais aventuras, mais conhecimento para sua vida.</p>
+                <div className="flex flex-col w-full h-fit min-h-43.5 p-2.5 gap-2.5 md:gap-3 lg:gap-4 md:p-3.5 lg:p-5 bg-forest-green rounded-t-2xl bg-[url('/landing/leaves.png')] bg-no-repeat bg-center bg-cover md:w-[50%] md:min-h-70 lg:min-h-90 mt-auto">
+                    <div className="flex flex-col w-fit h-fit max-w-[80%] md:max-w-[60%] lg:max-w-[40%] gap-1.5 p-2.5 md:gap-2 lg:gap-3">
+                        <h2 className="font-source-serif-pro text-2xl md:text-4xl lg:text-5xl text-white">Leitura acessível para todos os usuários</h2>
+                        <p className="font-roboto font-light text-[13px] md:text-[20px] lg:text-2xl text-text-light">Mais histórias, mais aventuras, mais conhecimento para sua vida.</p>
                     </div>
 
                     <Link 
                         to="/auth"
-                        className="flex items-center justify-center self-center w-fit h-fit px-4 py-2.5 bg-vivid-orange font-roboto text-[16px] md:text-3xl text-white font-normal rounded-3xl outline outline-white outline-offset-4"
+                        className="flex items-center justify-center self-center w-fit h-fit px-4 py-2.5 bg-vivid-orange font-roboto text-[16px] md:text-3xl lg:text-4xl md:p-4 lg:p-5 text-white font-normal rounded-3xl outline outline-white outline-offset-4"
                     >Começar agora</Link>
 
                 </div>
