@@ -30,7 +30,7 @@ import GestaoLivros from "./ui/pages/bibliotecario/GestaoLivros";
 
 // Perfil
 import Perfil from "./ui/pages/perfil/perfil";
-import TesteConfirmarReserva from "./ui/pages/test/TesteConfirmarReserva";
+import TesteConfirmarReserva from "./ui/pages/confirmarReserva/TesteConfirmarReserva";
 import MeusEmprestimos from "./ui/pages/leitor/emprestimos_pedidos/MeusEmprestimos";
 
 export default function App() {
