@@ -1,7 +1,9 @@
 export function formatarData(data: string | null): string {
     if (!data) return "—";
 
-    const [ano, mes, dia] = data.split("-");
+    const dataFormatada = new Date(data);
 
-    return `${dia}/${mes}/${ano}`;
+    return dataFormatada.toLocaleDateString("pt-BR", {
+        timeZone: "UTC",
+    });
 }

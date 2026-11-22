@@ -48,6 +48,8 @@ class NotificarEmprestimoEfetivadoTest(TestCase):
             livro=self.livro,
             ano_publicacao=2022,
             editora="Editora de Teste",
+            numero_paginas=200,
+
         )
 
         # Cria um exemplar.
