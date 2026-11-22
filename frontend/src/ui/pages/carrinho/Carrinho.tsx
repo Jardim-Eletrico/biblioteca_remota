@@ -44,6 +44,7 @@ export default function Carrinho(
                         ? error.message
                         : "Erro ao carregar carrinho."
                 );
+                navigate("/error");
             } finally {
                 setCarregando(false);
             }

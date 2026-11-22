@@ -41,39 +41,39 @@ export default function ConfirmarReserva() {
                     ? [desejo.edicao]
                     : [];
 
-        if (desejo && !desejo.tem_exemplares_disponiveis) {
-            alert("Esta edição não possui exemplares disponíveis.");
-            return;
-        }
-
-        if (edicoes.length === 0) return;
-
-            const response = await criarPedido({
-                edicoes: edicoes,
-                prazo: prazo
-            });
-
-            alert("Reserva solicitada com sucesso!");
-            console.log(response);
-
-            // Limpar o carrinho
-            try {
-                await Promise.all(
-                    itensCarrinho.map(item => removerItemCarrinho(item.id))
-                );
-                navigate("/meus-emprestimos");
+            if (desejo && !desejo.tem_exemplares_disponiveis) {
+                alert("Esta edição não possui exemplares disponíveis.");
+                return;
             }
 
-            catch (error){
-                console.error(error);
-            }
-            
-        }
+            if (edicoes.length === 0) return;
 
-        catch (error) {
-            console.log(error);
+                const response = await criarPedido({
+                    edicoes: edicoes,
+                    prazo: prazo
+                });
+
+                alert("Reserva solicitada com sucesso!");
+                console.log(response);
+
+                // Limpar o carrinho
+                try {
+                    await Promise.all(
+                        itensCarrinho.map(item => removerItemCarrinho(item.id))
+                    );
+                    navigate("/meus-emprestimos");
+                }
+
+                catch (error){
+                    console.error(error);
+                }
+                
+            }
+
+            catch (error) {
+                console.log(error);
+            }
         }
-    }
 
     return (
         <div className="flex flex-col justify-items-center w-full flex-1 gap-5">
