@@ -27,12 +27,12 @@ function LivroRecomendadoCard({
         <article className="flex flex-col h-full">
             {/* CAPA */}
             <div className="
-                relative w-full
+                relative
                 aspect-2/3
                 overflow-hidden
                 rounded-xl
                 bg-light-gray
-                dark:bg-surface-mid 
+                dark:bg-surface-mid shrink-0 w-40 md:w-50
             ">
 
                 {!imageError && edicao.capa ? (
@@ -42,7 +42,7 @@ function LivroRecomendadoCard({
                         alt={`Capa de ${livro.titulo}`}
                         className="
                             absolute inset-0
-                            w-full h-full
+                            shrink-0
                             object-cover
                             rounded-xl
                         "
@@ -110,7 +110,7 @@ function LivroRecomendadoCard({
             <button
                 type="button"
                 onClick={() => onAbrirLivro(livro.id, edicao.id)}
-                className="block w-36 shrink-0 text-left"
+                className="text-left"
             >
                 {conteudo}
             </button>
@@ -120,7 +120,7 @@ function LivroRecomendadoCard({
     return (
         <Link
             to={`/detalhes-livro/${edicao.id}`}
-            className="block w-36 shrink-0"
+            className="w-fit"
         >
             {conteudo}
         </Link>
@@ -141,7 +141,7 @@ export default function LivrosRecomendados({
                 mb-4 text-base font-bold
                 font-ubuntu
                 text-dark-blue
-                dark:text-light-blue-logo
+                dark:text-light-blue-logo md:text-[20px]
             ">
                 Conteúdos semelhantes a este
             </h2>

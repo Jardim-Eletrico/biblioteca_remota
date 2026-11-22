@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 import AvaliacaoModal from "../avaliacoes/AvaliacaoModal";
@@ -9,6 +8,8 @@ import LivrosRecomendados from "./LivrosRecomendados";
 
 import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 import { buscarPerfil } from "@/src/services/perfilService";
+
+
 
 import {
     adicionarDesejo,
@@ -432,17 +433,38 @@ export default function LivroDetalhes({
         }
     }
 
+
+    function useIsMd() {
+        const [isMd, setIsMd] = useState(window.innerWidth >= 768);
+
+        useEffect(() => {
+            function verificarTela() {
+                setIsMd(window.innerWidth >= 768);
+            }
+
+            window.addEventListener("resize", verificarTela);
+
+            return () => {
+                window.removeEventListener("resize", verificarTela);
+            };
+        }, []);
+
+        return isMd;
+    }
+
+    const isMd = useIsMd();
+
     return (
         <>
-            <div className="flex flex-col">
+            <div className="flex flex-col md:flex-row md:gap-8 w-full">
                 {/* CAPA */}
                 <div className="
-                    w-full
+                    w-full md:w-fit
                     overflow-hidden rounded-xl
                     border border-gray-stroke
                     bg-light-gray
                     dark:border-surface-mid
-                    dark:bg-surface-mid
+                    dark:bg-surface-mid h-fit
                 ">
                     {!imageError && edicao.capa ? (
                         <img
@@ -452,7 +474,7 @@ export default function LivroDetalhes({
                             className="
                                 block w-full
                                 aspect-2/3
-                                object-cover
+                                object-cover md:w-220
                             "
                         />
                     ) : (
@@ -482,161 +504,179 @@ export default function LivroDetalhes({
                         </div>
                     )}
                 </div>
+                
+                <div className="flex flex-col gap-3 w-full">
+                    {/* TÍTULO E LISTA DE DESEJOS */}
+                    <div className="
+                        flex items-start
+                        justify-between gap-5 md:justify-start
+                    ">
+                        <div className="min-w-0 w-fit">
+                            <h1 className="
+                                text-xl font-bold
+                                font-space-grotesk
+                                text-book-title
+                                dark:text-text-light md:text-5xl
+                            ">
+                                {livro.titulo}
+                            </h1>
 
-                {/* TÍTULO E LISTA DE DESEJOS */}
-                <div className="
-                    mt-2 flex items-start
-                    justify-between gap-3
-                ">
-                    <div className="min-w-0 flex-1">
-                        <h1 className="
-                            text-xl font-bold
-                            font-space-grotesk
-                            text-book-title
-                            dark:text-text-light
-                        ">
-                            {livro.titulo}
-                        </h1>
+                            <p className="
+                                text-sm font-ubuntu
+                                text-text-muted
+                                dark:text-text-light md:text-3xl
+                            ">
+                                {livro.autor}
+                            </p>
+                        </div>
 
-                        <p className="
-                            text-sm font-ubuntu
-                            text-text-muted
-                            dark:text-text-light
-                        ">
-                            {livro.autor}
-                        </p>
+                        {/* LISTA DE DESEJOS */}
+                        {ehLeitor && (
+                            <button
+                                type="button"
+                                onClick={alternarDesejo}
+                                disabled={atualizandoDesejo}
+                                aria-label={
+                                    desejoAtivo
+                                        ? "Remover da lista de desejos"
+                                        : "Adicionar à lista de desejos"
+                                }
+                                aria-pressed={desejoAtivo}
+                                className="
+                                    shrink-0
+                                    text-primary
+                                    transition-transform
+                                    hover:scale-110
+                                    disabled:cursor-default
+                                "
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    width="40"
+                                    height="40"
+                                    fill={desejoAtivo ? "currentColor" : "none"}
+                                    stroke="currentColor"
+                                    strokeWidth="1.5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="md:size-15"
+                                >
+                                    <path d="M6 3.75h12a1 1 0 0 1 1 1v16l-7-4-7 4v-16a1 1 0 0 1 1-1Z" />
+                                </svg>
+                            </button>
+                        )}
+                    </div>
+                    {/* AVALIAÇÃO MÉDIA */}
+                    <div className="">
+                        <AvaliacaoMedia
+                            media={livro.media_avaliacoes}
+                            quantidade={livro.quantidade_avaliacoes}
+                        />
                     </div>
 
-                    {/* LISTA DE DESEJOS */}
-                    {ehLeitor && (
-                        <button
-                            type="button"
-                            onClick={alternarDesejo}
-                            disabled={atualizandoDesejo}
-                            aria-label={
-                                desejoAtivo
-                                    ? "Remover da lista de desejos"
-                                    : "Adicionar à lista de desejos"
-                            }
-                            aria-pressed={desejoAtivo}
-                            className="
-                                mt-1 shrink-0
-                                text-primary
-                                transition-transform
-                                hover:scale-110
-                                disabled:cursor-default
-                            "
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                                width="40"
-                                height="40"
-                                fill={desejoAtivo ? "currentColor" : "none"}
-                                stroke="currentColor"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            >
-                                <path d="M6 3.75h12a1 1 0 0 1 1 1v16l-7-4-7 4v-16a1 1 0 0 1 1-1Z" />
-                            </svg>
-                        </button>
-                    )}
-                </div>
 
-                {/* AVALIAÇÃO MÉDIA */}
-                <div className="mt-1">
-                    <AvaliacaoMedia
-                        media={livro.media_avaliacoes}
-                        quantidade={livro.quantidade_avaliacoes}
+                    {/* DESCRIÇÃO */}
+                    <DescricaoLivro
+                        descricao={livro.descricao}
                     />
-                </div>
 
-                {/* AVALIAR OU EDITAR AVALIAÇÃO */}
-                {ehLeitor &&
-                    !carregandoPermissaoAvaliacao &&
-                    permissaoAvaliacao?.pode_avaliar && (
-                        <button
-                            type="button"
-                            onClick={() => setModalAvaliacaoAberto(true)}
-                            className="
-                                mt-3 w-full rounded-xl
-                                border border-primary
-                                px-4 py-2
-                                font-semibold text-primary
-                                transition-colors
-                                hover:bg-primary hover:text-white
-                            "
-                        >
-                            {permissaoAvaliacao.ja_avaliou
-                                ? "EDITAR AVALIAÇÃO"
-                                : "AVALIAR LIVRO"
+                    {/* ADICIONAR AO CARRINHO */}
+                    <button
+                        type="button"
+                        onClick={adicionarAoCarrinho}
+                        disabled={
+                            carregandoCarrinho ||
+                            atualizandoCarrinho ||
+                            erroCarrinho ||
+                            (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
+                        }
+                        className="
+                            w-full rounded-xl
+                            bg-primary
+                            px-5 py-3
+                            font-semibold
+                            text-light-blue-logo
+                            transition-opacity
+                            hover:opacity-90
+                            disabled:cursor-not-allowed
+                            disabled:opacity-50 md:w-fit md:px-20 md:text-2xl
+                        "
+                    >
+                        {carregandoCarrinho
+                            ? "CARREGANDO CARRINHO..."
+                            : atualizandoCarrinho
+                                ? "ATUALIZANDO..."
+                                : erroCarrinho
+                                    ? "ERRO AO CARREGAR CARRINHO"
+                                    : livroJaAdicionado
+                                        ? "REMOVER DO CARRINHO"
+                                        : limiteAtingido
+                                            ? "LIMITE DE 2 LIVROS ATINGIDO"
+                                            : !temDisponibilidade
+                                                ? "INDISPONÍVEL"
+                                                : "ADICIONAR AO CARRINHO"
+                        }
+                    </button>
+                    
+                    {/* MENSAGEM */}
+                    {mensagem && (
+                        <p className={`
+                            mt-2 text-sm
+                            ${tipoMensagem === "sucesso"
+                                ? "text-avaiable-green"
+                                : "text-warning"
                             }
-                        </button>
+                        `}>
+                            {mensagem}
+                        </p>
                     )}
+
+                    {/* AVALIAR OU EDITAR AVALIAÇÃO */}
+                    {ehLeitor &&
+                        !carregandoPermissaoAvaliacao &&
+                        permissaoAvaliacao?.pode_avaliar && (
+                            <button
+                                type="button"
+                                onClick={() => setModalAvaliacaoAberto(true)}
+                                className="
+                                    mt-3 w-full rounded-xl
+                                    border border-primary
+                                    px-4 py-2
+                                    font-semibold text-primary
+                                    transition-colors
+                                    hover:bg-primary hover:text-white md:w-fit md:px-20 md:text-2xl
+                                "
+                            >
+                                {permissaoAvaliacao.ja_avaliou
+                                    ? "EDITAR AVALIAÇÃO"
+                                    : "AVALIAR LIVRO"
+                                }
+                            </button>
+                        )
+                    }
+
+                    {isMd && (
+                        <div className="mt-auto">
+                            {/* RECOMENDAÇÕES */}
+                            <LivrosRecomendados
+                                livros={recomendacoesExibidas}
+                                onAbrirLivro={onAbrirLivroRecomendado}
+                            />
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* ADICIONAR AO CARRINHO */}
-            <button
-                type="button"
-                onClick={adicionarAoCarrinho}
-                disabled={
-                    carregandoCarrinho ||
-                    atualizandoCarrinho ||
-                    erroCarrinho ||
-                    (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
-                }
-                className="
-                    w-full rounded-xl
-                    bg-primary
-                    px-5 py-3
-                    font-semibold
-                    text-light-blue-logo
-                    transition-opacity
-                    hover:opacity-90
-                    disabled:cursor-not-allowed
-                    disabled:opacity-50
-                "
-            >
-                {carregandoCarrinho
-                    ? "CARREGANDO CARRINHO..."
-                    : atualizandoCarrinho
-                        ? "ATUALIZANDO..."
-                        : erroCarrinho
-                            ? "ERRO AO CARREGAR CARRINHO"
-                            : livroJaAdicionado
-                                ? "REMOVER DO CARRINHO"
-                                : limiteAtingido
-                                    ? "LIMITE DE 2 LIVROS ATINGIDO"
-                                    : !temDisponibilidade
-                                        ? "INDISPONÍVEL"
-                                        : "ADICIONAR AO CARRINHO"
-                }
-            </button>
-
-            {/* MENSAGEM */}
-            {mensagem && (
-                <p className={`
-                    mt-2 text-sm
-                    ${tipoMensagem === "sucesso"
-                        ? "text-avaiable-green"
-                        : "text-warning"
-                    }
-                `}>
-                    {mensagem}
-                </p>
+            {!isMd && (
+                <>
+                    {/* RECOMENDAÇÕES */}
+                    <LivrosRecomendados
+                        livros={recomendacoesExibidas}
+                        onAbrirLivro={onAbrirLivroRecomendado}
+                    />
+                </>
             )}
-
-            {/* DESCRIÇÃO */}
-            <DescricaoLivro
-                descricao={livro.descricao}
-            />
-
-            {/* RECOMENDAÇÕES */}
-            <LivrosRecomendados
-                livros={recomendacoesExibidas}
-                onAbrirLivro={onAbrirLivroRecomendado}
-            />
 
             {/* MODAL DE AVALIAÇÃO */}
             {modalAvaliacaoAberto && permissaoAvaliacao && (

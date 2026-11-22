@@ -43,7 +43,7 @@ export default function AvaliacaoMedia({
                         <span
                             key={estrela}
                             className="
-                                block h-4 w-4
+                                block h-4 w-4 md:size-8
                                 shrink-0 bg-primary
                             "
                             style={{
@@ -65,7 +65,7 @@ export default function AvaliacaoMedia({
             {/* MÉDIA */}
             <span className="
                 text-sm font-medium
-                text-primary
+                text-primary md:text-2xl
             ">
                 {media.toFixed(1)}
             </span>
@@ -73,7 +73,7 @@ export default function AvaliacaoMedia({
             {/* QUANTIDADE */}
             <span className="
                 text-xs text-text-muted
-                dark:text-text-light
+                dark:text-text-light md:text-2xl
             ">
                 ({quantidade})
             </span>
