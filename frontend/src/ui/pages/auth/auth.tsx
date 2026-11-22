@@ -54,7 +54,7 @@ export default function Auth() {
                     </>
                 ) : null}
 
-                <div className={`${cardStyles.card} sm:max-w-[80%] md:max-w-[70%]`}>
+                <div className={`${cardStyles.card} sm:max-w-[80%] md:max-w-[70%] lg:max-w-[50%] xl:max-w-[40%] 2xl:max-w-[30%] w-full flex flex-col items-center gap-6.5 px-5 py-7.5`}>
                     <form className="flex flex-col w-full gap-4" action=""
                         onSubmit={(event) => {
                             event.preventDefault();

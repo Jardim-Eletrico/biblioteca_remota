@@ -1,6 +1,7 @@
 
 type StatusEmprestimoProps = {
     status: "Pendente" | "Aprovado" | "Emprestado" | "Atrasado" | "Devolvido";
+    className?: string;
 };
 
 const estilos = {
@@ -22,10 +23,11 @@ const estilos = {
 
 export default function StatusEmprestimo({
     status,
+    className
 }: StatusEmprestimoProps) {
     return (
         <span
-            className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${estilos[status]}`}
+            className={`inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold ${estilos[status]} ${className || ""}`}
         >
             {status}
         </span>

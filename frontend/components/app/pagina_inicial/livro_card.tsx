@@ -23,7 +23,7 @@ export default function LivroCard( { autor, titulo, image, disponibilidade }: Ca
 
                     {disponibilidade === 0 && (
                         <div className="flex size-full justify-center items-end absolute inset-0 bg-black/80 pb-5 rounded-xl">
-                            <p className="font-baloo-tamma text-2xl text-white text-center font-bold">Indisponível</p>
+                            <p className="font-baloo-tamma text-2xl text-white text-center font-bold md:text-3xl">Indisponível</p>
                         </div>
                     )}
                 </div>
@@ -41,8 +41,8 @@ export default function LivroCard( { autor, titulo, image, disponibilidade }: Ca
 
                 </div>
             )}
-            <p className="font-ubuntu font-medium text-[1rem] text-left w-full dark:text-white line-clamp-3">{titulo}</p>
-            <p className="font-ubuntu font-medium text-[0.8rem] text-left w-full text-text-muted line-clamp-3">{autor}</p>
+            <p className="font-ubuntu font-medium text-[1rem] text-left w-full dark:text-white line-clamp-3 md:text-[20px]">{titulo}</p>
+            <p className="font-ubuntu font-medium text-[0.8rem] text-left w-full text-text-muted line-clamp-3 md:text-[16px]">{autor}</p>
         </div>
     )
 }

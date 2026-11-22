@@ -95,17 +95,11 @@ function IconeNotificacao({ tipo }: { tipo: string }) {
 function formatarData(dataString: string) {
     const data = new Date(dataString);
 
-    if (Number.isNaN(data.getTime())) {
-        return "";
-    }
+    if (Number.isNaN(data.getTime())) return "";
 
-    const opcoes = {
-        timeZone: "America/Sao_Paulo"
-    };
+    const opcoes = { timeZone: "America/Sao_Paulo" };
 
-    const hoje = new Date();
-
-    const obterDia = (valor: Date) =>
+    const formatarDia = (valor: Date) =>
         new Intl.DateTimeFormat("en-CA", {
             ...opcoes,
             year: "numeric",
@@ -113,26 +107,22 @@ function formatarData(dataString: string) {
             day: "2-digit"
         }).format(valor);
 
-    const diaNotificacao = obterDia(data);
-    const diaAtual = obterDia(hoje);
-
+    const hoje = new Date();
     const ontem = new Date(hoje.getTime() - 86400000);
-    const diaOntem = obterDia(ontem);
+
+    const dia = formatarDia(data);
+    const diaHoje = formatarDia(hoje);
+    const diaOntem = formatarDia(ontem);
 
     const horario = new Intl.DateTimeFormat("pt-BR", {
         ...opcoes,
         hour: "2-digit",
         minute: "2-digit",
-        hour12: false
+        hourCycle: "h23"
     }).format(data);
 
-    if (diaNotificacao === diaAtual) {
-        return `Hoje às ${horario}`;
-    }
-
-    if (diaNotificacao === diaOntem) {
-        return `Ontem às ${horario}`;
-    }
+    if (dia === diaHoje) return `Hoje às ${horario}`;
+    if (dia === diaOntem) return `Ontem às ${horario}`;
 
     const dataFormatada = new Intl.DateTimeFormat("pt-BR", {
         ...opcoes,
@@ -160,7 +150,7 @@ export default function NotificacaoCard({
             rounded-3xl p-3 pr-10
             bg-white text-zinc-900
             shadow-[0_3px_8px_rgba(0,0,0,0.20)]
-            dark:bg-[#202020] dark:text-white
+            dark:bg-surface-dark dark:text-white
         ">
 
             {/* Ícone */}
@@ -180,7 +170,7 @@ export default function NotificacaoCard({
 
                 <h3 className="
                     text-sm font-semibold leading-snug
-                    break-words
+                    break-word md:text-[18px]
                 ">
                     {notificacao.titulo}
                 </h3>
@@ -189,7 +179,7 @@ export default function NotificacaoCard({
                     mt-1 text-xs leading-snug
                     text-zinc-500
                     dark:text-zinc-400
-                    break-words
+                    break-word md:text-[16px]
                 ">
                     {notificacao.mensagem}
                 </p>
@@ -197,7 +187,7 @@ export default function NotificacaoCard({
                 <p className="
                     mt-2 text-[11px]
                     text-zinc-500
-                    dark:text-zinc-500
+                    dark:text-zinc-500 md:text-[13px]
                 ">
                     {formatarData(notificacao.data_criacao)}
                 </p>

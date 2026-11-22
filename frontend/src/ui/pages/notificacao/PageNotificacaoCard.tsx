@@ -1,4 +1,4 @@
-
+import Loader from "@/components/app/loader_animation/loader";
 import { useEffect, useState } from "react";
 
 import NotificacaoCard from "@/components/notificacoes/NotificacaoCard";
@@ -72,13 +72,13 @@ export default function PageNotificacaoCard() {
 
     return (
 
-            <div className="mx-auto max-w-5xl px-5">
+            <div className="w-full max-w-5xl px-5">
 
                 {/* Carregamento */}
                 {carregando && (
-                    <p className="py-10 text-center">
-                        Carregando notificações...
-                    </p>
+                    <div className="absolute inset-0 flex items-center justify-center scale-150">
+                        <Loader />
+                    </div>
                 )}
 
                 {/* Erro */}
