@@ -1,5 +1,7 @@
 import Loader from "@/components/app/loader_animation/loader";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
+import { ExcluirTodasNotificacoes } from "@/components/notificacoes/excluirTodasNotificacoes";
 
 import NotificacaoCard from "@/components/notificacoes/NotificacaoCard";
 
@@ -70,6 +72,63 @@ export default function PageNotificacaoCard() {
         }
     }
 
+    //Excluir todas as notificações
+    async function excluirTodasNotificacoes() {
+
+        try {
+            await Promise.all(
+                notificacoes.map(async (notificacao) => {
+                    await excluirNotificacaoService(notificacao.id);
+                }))
+
+            setNotificacoes([]);
+        }
+
+        catch (error) {
+            console.error(error)
+        }
+    }
+
+    const [posicao, setPosicao] = useState(0);
+    const [arrastando, setArrastando] = useState(false);
+
+    const inicioX = useRef(0);
+    const posicaoInicial = useRef(0);
+    const arrastandoRef = useRef(false);
+
+    const LIMITE = 90;
+
+    function iniciarArrasto(e: React.PointerEvent<HTMLDivElement>) {
+        inicioX.current = e.clientX;
+        posicaoInicial.current = posicao;
+        arrastandoRef.current = true;
+        setArrastando(true);
+
+        e.currentTarget.setPointerCapture(e.pointerId);
+    }
+
+    function arrastar(e: React.PointerEvent<HTMLDivElement>) {
+        if (!arrastandoRef.current) return;
+
+        const deslocamento = e.clientX - inicioX.current;
+
+        setPosicao(
+            Math.max(
+                -LIMITE,
+                Math.min(0, posicaoInicial.current + deslocamento)
+            )
+        );
+    }
+
+    function finalizarArrasto() {
+        if (!arrastandoRef.current) return;
+
+        arrastandoRef.current = false;
+        setArrastando(false);
+
+        setPosicao(atual => atual <= -LIMITE / 2 ? -LIMITE : 0);
+    }
+
     return (
 
             <div className="w-full max-w-5xl px-5">
@@ -97,6 +156,8 @@ export default function PageNotificacaoCard() {
                         <div className="
                             flex flex-col gap-4
                         ">
+                            <ExcluirTodasNotificacoes onExcluir={excluirTodasNotificacoes}/>
+
                             {notificacoes.map((notificacao) => (
                                 <NotificacaoCard
                                     key={notificacao.id}
