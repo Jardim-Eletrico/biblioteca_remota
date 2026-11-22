@@ -1,5 +1,5 @@
 import Loader from "@/components/app/loader_animation/loader";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import { ExcluirTodasNotificacoes } from "@/components/notificacoes/excluirTodasNotificacoes";
 
@@ -89,45 +89,6 @@ export default function PageNotificacaoCard() {
         }
     }
 
-    const [posicao, setPosicao] = useState(0);
-    const [arrastando, setArrastando] = useState(false);
-
-    const inicioX = useRef(0);
-    const posicaoInicial = useRef(0);
-    const arrastandoRef = useRef(false);
-
-    const LIMITE = 90;
-
-    function iniciarArrasto(e: React.PointerEvent<HTMLDivElement>) {
-        inicioX.current = e.clientX;
-        posicaoInicial.current = posicao;
-        arrastandoRef.current = true;
-        setArrastando(true);
-
-        e.currentTarget.setPointerCapture(e.pointerId);
-    }
-
-    function arrastar(e: React.PointerEvent<HTMLDivElement>) {
-        if (!arrastandoRef.current) return;
-
-        const deslocamento = e.clientX - inicioX.current;
-
-        setPosicao(
-            Math.max(
-                -LIMITE,
-                Math.min(0, posicaoInicial.current + deslocamento)
-            )
-        );
-    }
-
-    function finalizarArrasto() {
-        if (!arrastandoRef.current) return;
-
-        arrastandoRef.current = false;
-        setArrastando(false);
-
-        setPosicao(atual => atual <= -LIMITE / 2 ? -LIMITE : 0);
-    }
 
     return (
 
