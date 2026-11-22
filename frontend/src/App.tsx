@@ -32,6 +32,7 @@ import GestaoLivros from "./ui/pages/bibliotecario/GestaoLivros";
 import Perfil from "./ui/pages/perfil/perfil";
 import TesteConfirmarReserva from "./ui/pages/confirmarReserva/TesteConfirmarReserva";
 import MeusEmprestimos from "./ui/pages/leitor/emprestimos_pedidos/MeusEmprestimos";
+import ErrorPage from "./ui/pages/error/errorPage";
 
 export default function App() {
     return (
@@ -55,6 +56,9 @@ export default function App() {
                     <Route path="/reserva" element={<TesteConfirmarReserva />} />
                     <Route path="/meus-emprestimos" element={<MeusEmprestimos />} />
 
+                    {/* Rota de erro */}
+                    <Route path="/error" element={<ErrorPage />}/>
+
                     {/* Rotas exclusivas do bibliotecário */}
                     <Route element={<RotaBibliotecario />}>
                         <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
@@ -67,6 +71,8 @@ export default function App() {
                     {/* Perfil */}
                     <Route path="/perfil" element={<Perfil />} />
                 </Route>
+
+                
             </Routes>
         </BrowserRouter>
     );

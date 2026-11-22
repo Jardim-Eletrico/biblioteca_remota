@@ -5,6 +5,8 @@ import { ExcluirTodasNotificacoes } from "@/components/notificacoes/excluirTodas
 
 import NotificacaoCard from "@/components/notificacoes/NotificacaoCard";
 
+import { useNavigate } from "react-router-dom";
+
 import {
     listarNotificacoes,
     excluirNotificacao as excluirNotificacaoService
@@ -15,7 +17,7 @@ import type {
 } from "@/src/types/notificacoes";
 
 export default function PageNotificacaoCard() {
-
+    const navigate = useNavigate();
     const [notificacoes, setNotificacoes] = useState<NotificacaoResponse[]>([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState<string | null>(null);
@@ -37,6 +39,9 @@ export default function PageNotificacaoCard() {
                         ? error.message
                         : "Erro ao carregar notificações."
                 );
+
+                navigate("/error");
+                
             } finally {
                 setCarregando(false);
             }

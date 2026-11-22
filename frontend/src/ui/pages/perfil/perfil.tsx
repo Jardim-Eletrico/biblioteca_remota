@@ -1,4 +1,4 @@
-
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import {
@@ -12,6 +12,7 @@ export default function Perfil() {
     const [usuario, setUsuario] = useState<PerfilResponse | null>(null);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState("");
+    const navigate = useNavigate();
 
     const [editando, setEditando] = useState(false);
     const [nome, setNome] = useState("");
@@ -34,6 +35,8 @@ export default function Perfil() {
                         ? error.message
                         : "Não foi possível carregar o perfil."
                 );
+
+                navigate("/error");
             } finally {
                 setCarregando(false);
             }

@@ -40,6 +40,7 @@ export default function PageLivroDetalhes() {
                 "Erro ao atualizar os dados do livro:",
                 error
             );
+            navigate("/error");
         }
     }
 
@@ -83,6 +84,8 @@ export default function PageLivroDetalhes() {
                         ? error.message
                         : "Não foi possível carregar os detalhes."
                 );
+
+                navigate("/error");
 
             } finally {
                 if (ativo) {

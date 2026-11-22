@@ -32,6 +32,7 @@ export default function PageDesejoCard() {
                     ? error.message
                     : "Erro ao carregar os desejos."
             );
+            navigate("/error");
         } finally {
             setCarregando(false);
         }

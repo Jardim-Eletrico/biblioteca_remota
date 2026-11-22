@@ -9,7 +9,7 @@ import LivrosRecomendados from "./LivrosRecomendados";
 import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 import { buscarPerfil } from "@/src/services/perfilService";
 
-
+import { useNavigate } from "react-router-dom";
 
 import {
     adicionarDesejo,
@@ -96,6 +96,8 @@ export default function LivroDetalhes({
 
     const desejoAtivo = estaNaListaDesejosProp ?? desejoNaLista;
 
+    const navigate = useNavigate();
+
     // IDENTIFICAR PERFIL DO USUÁRIO
     useEffect(() => {
         let ativo = true;
@@ -109,6 +111,7 @@ export default function LivroDetalhes({
                 }
             } catch (error) {
                 console.error("Erro ao buscar perfil:", error);
+                navigate("/error")
             }
         }
 
