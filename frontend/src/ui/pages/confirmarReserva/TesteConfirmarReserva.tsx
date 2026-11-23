@@ -21,9 +21,12 @@ export default function ConfirmarReserva() {
         
     const navigate = useNavigate();
 
+    const [erroReserva, setErroReserva] = useState<string | null>(null);
+
     const [imageError, setImageError] = useState(false);
 
     async function handleConfirmarReserva(prazo: PrazoEmprestimo) {
+        setErroReserva(null);
         try {
             if (prazo === null) {
                 setSombras(20);
@@ -66,12 +69,19 @@ export default function ConfirmarReserva() {
 
                 catch (error){
                     console.error(error);
+
+                    
                 }
                 
             }
 
             catch (error) {
                 console.log(error);
+                if (error instanceof Error) {
+                        setErroReserva(error.message);
+                    } else {
+                        setErroReserva("Não foi possível realizar a reserva");
+                    }
             }
         }
 
@@ -323,6 +333,12 @@ export default function ConfirmarReserva() {
                     >
                         Confirmar
                     </button>
+
+                    {erroReserva && (
+                    <p className="text-center text-sm font-medium text-red-600 dark:text-red-400">
+                        {erroReserva}
+                    </p>
+                )}
                 </div>
                 
 
