@@ -24,7 +24,7 @@ function LivroRecomendadoCard({
     const disponivel = edicao.exemplares_disponiveis > 0;
 
     const conteudo = (
-        <article className="flex flex-col h-full">
+        <article className="flex flex-col w-40 shrink-0">
             {/* CAPA */}
             <div className="
                 relative
@@ -32,7 +32,7 @@ function LivroRecomendadoCard({
                 overflow-hidden
                 rounded-xl
                 bg-light-gray
-                dark:bg-surface-mid shrink-0 w-40 md:w-50
+                dark:bg-surface-mid shrink-0 w-40
             ">
 
                 {!imageError && edicao.capa ? (
@@ -44,7 +44,7 @@ function LivroRecomendadoCard({
                             absolute inset-0
                             shrink-0
                             object-cover
-                            rounded-xl
+                            rounded-xl h-full w-full
                         "
                     />
                 ) : (
@@ -53,7 +53,7 @@ function LivroRecomendadoCard({
                         flex items-center justify-center
                         border border-black
                         dark:border-white
-                        rounded-xl
+                        rounded-xl h-full w-full
                         text-text-muted
                         dark:text-text-light
                     ">
@@ -88,7 +88,7 @@ function LivroRecomendadoCard({
                 font-ubuntu
                 text-dark-blue
                 dark:text-light-blue-logo
-                line-clamp-2
+                line-clamp-2 w-full truncate
             ">
                 {livro.titulo}
             </p>
@@ -98,7 +98,7 @@ function LivroRecomendadoCard({
                 text-xs
                 text-text-muted
                 dark:text-text-light
-                line-clamp-1
+                line-clamp-1 w-full truncate
             ">
                 {livro.autor}
             </p>
@@ -120,7 +120,7 @@ function LivroRecomendadoCard({
     return (
         <Link
             to={`/detalhes-livro/${edicao.id}`}
-            className="w-fit"
+            className="w-40 shrink-0"
         >
             {conteudo}
         </Link>

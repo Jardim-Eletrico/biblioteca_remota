@@ -82,7 +82,7 @@ export function ExcluirTodasNotificacoes({
                     w-full p-4
                     bg-gray-200 dark:bg-gray-800
                     touch-pan-y select-none
-                    cursor-grab active:cursor-grabbing
+                    cursor-grab active:cursor-grabbing rounded-lg
                 "
             >
                 <span className="text-sm font-medium dark:text-white md:text-[20px]">

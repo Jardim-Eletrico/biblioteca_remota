@@ -108,6 +108,52 @@ async function handleLogin() {
                  onClick={()=> setMode("recovery")}>Esqueceu sua senha?
                  </button>
             </div>
+
+           <div className="
+                flex flex-col w-full h-fit
+                border border-dashed border-slate-500/70
+                bg-slate-800
+                p-3 gap-3 rounded-lg
+                text-slate-100
+            ">
+                <span className="
+                    font-ubuntu text-[16px] font-semibold
+                    text-blue-200 self-center
+                ">
+                    Autenticações de teste
+                </span>
+
+                <div className="
+                    flex flex-col font-ubuntu text-[14px]
+                    bg-slate-700/60 p-3 rounded-md gap-1
+                ">
+                    <p className="font-semibold text-blue-200">
+                        Leitor
+                    </p>
+                    <p className="text-slate-200">
+                        Email: ana.souza@biblioteca.com
+                    </p>
+                    <p className="text-slate-200">
+                        Senha: Ana@2026
+                    </p>
+                </div>
+
+                <div className="
+                    flex flex-col font-ubuntu text-[14px]
+                    bg-slate-700/60 p-3 rounded-md gap-1
+                ">
+                    <p className="font-semibold text-blue-200">
+                        Bibliotecário
+                    </p>
+                    <p className="text-slate-200">
+                        Email: bibliotecario@biblioteca.com
+                    </p>
+                    <p className="text-slate-200">
+                        Senha: Biblioteca@2026
+                    </p>
+                </div>
+            </div>
+
             <button className={`${submitStyle.submit_button}`} type="submit"
                 onClick={handleLogin}
             >

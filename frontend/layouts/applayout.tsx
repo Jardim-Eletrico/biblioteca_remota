@@ -3,10 +3,10 @@ import { Outlet } from "react-router-dom";
 
 export default function Applayout() {
     return(
-        <div className="min-h-screen flex flex-col gap-3 bg-gray-background dark:bg-gray-900 transition-all duration-300 ease-in-out overflow-x-hidden">
+        <div className="min-h-screen flex flex-col gap-3 bg-gray-background dark:bg-gray-900 transition-all duration-300 ease-in-out">
             <Appnavbar />
 
-            <main className="flex flex-col gap-10 sm:gap-10 px-5 flex-1">
+            <main className="flex flex-col gap-10 sm:gap-10 px-5 flex-1 overflow-x-hidden">
                 
                 <Outlet />
             </main>

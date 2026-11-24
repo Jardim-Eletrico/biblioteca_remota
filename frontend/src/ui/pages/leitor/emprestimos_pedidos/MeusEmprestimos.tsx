@@ -52,7 +52,7 @@ export default function MeusEmprestimos() {
                         <Loader />
                     </div>
                 ) : pedidosFiltrados.length === 0 ? (
-                    <p className="rounded-lg border border-gray-200 p-6 text-center dark:border-gray-800">
+                    <p className="rounded-lg border border-gray-200 p-6 text-center dark:text-white dark:border-gray-800">
                         {filtro === "ativos"
                             ? "Você não possui pedidos ou empréstimos ativos."
                             : "Você ainda não possui empréstimos devolvidos."}
