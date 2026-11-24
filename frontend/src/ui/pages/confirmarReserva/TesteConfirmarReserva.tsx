@@ -94,7 +94,12 @@ export default function ConfirmarReserva() {
             </div>
             
             <div className="flex flex-col flex-1 items-center w-full gap-10 md:gap-15">
-                <div className="flex flex-col md:flex-row items-center justify-center w-full flex-1 md:flex-0 gap-5 md:gap-15 md:w-full">
+                <div className="
+                    flex flex-col md:flex-row
+                    items-center justify-center
+                    w-full gap-5 md:gap-15
+                    flex-none
+                ">
                     {itensCarrinho.length > 0? (
                         <>
                             {itensCarrinho.map((item, index) => (
@@ -103,17 +108,22 @@ export default function ConfirmarReserva() {
                                     <div className="flex flex-col w-fit items-center gap-5">
 
                                         <div className="
-                                            w-fit overflow-hidden
-                                            flex flex-col gap-1.5 bg-white p-3 rounded-xl dark:bg-gray-800 shadow-md
+                                            w-fit max-w-full shrink-0
+                                            flex flex-col gap-1.5
+                                            bg-white p-3 rounded-xl
+                                            dark:bg-gray-800 shadow-md
                                         ">
-
                                             {!imageError && item.capa ? (
-                                                <div className="relative">
+                                                <div className="relative w-[clamp(180px,25vw,280px)]">
                                                     <img
                                                         src={item.capa}
                                                         onError={() => setImageError(true)}
                                                         alt={`Capa de ${item.titulo}`}
-                                                        className="aspect-2/3 shrink-0 md:h-160 object-cover rounded-lg"
+                                                        className="
+                                                            block w-full h-auto
+                                                            aspect-2/3 object-cover
+                                                            rounded-lg
+                                                        "
                                                     />
                                                     <div className="absolute inset-0 flex flex-col p-3 gap-1.5 justify-end">
                                                         {item.cdd && (
@@ -174,7 +184,7 @@ export default function ConfirmarReserva() {
                                                 </div>
                                             )}
 
-                                            <div className="flex flex-col w-full gap-0.5">
+                                            <div className="flex flex-col w-fit flex-1 gap-0.5">
                                                 <p className="w-full font-roboto font-medium text-[14px] md:text-[20px] dark:text-white">{item.titulo}</p>
                                                 <p className="w-full font-roboto font-light text-text-muted text-[12px] md:text-[18px] dark:text-gray-500">{item.editora}</p>
                                             </div>
