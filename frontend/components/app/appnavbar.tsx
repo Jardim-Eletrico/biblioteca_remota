@@ -1,4 +1,3 @@
-
 import { useTheme } from "@/contexts/themeContext";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useRef, useEffect } from "react";
@@ -12,7 +11,7 @@ import { listarNotificacoes } from "@/src/services/notificacaoService";
 export default function Appnavbar() {
     const navigate = useNavigate();
 
-    const { theme, toggleTheme } = useTheme();
+    const { theme, resolvedTheme, toggleTheme } = useTheme();
     const [openMenu, setOpenMenu] = useState(false);
 
     const navbarRef = useRef<HTMLDivElement>(null);
@@ -88,7 +87,7 @@ export default function Appnavbar() {
     return (
         <>
             <header
-                className="flex flex-row justify-between items-center w-full h-fit px-5 py-2.5 sticky top-0 right-0 left-0 isolate z-50"
+                className="flex flex-row justify-between items-center w-full h-fit px-5 py-2.5 sticky top-0 isolate z-50 self-start"
                 ref={navbarRef}
             >
                 <div
@@ -253,7 +252,7 @@ export default function Appnavbar() {
                         {/* Sol */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                             className={`bi bi-cloud-sun text-white transition-all duration-300 ease-in-out size-8 sm:size-10 ${
-                                theme === "dark" ? "opacity-100 rotate-360" : "opacity-0 rotate-0 absolute"
+                                resolvedTheme === "dark" ? "opacity-100 rotate-360" : "opacity-0 rotate-0 absolute"
                             }`}
                             viewBox="0 0 16 16">
                             <path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .624.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .51-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/>
@@ -263,7 +262,7 @@ export default function Appnavbar() {
                         {/* Lua */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                             className={`bi bi-cloud-moon transition-all duration-300 ease-in-out size-8 sm:size-10 ${
-                                theme === "light" ? "opacity-100 rotate-0" : "opacity-0 rotate-360 absolute"
+                                resolvedTheme === "light" ? "opacity-100 rotate-0" : "opacity-0 rotate-360 absolute"
                             }`}
                             viewBox="0 0 16 16">
                             <path d="M7 8a3.5 3.5 0 0 1 3.5 3.555.5.5 0 0 0 .625.492A1.503 1.503 0 0 1 13 13.5a1.5 1.5 0 0 1-1.5 1.5H3a2 2 0 1 1 .1-3.998.5.5 0 0 0 .509-.375A3.5 3.5 0 0 1 7 8m4.473 3a4.5 4.5 0 0 0-8.72-.99A3 3 0 0 0 3 16h8.5a2.5 2.5 0 0 0 0-5z"/>
