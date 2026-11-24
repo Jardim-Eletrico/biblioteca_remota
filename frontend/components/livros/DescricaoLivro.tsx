@@ -14,6 +14,8 @@ export default function DescricaoLivro({
 
     const textoRef = useRef<HTMLParagraphElement>(null);
 
+    const [alturaLimite, setAlturaLimite] = useState(0);
+
     useEffect(() => {
         const elemento = textoRef.current;
 
@@ -24,6 +26,10 @@ export default function DescricaoLivro({
 
             const estilo = window.getComputedStyle(elemento);
             const lineHeight = parseFloat(estilo.lineHeight);
+
+            const alturaQuatroLinhas = lineHeight * 4;
+
+            setAlturaLimite(alturaQuatroLinhas);
 
             const quantidadeLinhas = Math.round(
                 elemento.scrollHeight / lineHeight
@@ -54,17 +60,19 @@ export default function DescricaoLivro({
 
                 <p
                     ref={textoRef}
-                    className={`
+                    className="
                         text-sm leading-relaxed
                         font-roboto
                         text-text-muted
                         dark:text-text-light
                         md:text-[20px] w-full
                         overflow-hidden
-                        transition-[max-height] duration-250 ease-in-out
-                    `}
+                        transition-[max-height] duration-500 ease-in-out
+                    "
                     style={{
-                        maxHeight: expandida ? `${textoRef.current?.scrollHeight}px` : "6em"
+                        maxHeight: expandida
+                            ? `${textoRef.current?.scrollHeight}px`
+                            : `${alturaLimite}px`
                     }}
                 >
                     {descricao}
