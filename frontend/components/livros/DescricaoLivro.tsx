@@ -48,9 +48,9 @@ export default function DescricaoLivro({
     if (!descricao) return null;
 
     return (
-        <section className="mt-5 w-full">
+        <section className="mt-5 w-full transition-all duration-150">
 
-            <div className="relative w-full">
+            <div className="relative w-full transition-all duration-150">
 
                 <p
                     ref={textoRef}
@@ -60,22 +60,29 @@ export default function DescricaoLivro({
                         text-text-muted
                         dark:text-text-light
                         md:text-[20px] w-full
-                        ${!expandida ? "line-clamp-4" : ""}
+                        overflow-hidden
+                        transition-[max-height] duration-250 ease-in-out
                     `}
+                    style={{
+                        maxHeight: expandida ? `${textoRef.current?.scrollHeight}px` : "6em"
+                    }}
                 >
                     {descricao}
                 </p>
 
                 {!expandida && podeExpandir && (
-                    <div className="
-                        pointer-events-none
-                        absolute bottom-0 left-0
-                        h-20 w-full
-                        bg-linear-to-t
-                        from-gray-background
-                        to-transparent
-                        dark:from-gray-900
-                    " />
+                    <div
+                        className="
+                            pointer-events-none
+                            absolute bottom-0 left-0
+                            h-20 w-full
+                            bg-linear-to-t
+                            from-gray-background
+                            to-transparent
+                            dark:from-gray-900
+                            transition-opacity duration-1050
+                        "
+                    />
                 )}
 
             </div>
@@ -99,7 +106,7 @@ export default function DescricaoLivro({
                         viewBox="0 0 20 20"
                         fill="currentColor"
                         className={`
-                            h-4 w-4 transition-transform
+                            h-4 w-4 transition-transform duration-300
                             ${expandida ? "rotate-180" : ""}
                         `}
                     >
