@@ -664,28 +664,15 @@ export default function LivroDetalhes({
                             </button>
                         )
                     }
-
-                    {isMd && (
-                        <div className="mt-auto">
-                            {/* RECOMENDAÇÕES */}
-                            <LivrosRecomendados
-                                livros={recomendacoesExibidas}
-                                onAbrirLivro={onAbrirLivroRecomendado}
-                            />
-                        </div>
-                    )}
                 </div>
             </div>
 
-            {!isMd && (
-                <>
-                    {/* RECOMENDAÇÕES */}
-                    <LivrosRecomendados
-                        livros={recomendacoesExibidas}
-                        onAbrirLivro={onAbrirLivroRecomendado}
-                    />
-                </>
-            )}
+            
+            {/* RECOMENDAÇÕES */}
+            <LivrosRecomendados
+                livros={recomendacoesExibidas}
+                onAbrirLivro={onAbrirLivroRecomendado}
+            />
 
             {/* MODAL DE AVALIAÇÃO */}
             {modalAvaliacaoAberto && permissaoAvaliacao && (
