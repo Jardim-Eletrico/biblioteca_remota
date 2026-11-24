@@ -48,9 +48,9 @@ export default function DescricaoLivro({
     if (!descricao) return null;
 
     return (
-        <section className="mt-5">
+        <section className="mt-5 w-full">
 
-            <div className="relative">
+            <div className="relative w-full">
 
                 <p
                     ref={textoRef}
@@ -59,7 +59,7 @@ export default function DescricaoLivro({
                         font-roboto
                         text-text-muted
                         dark:text-text-light
-                        md:text-[26px]
+                        md:text-[20px] w-full
                         ${!expandida ? "line-clamp-4" : ""}
                     `}
                 >
@@ -74,7 +74,7 @@ export default function DescricaoLivro({
                         bg-linear-to-t
                         from-gray-background
                         to-transparent
-                        dark:from-surface-dark
+                        dark:from-gray-900
                     " />
                 )}
 
