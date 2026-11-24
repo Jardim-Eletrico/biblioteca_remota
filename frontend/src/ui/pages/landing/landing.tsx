@@ -9,31 +9,86 @@ export default function Landing() {
 
     const imagemRef = useRef<HTMLDivElement>(null);
 
+    
+    
     useEffect(() => {
-        let frameId: number;
+        const imagem = imagemRef.current;
+        const banner = imagem?.parentElement;
+        if (!imagem || !banner) return;
 
-        const atualizarParallax = () => {
-            cancelAnimationFrame(frameId);
+        // Respeita quem prefere menos movimento
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
-            frameId = requestAnimationFrame(() => {
-                if (!imagemRef.current) return;
+        const VELOCIDADE = 0.3;   // 0 = imagem parada, 1 = sem parallax
+        const INERCIA_MS = 200;   // maior = mais "pesado"
+        const MARGEM = 0.15;      // igual ao top/bottom -15% do CSS
 
-                const banner = imagemRef.current.parentElement;
-                if (!banner) return;
+        let frameId = 0;
+        let rodando = false;
+        let visivel = true;
+        let atual = 0;
+        let alvo = 0;
+        let ultimoTempo = 0;
 
-                const distancia = banner.getBoundingClientRect().top;
-
-                const deslocamento = -distancia * 0.3;
-
-                imagemRef.current.style.transform = `translateY(${deslocamento}px)`;
-            });
+        const calcularAlvo = () => {
+            const limite = banner.offsetHeight * MARGEM;
+            const bruto = -banner.getBoundingClientRect().top * VELOCIDADE;
+            // Nunca deixa a imagem passar da sobra, evitando bordas vazias
+            alvo = Math.max(-limite, Math.min(limite, bruto));
         };
 
-        window.addEventListener("scroll", atualizarParallax, { passive: true });
-        atualizarParallax();
+        const animar = (tempo: number) => {
+            if (!ultimoTempo) ultimoTempo = tempo;
+            const delta = Math.min(tempo - ultimoTempo, 64);
+            ultimoTempo = tempo;
+
+            // Suavização independente de FPS
+            const fator = 1 - Math.exp(-delta / INERCIA_MS);
+            atual += (alvo - atual) * fator;
+
+            imagem.style.transform = `translate3d(0, ${atual.toFixed(2)}px, 0)`;
+
+            // Dorme quando estabiliza
+            if (Math.abs(alvo - atual) < 0.05) {
+                atual = alvo;
+                imagem.style.transform = `translate3d(0, ${atual}px, 0)`;
+                rodando = false;
+                ultimoTempo = 0;
+                return;
+            }
+
+            frameId = requestAnimationFrame(animar);
+        };
+
+        const iniciar = () => {
+            if (rodando || !visivel) return;
+            rodando = true;
+            frameId = requestAnimationFrame(animar);
+        };
+
+        const aoRolar = () => {
+            calcularAlvo();
+            iniciar();
+        };
+
+        // Só anima enquanto o banner está visível
+        const observer = new IntersectionObserver(([entry]) => {
+            visivel = entry.isIntersecting;
+            if (visivel) aoRolar();
+        });
+        observer.observe(banner);
+
+        window.addEventListener("scroll", aoRolar, { passive: true });
+        window.addEventListener("resize", aoRolar);
+
+        calcularAlvo();
+        atual = alvo;
+        imagem.style.transform = `translate3d(0, ${atual}px, 0)`;
 
         return () => {
-            window.removeEventListener("scroll", atualizarParallax);
+            window.removeEventListener("scroll", aoRolar);
+            window.removeEventListener("resize", aoRolar);
+            observer.disconnect();
             cancelAnimationFrame(frameId);
         };
     }, []);
@@ -46,7 +101,7 @@ export default function Landing() {
                 {/* Imagem com parallax */}
                 <div
                     ref={imagemRef}
-                    className="absolute left-0 right-0 top-[-15%] bottom-[-15%] bg-[url('/landing/landing_hero.png')] bg-cover bg-bottom-right z-0"
+                    className="absolute left-0 right-0 top-[-15%] bottom-[-15%] bg-[url('/landing/landing_hero.png')] bg-cover bg-bottom-right z-0 will-change-transform"
                 />
 
                 {/* Gradiente */}
@@ -127,17 +182,65 @@ export default function Landing() {
 
                 </div>
 
-                <div className="flex flex-col w-full h-fit min-h-43.5 p-2.5 gap-2.5 md:gap-3 lg:gap-4 md:p-3.5 lg:p-5 bg-forest-green rounded-t-2xl bg-[url('/landing/leaves.png')] bg-no-repeat bg-center bg-cover md:w-[50%] md:min-h-70 lg:min-h-90 mt-auto">
-                    <div className="flex flex-col w-fit h-fit max-w-[80%] md:max-w-[60%] lg:max-w-[40%] gap-1.5 p-2.5 md:gap-2 lg:gap-3">
-                        <h2 className="font-source-serif-pro text-2xl md:text-4xl lg:text-5xl text-white">Leitura acessível para todos os usuários</h2>
-                        <p className="font-roboto font-light text-[13px] md:text-[20px] lg:text-2xl text-text-light">Mais histórias, mais aventuras, mais conhecimento para sua vida.</p>
+                
+                <div className="
+                    flex flex-col w-full h-fit min-h-44
+                    p-3 gap-3
+                    sm:p-4 sm:gap-3
+                    md:w-1/2 md:min-h-64 md:p-4 md:gap-4
+                    lg:min-h-80 lg:p-5 lg:gap-12
+                    xl:min-h-96 xl:p-6
+                    mt-auto
+                    bg-forest-green rounded-t-2xl
+                    bg-[url('/landing/leaves.png')]
+                    bg-no-repeat bg-center bg-cover
+                ">
+                    <div className="
+                        flex flex-col w-full h-fit gap-2
+                        sm:gap-2.5
+                        md:gap-3
+                        lg:gap-3.5
+                    ">
+                        <h2 className="
+                            font-source-serif-pro text-2xl
+                            sm:text-3xl
+                            md:text-4xl
+                            lg:text-5xl
+                            text-white
+                        ">
+                            Leitura acessível para todos os usuários
+                        </h2>
+
+                        <p className="
+                            font-roboto font-light text-sm
+                            sm:text-base
+                            md:text-lg
+                            lg:text-2xl
+                            text-text-light
+                        ">
+                            Mais histórias, mais aventuras, mais conhecimento para sua vida.
+                        </p>
                     </div>
 
-                    <Link 
+                    <Link
                         to="/auth"
-                        className="flex items-center justify-center self-center w-fit h-fit px-4 py-2.5 bg-vivid-orange font-roboto text-[16px] md:text-3xl lg:text-4xl md:p-4 lg:p-5 text-white font-normal rounded-3xl outline outline-white outline-offset-4"
-                    >Começar agora</Link>
-
+                        className="
+                            flex items-center justify-center self-center
+                            w-fit h-fit
+                            px-4 py-2
+                            sm:px-5 sm:py-2
+                            md:px-5 md:py-2.5
+                            lg:px-6 lg:py-3
+                            bg-vivid-orange
+                            font-roboto text-base
+                            md:text-lg lg:text-xl
+                            text-white font-normal
+                            rounded-3xl
+                            outline outline-white outline-offset-4
+                        "
+                    >
+                        Começar agora
+                    </Link>
                 </div>
 
             </div>
