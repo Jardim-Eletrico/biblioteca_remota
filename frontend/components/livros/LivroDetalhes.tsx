@@ -98,6 +98,9 @@ export default function LivroDetalhes({
 
     const navigate = useNavigate();
 
+    const isBibliotecario =
+        perfil?.perfis.includes("bibliotecario") ?? false;
+
     // IDENTIFICAR PERFIL DO USUÁRIO
     useEffect(() => {
         let ativo = true;
@@ -455,8 +458,6 @@ export default function LivroDetalhes({
         return isMd;
     }
 
-    const isMd = useIsMd();
-
     return (
         <>
             <div className="
@@ -598,7 +599,8 @@ export default function LivroDetalhes({
                             carregandoCarrinho ||
                             atualizandoCarrinho ||
                             erroCarrinho ||
-                            (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido))
+                            (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido)) ||
+                            isBibliotecario
                         }
                         className="
                             w-full rounded-xl
