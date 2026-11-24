@@ -7,7 +7,7 @@ export default function Pubnavbar() {
     return(
         <>
         
-            <header className="w-screen h-fit flex justify-between items-center sticky top-0 z-50 px-5 py-5 before:content-[''] before:absolute before:z-[-1] before:bg-navbar-dark before:inset-0 before:backdrop-blur-md">
+            <header className="w-full h-fit flex justify-between items-center sticky top-0 z-50 px-5 py-5 before:content-[''] before:absolute before:z-[-1] before:bg-navbar-dark before:inset-0 before:backdrop-blur-md overflow-x-hidden">
                 
                 <Link to="/landing">
                     <Logo aligned="horizontal" text="yes"/>
