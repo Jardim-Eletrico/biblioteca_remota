@@ -280,6 +280,7 @@ export default function Appnavbar() {
                                 openMenu ? "bg-white/0 dark:bg-white/0" : "bg-navbar-light"
                             }`
                     }`}
+
                 >
                     {!isBibliotecario && (
                         <>
@@ -317,14 +318,16 @@ export default function Appnavbar() {
                         type="button"
                         onClick={() => navigate("/perfil")}
                         aria-label="Meu perfil"
-                        className="flex items-center justify-center size-8 sm:size-10 rounded-full bg-gray-400 hover:bg-gray-300 transition-colors cursor-pointer"
+                        className={`flex flex-row items-center w-fit h-hug px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out ${
+                                openMenu ? "bg-white/0 dark:bg-white/0" : "bg-navbar-light"}
+                        `}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="22"
-                            height="22"
+                            width="35"
+                            height="35"
                             fill="currentColor"
-                            className="bi bi-person text-black dark:text-white"
+                            className="bi bi-person text-black dark:text-white size-8 sm:size-10"
                             viewBox="0 0 16 16"
                         >
                             <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 4 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
