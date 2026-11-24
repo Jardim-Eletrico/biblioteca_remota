@@ -146,10 +146,10 @@ async function handleLogin() {
                         Bibliotecário
                     </p>
                     <p className="text-slate-200">
-                        Email: ana.souza@biblioteca.com
+                        Email: bibliotecario@biblioteca.com
                     </p>
                     <p className="text-slate-200">
-                        Senha: Ana@2026
+                        Senha: Biblioteca@2026
                     </p>
                 </div>
             </div>
