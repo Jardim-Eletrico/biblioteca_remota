@@ -459,15 +459,21 @@ export default function LivroDetalhes({
 
     return (
         <>
-            <div className="flex flex-col md:flex-row md:gap-8 w-full">
+            <div className="
+                flex flex-col
+                lg:flex-row lg:gap-8
+                w-full min-w-0
+            ">
                 {/* CAPA */}
                 <div className="
-                    w-full md:w-fit
+                    w-full sm:w-100
+                    lg:w-80 lg:shrink-0
                     overflow-hidden rounded-xl
                     border border-gray-stroke
                     bg-light-gray
                     dark:border-surface-mid
-                    dark:bg-surface-mid h-fit
+                    dark:bg-surface-mid
+                    h-fit
                 ">
                     {!imageError && edicao.capa ? (
                         <img
@@ -477,7 +483,7 @@ export default function LivroDetalhes({
                             className="
                                 block w-full
                                 aspect-2/3
-                                object-cover md:w-220
+                                object-cover h-full
                             "
                         />
                     ) : (
@@ -508,7 +514,7 @@ export default function LivroDetalhes({
                     )}
                 </div>
                 
-                <div className="flex flex-col gap-3 w-full">
+                <div className="flex flex-col gap-3 w-full min-w-0 flex-1">
                     {/* TÍTULO E LISTA DE DESEJOS */}
                     <div className="
                         flex items-start
