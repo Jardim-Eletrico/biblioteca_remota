@@ -55,6 +55,7 @@ export default function App() {
                     <Route path="/reserva" element={<TesteConfirmarReserva />} />
                     <Route path="/meus-emprestimos" element={<MeusEmprestimos />} />
 
+
                     {/* Rotas exclusivas do bibliotecário */}
                     <Route element={<RotaBibliotecario />}>
                         <Route path="/gestao-emprestimos" element={<GestaoEmprestimos />} />
