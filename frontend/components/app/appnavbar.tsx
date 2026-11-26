@@ -318,9 +318,9 @@ export default function Appnavbar() {
                         type="button"
                         onClick={() => navigate("/perfil")}
                         aria-label="Meu perfil"
-                        className={`flex flex-row items-center w-fit h-hug px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out ${
-                                openMenu ? "bg-white/0 dark:bg-white/0" : "bg-navbar-light"}
-                        `}
+                        className={`flex flex-row items-center w-fit h-hug  ${
+                                openMenu ? "bg-white/0 dark:bg-white/0" : ""}
+                        ${isBibliotecario && "px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl bg-navbar-light dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out"}`}
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
