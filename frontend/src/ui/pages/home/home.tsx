@@ -170,7 +170,7 @@ export default function Home() {
                     <div className="flex w-max gap-7.5">
                         {livrosTopSection.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} className="w-40 shrink-0 sm:w-48 md:w-55 lg:w-60" onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
+                                <div key={edicao.id} className="w-40 shrink-0 sm:w-48 md:w-55 lg:w-60 hover:cursor-pointer" onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
                                     <LivroCard
                                         autor={livro.autor}
                                         titulo={livro.titulo}
@@ -239,7 +239,7 @@ export default function Home() {
                     ) : (
                         livros.map(livro => (
                             livro.edicoes.map(edicao => (
-                                <div key={edicao.id} onClick={() => navigate(`/detalhes-livro/${edicao.id}`)}>
+                                <div key={edicao.id} onClick={() => navigate(`/detalhes-livro/${edicao.id}`)} className="hover:cursor-pointer">
                                     <LivroCard
                                         key={edicao.id}
                                         autor={livro.autor}
