@@ -210,8 +210,8 @@ export default function Appnavbar() {
 
                                             <Link to="/carrinho" onClick={fecharMenu}>
                                                 <div className={MenuLinkStyle.link}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-cart dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
-                                                        <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0-2-4"/>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bag dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
+                                                        <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
                                                     </svg>
                                                     <span className="dark:text-white">CARRINHO DE LIVROS</span>
                                                 </div>
@@ -236,7 +236,7 @@ export default function Appnavbar() {
 
                 <div className={`flex flex-row w-fit h-hug px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out ${openMenu ? "bg-white/0 dark:bg-white/0" : "bg-navbar-light"}`}>
                     <button
-                        className="flex items-center"
+                        className="flex items-center hover:cursor-pointer"
                         aria-label="hamburguer"
                         onClick={(e) => {
                             hamburguerMenu(e);
@@ -248,7 +248,7 @@ export default function Appnavbar() {
                         </svg>
                     </button>
 
-                    <button className="flex items-center relative" aria-label="colorThemeBtn" onClick={toggleTheme}>
+                    <button className="flex items-center relative hover:cursor-pointer" aria-label="colorThemeBtn" onClick={toggleTheme}>
                         {/* Sol */}
                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor"
                             className={`bi bi-cloud-sun text-white transition-all duration-300 ease-in-out size-8 sm:size-10 ${
@@ -273,7 +273,7 @@ export default function Appnavbar() {
 
                 {/* Acesso rápido e perfil */}
                 <div
-                    className={`flex flex-row items-center w-fit h-hug ${
+                    className={`flex flex-row items-center w-fit h-hug hover:cursor-pointer ${
                         isBibliotecario
                             ? ""
                             : `px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out ${
@@ -284,7 +284,7 @@ export default function Appnavbar() {
                 >
                     {!isBibliotecario && (
                         <>
-                            <Link to="/meus-emprestimos">
+                            <Link to="/carrinho">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-bag dark:text-white size-8 sm:size-10" viewBox="0 0 16 16">
                                     <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1m3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/>
                                 </svg>
@@ -318,7 +318,7 @@ export default function Appnavbar() {
                         type="button"
                         onClick={() => navigate("/perfil")}
                         aria-label="Meu perfil"
-                        className={`flex flex-row items-center w-fit h-hug  ${
+                        className={`flex flex-row items-center w-fit h-hug hover:cursor-pointer ${
                                 openMenu ? "bg-white/0 dark:bg-white/0" : ""}
                         ${isBibliotecario && "px-4 py-2 sm:px-5 sm:py-2.5 rounded-4xl bg-navbar-light dark:bg-navbar-dark gap-5 backdrop-blur-sm transition-colors duration-200 ease-in-out"}`}
                     >

@@ -11,6 +11,8 @@ import type { LivroRecomendadoResponse } from "@/src/types/livro";
 
 import { buscarLivrosRecomendados } from "@/src/services/livrosService";
 
+import { listarMeusPedidos } from "@/src/services/pedidoService";
+
 
 interface CarrinhoProps {
     recomendados?: LivroRecomendadoResponse[];
@@ -22,6 +24,8 @@ export default function Carrinho(
     }: CarrinhoProps)
  {
 
+    const [limiteEmprestimosAtingido, setLimiteEmprestimosAtingido] = useState(false);
+
     const navigate = useNavigate();
 
     const [itens, setItens] = useState<ItemCarrinho[]>([]);
@@ -31,7 +35,65 @@ export default function Carrinho(
     const [recomendacoesApi, setRecomendacoesApi] = useState<LivroRecomendadoResponse[]>([]);
 
     const [edicoesIndisponiveis, setEdicoesIndisponiveis] = useState<number[]>([]);
+    const [verificandoEmprestimos, setVerificandoEmprestimos] = useState(true);
 
+    const [possuiAtraso, setPossuiAtraso] = useState(false);
+
+
+    useEffect(() => {
+        async function buscarEmprestimos() {
+            try {
+                const pedidos = await listarMeusPedidos();
+
+                const emprestimosAtivos = pedidos.filter((pedido) => {
+                
+                    if (pedido.status !== "aprovado") {
+                        return false;
+                    }
+
+                    // Pedido aprovado que ainda não virou empréstimo.
+                    if (!pedido.emprestimo) {
+                        return true;
+                    }
+
+                    // Empréstimo ainda não devolvido.
+                    return (
+                        pedido.emprestimo.data_devolucao === null &&
+                        pedido.emprestimo.situacao_encerramento === null
+                    );
+                });
+
+                const emprestimosAtrasados = pedidos.filter((pedido) => {
+                    if (pedido.status !== "aprovado" || !pedido.emprestimo) {
+                        return false;
+                    }
+
+                    const emprestimo = pedido.emprestimo;
+                    const hoje = new Date().toLocaleDateString("en-CA");
+
+                    return (
+                        emprestimo.situacao_encerramento === null &&
+                        !emprestimo.regularizado &&
+                        emprestimo.data_devolucao === null &&
+                        emprestimo.data_prevista_devolucao < hoje
+                    );
+                });
+
+                setLimiteEmprestimosAtingido(
+                    emprestimosAtivos.length + itens.length > 2
+                );
+
+                setPossuiAtraso(emprestimosAtrasados.length > 0);
+
+            } catch (error) {
+                console.error("Erro ao verificar empréstimos:", error);
+            } finally {
+                setVerificandoEmprestimos(false);
+            }
+        }
+
+        buscarEmprestimos();
+    }, [itens]);
 
     useEffect(() => {
         async function carregarCarrinho() {
@@ -63,6 +125,10 @@ export default function Carrinho(
 
         if (indisponiveis.length > 0) {
             return;
+        }
+
+        if (limiteEmprestimosAtingido || verificandoEmprestimos) {
+            return
         }
 
         navigate("/reserva", { state: { itens } });
@@ -224,13 +290,14 @@ export default function Carrinho(
                                     </span>
                                 </div>
 
-                                <span className="
+                                <span className={`
                                     rounded-full px-3 py-1
                                     text-xs font-bold
                                     bg-blue-50 text-blue-600
                                     dark:bg-blue-950/50 dark:text-blue-400
                                     md:text-[18px]
-                                ">
+                                    ${(limiteEmprestimosAtingido || possuiAtraso) && "text-red-600 bg-red-100 dark:text-red-600 dark:bg-red-100"}
+                                    `}>
                                     {itens.length}/2
                                 </span>
                             </div>
@@ -241,15 +308,35 @@ export default function Carrinho(
                                 overflow-hidden
                             ">
                                 <div
-                                    className="
+                                    className={`
                                         h-full rounded-full
                                         bg-primary transition-all duration-900
-                                    "
+                                        ${(limiteEmprestimosAtingido || possuiAtraso) && "bg-red-600"}
+                                        `}
                                     style={{
                                         width: `${Math.min(itens.length / 2, 1) * 100}%`
                                     }}
                                 />
                             </div>
+
+                            {limiteEmprestimosAtingido && (
+                                <div className="w-full bg-red-50 dark:bg-red-100 border border-dashed border-red-600 font-ubuntu text-sm sm:text-base text-red-600 p-2 text-center rounded-md wrap-break-word">
+                                    Seu limite de empréstimos foi ultrapassado. Clique{" "}
+                                    <span
+                                        onClick={() => navigate("/meus-emprestimos")}
+                                        className="font-semibold hover:cursor-pointer underline whitespace-nowrap"
+                                    >
+                                        aqui
+                                    </span>{" "}
+                                    para rever seus empréstimos.
+                                </div>
+                            )}
+
+                            {possuiAtraso && (
+                                <div className="w-full bg-red-50 dark:bg-red-100 border border-dashed border-red-600 font-ubuntu text-sm sm:text-base text-red-600 p-2 text-center rounded-md wrap-break-word">
+                                    Você possui um empréstimo em atraso. Regularize sua situação para realizar novas reservas.
+                                </div>
+                            )}
 
                             <button
                                 type="button"
@@ -261,8 +348,11 @@ export default function Carrinho(
                                     hover:brightness-110
                                     active:scale-[0.98]
                                     md:text-[20px]
-                                    ${edicoesIndisponiveis.length >=1 && "hover:bg-red-700 active:bg-red-700 focus:bg-red-700"}
+                                    ${(edicoesIndisponiveis.length >= 1 || limiteEmprestimosAtingido)
+                                        ? "hover:bg-red-700 active:bg-red-700 focus:bg-red-700"
+                                        : ""}
                                 `}
+                                disabled={verificandoEmprestimos || limiteEmprestimosAtingido || possuiAtraso}
                                 onClick={() => reservarLivros(itens)}
                             >
                                 RESERVAR LIVROS

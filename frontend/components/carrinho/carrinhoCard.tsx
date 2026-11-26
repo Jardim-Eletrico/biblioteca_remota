@@ -34,6 +34,7 @@ export default function ItemCarrinhoCard({
                     text-zinc-700 hover:text-red-500
                     dark:text-zinc-300 dark:hover:text-red-400
                     transition-colors
+                    hover:cursor-pointer
                 "
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-x dark:text-white" viewBox="0 0 16 16">
@@ -151,6 +152,7 @@ export default function ItemCarrinhoCard({
                         dark:text-blue-400
                         dark:hover:bg-blue-600
                         dark:hover:text-white self-end mt-auto md:text-[20px]
+                        hover:cursor-pointer
                     "
                     onClick={() => {navigate(`/detalhes-livro/${item.edicaoId}`); }}
                 >
