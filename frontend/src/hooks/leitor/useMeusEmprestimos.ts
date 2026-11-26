@@ -79,6 +79,16 @@ export default function useMeusEmprestimos() {
         });
     }, [pedidos, filtro]);
 
+    // Somente empréstimos ativos
+    const emprestimosAtivos = useMemo(() => {
+        return pedidos.filter((pedido) =>
+            pedido.status === "aprovado" &&
+            pedido.emprestimo !== null &&
+            pedido.emprestimo.data_devolucao === null &&
+            pedido.emprestimo.situacao_encerramento === null
+        );
+    }, [pedidos]);
+
     // Verificar se o pedido pode ser cancelado
     function podeCancelarPedido(pedido: PedidoResponse) {
         return (
@@ -120,6 +130,7 @@ export default function useMeusEmprestimos() {
     return {
         pedidos,
         pedidosFiltrados,
+        emprestimosAtivos,
 
         filtro,
         setFiltro,
