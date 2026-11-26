@@ -14,7 +14,7 @@ export default function ErrorPage() {
         <div className="flex flex-col items-center flex-1">
 
             <div className="flex flex-col w-full h-full flex-1 items-center justify-center gap-2 md:gap-5 lg:gap-6.5">
-                <div className="flex w-full items-center">
+                <div className="flex w-full justify-center items-center">
                     <img src="/error/404character.png" alt="404 character img" className="size-36 md:size-47" />
                     <h2 className="font-ubuntu font-bold text-6xl md:text-7xl lg:text-8xl dark:text-white">OOPS!</h2>
                 </div>
