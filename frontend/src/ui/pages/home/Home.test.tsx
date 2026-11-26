@@ -16,4 +16,30 @@ const mocks = vi.hoisted(() => ({
     buscarPerfil: vi.fn(),
     tokenExpirado: vi.fn,
 })
+);
+
+vi.mock("@/src/services/livrosService", () => ({
+    listarLivros: mocks.listarLivros,
+}));
+
+vi.mock("@/src/services/perfilService", () => ({
+    buscarPerfil: mocks.buscarPerfil,
+}));
+
+vi.mock("@/src/utils/token", () => ({
+    tokenExpirado: mocks.tokenExpirado,
+}));
+
+vi.mock("react-infinite-scroll-component", () => ({
+    default: ({ children }: {children: ReactNode}) => (
+        <div>{children}</div>
+    )
+})
 )
+
+describe ("Home", () {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        localStorage.clear()
+    })
+})
