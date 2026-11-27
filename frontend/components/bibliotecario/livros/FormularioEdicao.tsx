@@ -23,7 +23,7 @@ export default function FormularioEdicao({
             <div>
                 <label
                     htmlFor={`${prefixo}-ano-publicacao`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     Ano de publicação *
                 </label>
@@ -43,7 +43,7 @@ export default function FormularioEdicao({
                     }
                     placeholder="Ex.: 2024"
                     required
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                 />
             </div>
 
@@ -51,7 +51,7 @@ export default function FormularioEdicao({
             <div>
                 <label
                     htmlFor={`${prefixo}-editora`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     Editora *
                 </label>
@@ -66,7 +66,7 @@ export default function FormularioEdicao({
                     placeholder="Nome da editora"
                     maxLength={200}
                     required
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                 />
             </div>
 
@@ -74,7 +74,7 @@ export default function FormularioEdicao({
             <div>
                 <label
                     htmlFor={`${prefixo}-numero-paginas`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     Número de páginas *
                 </label>
@@ -93,7 +93,7 @@ export default function FormularioEdicao({
                     }
                     placeholder="Ex.: 320"
                     required
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                 />
             </div>
 
@@ -101,7 +101,7 @@ export default function FormularioEdicao({
             <div>
                 <label
                     htmlFor={`${prefixo}-edicao`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     Número da edição *
                 </label>
@@ -116,7 +116,7 @@ export default function FormularioEdicao({
                     placeholder="Ex.: 1ª, 2ª, Revisada"
                     maxLength={20}
                     required
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                 />
             </div>
 
@@ -124,7 +124,7 @@ export default function FormularioEdicao({
             <div className="md:col-span-2">
                 <label
                     htmlFor={`${prefixo}-isbn`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     ISBN
                 </label>
@@ -138,7 +138,7 @@ export default function FormularioEdicao({
                     }
                     placeholder="Ex.: 978-85-00000-00-0"
                     maxLength={17}
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                 />
             </div>
 
@@ -146,7 +146,7 @@ export default function FormularioEdicao({
             <div className="md:col-span-2">
                 <label
                     htmlFor={`${prefixo}-capa`}
-                    className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                    className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                 >
                     Capa do livro
                 </label>
@@ -162,7 +162,7 @@ export default function FormularioEdicao({
                             e.target.files?.[0] ?? null
                         )
                     }
-                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:px-4 file:py-2 file:text-sm file:font-medium dark:border-surface-mid dark:bg-surface-dark dark:text-gray-300 dark:file:bg-surface-mid dark:file:text-white"
+                    className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-700 file:mr-4 file:rounded-md file:border-0 file:bg-gray-100 file:px-4 file:py-2 file:text-base file:font-medium dark:border-surface-mid dark:bg-surface-dark dark:text-gray-300 dark:file:bg-surface-mid dark:file:text-white"
                 />
 
                 {edicao.capa && (
@@ -174,7 +174,7 @@ export default function FormularioEdicao({
                         />
 
                         <div>
-                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                            <p className="text-base font-medium text-gray-700 dark:text-gray-300">
                                 {edicao.capa.name}
                             </p>
 
@@ -183,7 +183,7 @@ export default function FormularioEdicao({
                                 onClick={() =>
                                     atualizarEdicao(indice, "capa", null)
                                 }
-                                className="mt-1 text-sm text-red-600 hover:underline dark:text-red-400"
+                                className="mt-1 text-base text-red-600 hover:underline dark:text-red-400"
                             >
                                 Remover capa
                             </button>

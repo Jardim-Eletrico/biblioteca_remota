@@ -11,7 +11,7 @@ export default function LeitoresTabela({
 }: LeitoresTabelaProps) {
     return (
         <div className="overflow-x-auto rounded-xl border border-gray-stroke bg-white shadow-sm dark:border-surface-mid dark:bg-surface-dark">
-            <table className="w-full min-w-[700px] text-left">
+            <table className="w-full min-w-175 text-left">
                 <thead className="bg-gray-background dark:bg-surface-mid">
                     <tr className="text-xs font-semibold uppercase tracking-wide text-text-muted dark:text-text-light">
                         <th className="px-5 py-4">Leitor</th>
