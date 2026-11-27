@@ -112,7 +112,7 @@ export default function GestaoLeitores() {
     }, [leitores, filtro]);
 
     return (
-        <main className="min-h-screen bg-gray-background p-5 dark:bg-navy-background md:p-8">
+        <main className="min-h-screen md:p-8">
             <div className="mx-auto max-w-7xl space-y-6">
 
                 {/* Cabeçalho */}
@@ -290,7 +290,7 @@ export default function GestaoLeitores() {
                                 </p>
                             ) : (
                                 <div className="overflow-x-auto rounded-lg border border-gray-stroke dark:border-surface-mid">
-                                    <table className="w-full min-w-[600px] text-left text-sm">
+                                    <table className="w-full min-w-150 text-left text-sm">
                                         <thead className="bg-gray-background text-text-muted dark:bg-surface-mid dark:text-text-light">
                                             <tr>
                                                 <th className="p-3">Livro</th>

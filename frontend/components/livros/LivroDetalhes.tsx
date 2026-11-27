@@ -40,6 +40,7 @@ interface LivroDetalhesProps {
     livro: LivroResponse;
     edicao: EdicaoResponse;
     recomendados?: LivroRecomendadoResponse[];
+    possuiExemplares: boolean;
 
     estaNaListaDesejos?: boolean;
     onAlternarDesejo?: () => void;
@@ -60,6 +61,7 @@ export default function LivroDetalhes({
     onAlternarDesejo,
     onAbrirLivroRecomendado,
     onAvaliacaoAtualizada,
+    possuiExemplares
 }: LivroDetalhesProps) {
     const [imageError, setImageError] = useState(false);
 
@@ -348,10 +350,6 @@ export default function LivroDetalhes({
     // VERIFICAR LIMITE DE LIVROS
     const limiteAtingido = itens.length >= 2;
 
-    // VERIFICAR DISPONIBILIDADE DA EDIÇÃO
-    const temDisponibilidade =
-        edicao.exemplares_disponiveis > 0;
-
     // ADICIONAR OU REMOVER DO CARRINHO
     async function adicionarAoCarrinho() {
         if (
@@ -396,14 +394,6 @@ export default function LivroDetalhes({
             return;
         }
 
-        if (!temDisponibilidade) {
-            setTipoMensagem("erro");
-            setMensagem(
-                "Esta edição não possui exemplares disponíveis."
-            );
-            return;
-        }
-
         if (limiteAtingido) {
             setTipoMensagem("erro");
             setMensagem(
@@ -437,25 +427,6 @@ export default function LivroDetalhes({
         } finally {
             setAtualizandoCarrinho(false);
         }
-    }
-
-
-    function useIsMd() {
-        const [isMd, setIsMd] = useState(window.innerWidth >= 768);
-
-        useEffect(() => {
-            function verificarTela() {
-                setIsMd(window.innerWidth >= 768);
-            }
-
-            window.addEventListener("resize", verificarTela);
-
-            return () => {
-                window.removeEventListener("resize", verificarTela);
-            };
-        }, []);
-
-        return isMd;
     }
 
     return (
@@ -599,8 +570,8 @@ export default function LivroDetalhes({
                             carregandoCarrinho ||
                             atualizandoCarrinho ||
                             erroCarrinho ||
-                            (!livroJaAdicionado && (!temDisponibilidade || limiteAtingido)) ||
-                            isBibliotecario
+                            (!livroJaAdicionado && limiteAtingido) ||
+                            isBibliotecario || !possuiExemplares
                         }
                         className="
                             w-full rounded-xl
@@ -624,9 +595,9 @@ export default function LivroDetalhes({
                                         ? "REMOVER DO CARRINHO"
                                         : limiteAtingido
                                             ? "LIMITE DE 2 LIVROS ATINGIDO"
-                                            : !temDisponibilidade
-                                                ? "INDISPONÍVEL"
-                                                : "ADICIONAR AO CARRINHO"
+                                                : !possuiExemplares ?
+                                                    "INDISPONÍVEL"
+                                                        : "ADICIONAR AO CARRINHO"
                         }
                     </button>
                     

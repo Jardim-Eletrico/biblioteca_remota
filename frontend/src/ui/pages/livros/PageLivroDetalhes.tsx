@@ -147,6 +147,7 @@ export default function PageLivroDetalhes() {
             edicao={edicao}
             onAbrirLivroRecomendado={abrirLivroRecomendado}
             onAvaliacaoAtualizada={atualizarDadosLivro}
+            possuiExemplares={edicao.possui_exemplares_emprestaveis}
         />
     );
 }

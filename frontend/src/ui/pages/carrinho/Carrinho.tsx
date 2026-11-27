@@ -34,7 +34,6 @@ export default function Carrinho(
 
     const [recomendacoesApi, setRecomendacoesApi] = useState<LivroRecomendadoResponse[]>([]);
 
-    const [edicoesIndisponiveis, setEdicoesIndisponiveis] = useState<number[]>([]);
     const [verificandoEmprestimos, setVerificandoEmprestimos] = useState(true);
 
     const [possuiAtraso, setPossuiAtraso] = useState(false);
@@ -115,20 +114,9 @@ export default function Carrinho(
         carregarCarrinho();
     }, []);
 
-    function reservarLivros(itens: ItemCarrinho[]) {
-
-        const indisponiveis = itens
-            .filter(edicao => edicao.exemplaresDisponiveis <= 0)
-            .map(edicao => edicao.edicaoId);
-
-        setEdicoesIndisponiveis(indisponiveis);
-
-        if (indisponiveis.length > 0) {
+        function reservarLivros(itens: ItemCarrinho[]) {
+        if (limiteEmprestimosAtingido || verificandoEmprestimos || possuiAtraso) {
             return;
-        }
-
-        if (limiteEmprestimosAtingido || verificandoEmprestimos) {
-            return
         }
 
         navigate("/reserva", { state: { itens } });
@@ -286,7 +274,7 @@ export default function Carrinho(
                                     ">
                                         {itens.length === 2
                                             ? "Limite de livros atingido"
-                                            : "Disponíveis para reserva"}
+                                            : "Livros selecionados"}
                                     </span>
                                 </div>
 
@@ -348,7 +336,7 @@ export default function Carrinho(
                                     hover:brightness-110
                                     active:scale-[0.98]
                                     md:text-[20px]
-                                    ${(edicoesIndisponiveis.length >= 1 || limiteEmprestimosAtingido)
+                                    ${limiteEmprestimosAtingido
                                         ? "hover:bg-red-700 active:bg-red-700 focus:bg-red-700"
                                         : ""}
                                 `}

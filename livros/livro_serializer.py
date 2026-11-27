@@ -14,6 +14,7 @@ from emprestimos.models import Emprestimo
 class EdicaoSerializer(serializers.ModelSerializer):
     total_exemplares = serializers.SerializerMethodField()
     exemplares_disponiveis = serializers.SerializerMethodField()
+    possui_exemplares_emprestaveis = serializers.SerializerMethodField()
 
     class Meta:
         model = Edicao
@@ -24,6 +25,9 @@ class EdicaoSerializer(serializers.ModelSerializer):
 
     def get_exemplares_disponiveis(self, obj):
         return obj.exemplares.filter(status="disponivel").count()
+
+    def get_possui_exemplares_emprestaveis(self, obj):
+        return obj.exemplares.exclude(status="baixado").exists()
 
 
 class LivroSerializer(serializers.ModelSerializer):

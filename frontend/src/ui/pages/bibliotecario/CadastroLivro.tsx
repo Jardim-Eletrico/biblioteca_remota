@@ -26,15 +26,15 @@ export default function CadastroLivro() {
     }
 
     return (
-        <main className="min-h-screen bg-gray-50 px-4 py-8 dark:bg-surface-dark sm:px-6 lg:px-8">
-            <div className="mx-auto max-w-5xl">
+        <main className="min-h-screen">
+            <div className="mx-auto max-w-5xl dark:bg-surface-dark bg-gray-50 px-4 py-8 sm:px-6 lg:px-8 rounded-md">
                 {/* Cabeçalho */}
                 <div className="mb-8">
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
                         Cadastrar livro
                     </h1>
 
-                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <p className="mt-2 text-base text-gray-600 dark:text-gray-400">
                         Cadastre uma nova obra, suas edições e os respectivos
                         exemplares no acervo da biblioteca.
                     </p>
@@ -67,7 +67,7 @@ export default function CadastroLivro() {
                     {erro && (
                         <div
                             role="alert"
-                            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400"
+                            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-base text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400"
                         >
                             {erro}
                         </div>
@@ -76,7 +76,7 @@ export default function CadastroLivro() {
                     {sucesso && (
                         <div
                             role="status"
-                            className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400"
+                            className="rounded-lg border border-green-200 bg-green-50 px-4 py-3 text-base text-green-700 dark:border-green-900 dark:bg-green-950/30 dark:text-green-400"
                         >
                             {sucesso}
                         </div>
@@ -87,7 +87,7 @@ export default function CadastroLivro() {
                         <button
                             type="submit"
                             disabled={carregando || carregandoCDDs}
-                            className="inline-flex min-w-40 items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="inline-flex min-w-40 items-center justify-center rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {carregando
                                 ? "Cadastrando..."

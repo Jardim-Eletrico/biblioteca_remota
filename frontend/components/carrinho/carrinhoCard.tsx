@@ -135,7 +135,7 @@ export default function ItemCarrinhoCard({
 
                 {item.exemplaresDisponiveis <= 0 && (
                     <div className="flex items-center justify-center bg-red-100 text-red-500 border-dashed border-red-500 border-2 p-2 md:p-3 rounded-lg relative">
-                        <p className="text-[12px] md:text-[16px]">Este item está indisponível. Remova-o do carrinho antes de continuar</p>
+                        <p className="text-[12px] md:text-[16px]">Este item está indisponível, mas você ainda pode reservá-lo.</p>
                     </div>
                 )}
 

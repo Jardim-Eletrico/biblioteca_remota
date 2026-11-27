@@ -157,7 +157,7 @@ export default function ConfirmarReserva() {
                                                                 rounded-md bg-amber-100
                                                                 px-2 py-1 text-xs font-medium
                                                                 text-amber-700
-                                                                dark:bg-amber-900/40 dark:text-amber-300 md:text-[18px]
+                                                                dark:bg-amber-900/70 dark:text-amber-300 md:text-[18px] w-fit backdrop-blur-xl
                                                             ">
                                                                 <span className="h-2 w-2 rounded-full bg-amber-600" />
                                                                 Indisponível

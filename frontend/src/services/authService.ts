@@ -68,8 +68,11 @@ export async function cadastro(
     const data = await response.json().catch(() => null);
 
     if (!response.ok) {
+        console.error("Status:", response.status);
+        console.error("Resposta do servidor:", data);
+
         throw new Error(
-            data?.detail ?? data?.erro ?? "Erro no cadastro"
+            data?.detail ?? data?.erro ?? JSON.stringify(data)
         );
     }
 
