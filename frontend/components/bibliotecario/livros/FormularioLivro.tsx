@@ -20,11 +20,11 @@ export default function FormularioLivro({
     return (
         <section className="rounded-xl border border-gray-stroke bg-white p-6 shadow-sm dark:border-surface-mid dark:bg-surface-dark">
             <div className="mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     Dados do livro
                 </h2>
 
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
                     Informe os dados principais da obra.
                 </p>
             </div>
@@ -34,7 +34,7 @@ export default function FormularioLivro({
                 <div className="md:col-span-2">
                     <label
                         htmlFor="titulo"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Título *
                     </label>
@@ -49,7 +49,7 @@ export default function FormularioLivro({
                         placeholder="Digite o título do livro"
                         required
                         maxLength={200}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
                 </div>
 
@@ -57,7 +57,7 @@ export default function FormularioLivro({
                 <div className="md:col-span-2">
                     <label
                         htmlFor="subtitulo"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Subtítulo
                     </label>
@@ -71,7 +71,7 @@ export default function FormularioLivro({
                         }
                         placeholder="Digite o subtítulo, se houver"
                         maxLength={200}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
                 </div>
 
@@ -79,7 +79,7 @@ export default function FormularioLivro({
                 <div>
                     <label
                         htmlFor="autor"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Autor *
                     </label>
@@ -94,7 +94,7 @@ export default function FormularioLivro({
                         placeholder="Nome do autor"
                         required
                         maxLength={200}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
                 </div>
 
@@ -102,7 +102,7 @@ export default function FormularioLivro({
                 <div>
                     <label
                         htmlFor="ano_original"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Ano original *
                     </label>
@@ -117,7 +117,7 @@ export default function FormularioLivro({
                         placeholder="Ex.: 1899 ou século XIX"
                         required
                         maxLength={30}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
                 </div>
 
@@ -125,7 +125,7 @@ export default function FormularioLivro({
                 <div>
                     <label
                         htmlFor="generos"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Gêneros
                     </label>
@@ -139,10 +139,10 @@ export default function FormularioLivro({
                         }
                         placeholder="Ex.: Romance, Drama, Ficção"
                         maxLength={90}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
 
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                         Separe os gêneros por vírgula.
                     </p>
                 </div>
@@ -151,7 +151,7 @@ export default function FormularioLivro({
                 <div>
                     <label
                         htmlFor="cdd"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Classificação Decimal de Dewey (CDD)
                     </label>
@@ -168,7 +168,7 @@ export default function FormularioLivro({
                             )
                         }
                         disabled={carregandoCDDs}
-                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-60 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     >
                         <option value="">
                             {carregandoCDDs
@@ -188,7 +188,7 @@ export default function FormularioLivro({
                 <div className="md:col-span-2">
                     <label
                         htmlFor="descricao"
-                        className="mb-2 block text-sm font-medium text-gray-700 dark:text-gray-300"
+                        className="mb-2 block text-base font-medium text-gray-700 dark:text-gray-300"
                     >
                         Descrição
                     </label>
@@ -202,10 +202,10 @@ export default function FormularioLivro({
                         placeholder="Escreva uma breve descrição sobre o livro"
                         maxLength={1000}
                         rows={4}
-                        className="w-full resize-y rounded-lg border border-gray-stroke bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
+                        className="w-full resize-y rounded-lg border border-gray-stroke bg-white px-4 py-3 text-base text-gray-900 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-surface-mid dark:bg-surface-dark dark:text-white"
                     />
 
-                    <p className="mt-1 text-right text-xs text-gray-500 dark:text-gray-400">
+                    <p className="mt-1 text-right text-sm text-gray-500 dark:text-gray-400">
                         {livro.descricao.length}/1000 caracteres
                     </p>
                 </div>

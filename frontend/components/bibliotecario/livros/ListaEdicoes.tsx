@@ -23,11 +23,11 @@ export default function ListaEdicoes({
         <section className="space-y-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                         Edições do livro
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    <p className="mt-1 text-base text-gray-500 dark:text-gray-400">
                         Cadastre uma ou mais edições para esta obra.
                     </p>
                 </div>
@@ -35,7 +35,7 @@ export default function ListaEdicoes({
                 <button
                     type="button"
                     onClick={adicionarEdicao}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-blue-700"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-base font-medium text-white transition hover:bg-blue-700"
                 >
                     <span className="text-lg leading-none">+</span>
                     Adicionar edição
@@ -55,8 +55,11 @@ export default function ListaEdicoes({
                 ))}
             </div>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-                {edicoes.length} {edicoes.length === 1 ? "edição cadastrada" : "edições cadastradas"}
+            <p className="text-base text-gray-500 dark:text-gray-400">
+                {edicoes.length}{" "}
+                {edicoes.length === 1
+                    ? "edição cadastrada"
+                    : "edições cadastradas"}
             </p>
         </section>
     );

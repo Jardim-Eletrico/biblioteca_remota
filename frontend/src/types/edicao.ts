@@ -11,6 +11,7 @@ export interface EdicaoResponse {
 
     total_exemplares: number;
     exemplares_disponiveis: number;
+    possui_exemplares_emprestaveis: boolean;
 
     data_de_criacao: string;
 }

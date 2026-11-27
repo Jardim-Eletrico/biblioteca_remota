@@ -48,10 +48,9 @@ class CarrinhoView(APIView):
                 status=404
             )
 
-
-        if not edicao.exemplares.filter(status="disponivel").exists():
+        if not edicao.exemplares.exclude(status="baixado").exists():
             return Response(
-                {"erro": "Não há exemplares disponíveis."},
+                {"erro": "Esta edição não possui exemplares disponíveis para empréstimo."},
                 status=400
             )
 
